@@ -18,4 +18,4 @@ class Wire
 		Wire (string name, string type, bool is_stack, DValue v){WName = name; WType = type; IsStack = is_stack; value = v;}
 
 		
-}
+};
