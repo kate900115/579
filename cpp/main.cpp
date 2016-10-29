@@ -38,78 +38,181 @@ int main(int argc, char **argv)
 		//to get the type
 		sstr >>word;
 		switch (word)
-		case "input":
 		{
-			while (sstr >> word)
+			case "input":
 			{
-				Wire NewInput(word, INPUT, 0, X);
-				CWire.push_back(NewInput);
+				while (sstr >> word)
+				{
+						Wire NewInput(word, INPUT, 0, X);
+					CWire.push_back(NewInput);
+				}
+	    		}
+
+			case "output":
+			{
+				while (sstr >> word)
+				{
+					Wire NewOutput(word, OUTPUT, 0, X);
+					CWire.push_back(NewOutput);
+				}
 			}
-	    	}
 
-		case "output":
-		{
-			while (sstr >> word)
+			case "wire" :
 			{
-				Wire NewOutput(word, OUTPUT, 0, X);
-				CWire.push_back(NewOutput);
+				while (sstr >> word)
+				{
+					Wire NewWire(word, WIRE, 0, X);
+					CWire.push_back(NewWire);
+				}	
 			}
-		}
-
-		case "wire" :
-		{
-			while (sstr >> word)
+			case "dff" :
 			{
-				Wire NewWire(word, WIRE, 0, X);
-				CWire.push_back(NewWire);
-			}	
-		}
-		case "dff" :
-		{
-			string dff_name;
-			string dff_input;
-			string dff_output;
-
-			sstr >> dff_name;
-			sstr >> dff_input;
-			sstr >> dff_output;
-
-			vector<string> d_inputs;
-			d_inputs.push_back(dff_input);
+				string dff_name;
+				string dff_input;
+				string dff_output;
+	
+				sstr >> dff_name;
+				sstr >> dff_input;
+				sstr >> dff_output;
+	
+				vector<string> d_inputs;
+				d_inputs.push_back(dff_input);
 			
-			Gate NewDFF(dff_name, DFF, d_inputs, dff_output);
-		}
-		case "not" :
-		{
-			string not_name;
-			string not_input;
-			string not_output;
+				Gate NewDFF(dff_name, DFF, d_inputs, dff_output);
+				CGate.push_back(NewDFF);
+			}
+			case "not" :
+			{
+				string not_name;
+				string not_input;
+				string not_output;
 
-			sstr >> not_name;
-			sstr >> not_input;
-			sstr >> not_input;
+				sstr >> not_name;
+				sstr >> not_input;
+				sstr >> not_input;
 			
-			vector<sting> n_inputs;
-			d_inputs.push_back(not_input);
+				vector<sting> n_inputs;
+				d_inputs.push_back(not_input);
 			
-			Gate NewNot(not_name, NOT, n_inputs, not_output);
-		}
-		case "and" :
-		{
-			string and_name;
-		}
-	    	case "or" :
-		{
+				Gate NewNot(not_name, NOT, n_inputs, not_output);
+				CGate.push_back(NewNot);
+			}
+			case "and" :
+			{
+				string and_name;
+				sstr >> and_name;
+			
+				vector<string> and_inputs;
+				string and_input;
+				while (sstr >> and_input)
+				{	
+					and_inputs.push_back(and_input);
+				}
+				
+				string and_output = and_inputs.back();
+				and_inputs.pop_back();
+				int size = and_inputs.size();
+				switch (size)
+				case 2:
+					Gate NewAnd(and_name, AND2, and_inputs, and_output);
+					CGate.push_back(NewAnd);
+				case 3:
+					Gate NewAnd(and_name, AND3, and_inputs, and_output);
+					CGate.push_back(NewAnd);
+				case 4:
+					Gate NewAnd(and_name, AND4, and_inputs, and_output);
+					CGate.push_back(NewAnd);
+				default: ;
+			}
+		    	case "or" :
+			{
+				string or_name;
+				sstr >> or_name;
+			
+				vector<string> or_inputs;
+				string or_input;
+				while (sstr >> or_input)
+				{	
+					or_inputs.push_back(or_input);
+				}
+				
+				string or_output = or_inputs.back();
+				or_inputs.pop_back();
+	
+				int size = or_inputs.size();
+				switch (size)
+				{
+					case 2:
+						Gate NewOr(or_name, OR2, or_inputs, or_output);
+						CGate.push_back(NewOr);
+					case 3:	
+						Gate NewOr(or_name, OR3, or_inputs, or_output);
+						CGate.push_back(NewOr);
+					case 4:	
+						Gate NewOr(or_name, OR4, or_inputs, or_output);
+						CGate.push_back(NewOr);
+					default: ;
+				}
+			}
+		    	case "nor" :
+			{
+				string nor_name;
+				sstr >> nor_name;
+				
+				vector<string> nor_inputs;
+				string nor_input;
+				while (sstr >> nor_input)
+				{	
+					nor_inputs.push_back(nor_input);
+				}
+					
+				string nor_output = nor_inputs.back();
+				nor_inputs.pop_back();
 
-		}
-	    	case "nor" :
-		{
-
-		}
-		case "nand" :
-		{
-
-		}
+				int size = nor_inputs.size();
+				switch (size)
+				{
+					case 2:
+						Gate NewNor(nor_name, NOR2, nor_inputs, nor_output);
+						CGate.push_back(NewNor);
+					case 3:
+						Gate NewNor(nor_name, NOR3, nor_inputs, nor_output);
+						CGate.push_back(NewNor);
+					case 4:
+						Gate NewNor(nor_name, NOR4, nor_inputs, nor_output);
+						CGate.push_back(NewNor);
+					default: ;
+				}
+			}
+			case "nand" :
+			{
+				string nand_name;
+				sstr >> nand_name;
+			
+				vector<string> nand_inputs;
+				string nand_input;
+				while (sstr >> nand_input)
+				{	
+					nand_inputs.push_back(nand_input);
+				}
+				
+				string nand_output = nand_inputs.back();
+				nand_inputs.pop_back();
+				int size = nand_inputs.size();
+				switch (size)
+				{
+					case 2:
+						Gate NewNand(nand_name, NAND2, nand_inputs, nand_output);
+						CGate.push_back(NewNand);
+					case 3:
+						Gate NewNand(nand_name, NAND3, nand_inputs, nand_output);
+						CGate.push_back(NewNand);
+					case 4:
+						Gate NewNand(nand_name, NAND4, nand_inputs, nand_output);
+						CGate.push_back(NewNand);
+					default: ;
+			}
+			default: ;
 		
 		// parse non-empty lines only
 		
