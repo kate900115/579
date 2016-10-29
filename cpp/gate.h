@@ -12,12 +12,12 @@ class Gate
 	private:
 		string GName;
 		string GType;
-		vector<Wire> GInputs;
-		Wire GOutput;
+		vector<string> GInputs;
+		string GOutput;
 
 	public:
 		//constructor
-		Gate(string name, string type, vector<Wire> inputs, Wire output){GName = name; GType = type; GInputs = inputs; GOutput = output;}
+		Gate(string name, string type, vector<string> inputs, string output){GName = name; GType = type; GInputs = inputs; GOutput = output;}
 		
 		int GetInputSize(){return GInputs.size();}
 };

@@ -17,11 +17,11 @@ class Wire
 		string WName;
 		WType Type;
 		bool IsStack;
-		DValue Value;
+		DType Value;
 
 	public:
 		//constructor
-		Wire (string name, string type, bool is_stack, DValue v){WName = name; Type = type; IsStack = is_stack; Value = v;}
+		Wire (string name, WType type, bool is_stack, DType v){WName = name; Type = type; IsStack = is_stack; Value = v;}
 
 		
 };
