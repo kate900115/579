@@ -21,38 +21,47 @@ void Wire::PrintWire()
 
 	if (Value==ZERO)
 	{
-		cout<<"0"<<endl;
+		cout<<"0";
 	}
 	else if(Value==ONE)
 	{
-		cout<<"1"<<endl;
+		cout<<"1";
 	}
 	else if(Value==D)
 	{
-		cout<<"D"<<endl;
+		cout<<"D";
 	}
 	else if(Value==DNOT)
 	{
-		cout<<"D'"<<endl;
+		cout<<"D'";
 	}
 	else if(Value==X)
 	{
-		cout<<"X"<<endl;
+		cout<<"X";
 	}
 	else if(Value==ZERO_X)
 	{
-		cout<<"0/X"<<endl;
+		cout<<"0/X";
 	}
 	else if(Value==ONE_X)
 	{
-		cout<<"1/X"<<endl;
+		cout<<"1/X";
 	}
 	else if(Value==X_ZERO)
 	{
-		cout<<"X/1"<<endl;
+		cout<<"X/1";
 	}
 	else if(Value==X_ONE)
 	{
-		cout<<"X/0"<<endl;
+		cout<<"X/0";
+	}
+	
+	if (FanInGate!=NULL)
+	{
+		cout<<", FanIn ="<<FanInGate->GetGateName()<<endl;
+	}
+	else
+	{
+		cout<<endl;
 	}
 }	

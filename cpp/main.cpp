@@ -77,8 +77,8 @@ int main(int argc, char **argv)
 		else if (word=="dff")
 		{
 			string dff_name;
-			string dff_input;
 			string dff_output;
+			string dff_input;
 			sstr >> dff_name;
 			sstr >> dff_input;
 			sstr >> dff_output;
@@ -88,6 +88,18 @@ int main(int argc, char **argv)
 		
 			Gate NewDFF(dff_name, DFF, d_inputs, dff_output);
 			CGate.push_back(NewDFF);
+			
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i].GetWireName() == dff_output)
+				{
+					CWire[i].SetFanIn(&NewDFF);	
+				}
+				if (CWire[i].GetWireName() == dff_input)
+				{
+					CWire[i].AddFanOut(&NewDFF);
+				}
+			}
 		}
 		else if	(word=="not")
 		{
@@ -95,19 +107,34 @@ int main(int argc, char **argv)
 			string not_input;
 			string not_output;
 			sstr >> not_name;
-			sstr >> not_input;
 			sstr >> not_output;
+			sstr >> not_input;
 		
 			vector<string> n_inputs;
 			n_inputs.push_back(not_input);
 			
 			Gate NewNot(not_name, NOT, n_inputs, not_output);
 			CGate.push_back(NewNot);
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i].GetWireName() == not_output)
+				{
+					CWire[i].SetFanIn(&NewNot);	
+				}
+				if (CWire[i].GetWireName() == not_input)
+				{
+					CWire[i].AddFanOut(&NewNot);
+				}
+			}
 		}
 		else if (word=="and")
 		{
 			string and_name;
 			sstr >> and_name;
+
+			string and_output;
+			sstr >> and_output;
 		
 			vector<string> and_inputs;
 			string and_input;
@@ -116,25 +143,84 @@ int main(int argc, char **argv)
 				and_inputs.push_back(and_input);
 			}
 				
-			string and_output = and_inputs.back();
-			and_inputs.pop_back();
 			int size = and_inputs.size();
+
 			switch (size)
 			{
 				case (2):
 				{
 					Gate NewAnd(and_name, AND2, and_inputs, and_output);
 					CGate.push_back(NewAnd);
+					for (unsigned j=0; j<2; j++)
+					{
+						and_input = and_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == and_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == and_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (3):
 				{			
 					Gate NewAnd(and_name, AND3, and_inputs, and_output);
 					CGate.push_back(NewAnd);
+					for (unsigned j=0; j<3; j++)
+					{
+						and_input = and_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == and_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == and_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (4):
 				{			
 					Gate NewAnd(and_name, AND4, and_inputs, and_output);
 					CGate.push_back(NewAnd);
+					for (unsigned j=0; j<4; j++)
+					{
+						and_input = and_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == and_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == and_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				default: ;
 			}
@@ -143,6 +229,9 @@ int main(int argc, char **argv)
 		{
 			string or_name;
 			sstr >> or_name;
+
+			string or_output;
+			sstr >> or_output;
 		
 			vector<string> or_inputs;
 			string or_input;
@@ -151,8 +240,6 @@ int main(int argc, char **argv)
 				or_inputs.push_back(or_input);
 			}
 			
-			string or_output = or_inputs.back();
-			or_inputs.pop_back();
 			int size = or_inputs.size();
 			switch (size)
 			{
@@ -160,16 +247,76 @@ int main(int argc, char **argv)
 				{
 					Gate NewOr(or_name, OR2, or_inputs, or_output);
 					CGate.push_back(NewOr);
+					for (unsigned j=0; j<2; j++)
+					{
+						or_input = or_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == or_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == or_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (3):	
 				{
 					Gate NewOr(or_name, OR3, or_inputs, or_output);
 					CGate.push_back(NewOr);
+					for (unsigned j=0; j<3; j++)
+					{
+						or_input = or_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == or_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == or_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (4):	
 				{				
 					Gate NewOr(or_name, OR4, or_inputs, or_output);
-					CGate.push_back(NewOr);
+					CGate.push_back(NewOr);	
+					for (unsigned j=0; j<4; j++)
+					{
+						or_input = or_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == or_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == or_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				default: ;
 			}
@@ -178,6 +325,9 @@ int main(int argc, char **argv)
 		{
 			string nor_name;
 			sstr >> nor_name;
+
+			string nor_output;
+			sstr >> nor_output;
 			
 			vector<string> nor_inputs;
 			string nor_input;
@@ -185,9 +335,6 @@ int main(int argc, char **argv)
 			{	
 				nor_inputs.push_back(nor_input);
 			}
-				
-			string nor_output = nor_inputs.back();
-			nor_inputs.pop_back();
 
 			int size = nor_inputs.size();
 			switch (size)
@@ -196,16 +343,76 @@ int main(int argc, char **argv)
 				{
 					Gate NewNor(nor_name, NOR2, nor_inputs, nor_output);
 					CGate.push_back(NewNor);
+					for (unsigned j=0; j<2; j++)
+					{
+						nor_input = nor_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nor_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nor_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (3):
 				{				
 					Gate NewNor(nor_name, NOR3, nor_inputs, nor_output);
 					CGate.push_back(NewNor);
+					for (unsigned j=0; j<3; j++)
+					{
+						nor_input = nor_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nor_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nor_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (4):
 				{
 					Gate NewNor(nor_name, NOR4, nor_inputs, nor_output);
 					CGate.push_back(NewNor);
+					for (unsigned j=0; j<4; j++)
+					{
+						nor_input = nor_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nor_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nor_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				default: ;
 			}
@@ -214,6 +421,9 @@ int main(int argc, char **argv)
 		{
 			string nand_name;
 			sstr >> nand_name;
+
+			string nand_output;
+			sstr >> nand_output;
 		
 			vector<string> nand_inputs;
 			string nand_input;
@@ -222,8 +432,6 @@ int main(int argc, char **argv)
 				nand_inputs.push_back(nand_input);
 			}
 				
-			string nand_output = nand_inputs.back();
-			nand_inputs.pop_back();
 			int size = nand_inputs.size();
 			switch (size)
 			{
@@ -231,16 +439,76 @@ int main(int argc, char **argv)
 				{
 					Gate NewNand(nand_name, NAND2, nand_inputs, nand_output);
 					CGate.push_back(NewNand);
+					for (unsigned j=0; j<2; j++)
+					{
+						nand_input = nand_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nand_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nand_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (3):
 				{
 					Gate NewNand(nand_name, NAND3, nand_inputs, nand_output);
 					CGate.push_back(NewNand);
+					for (unsigned j=0; j<3; j++)
+					{
+						nand_input = nand_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nand_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nand_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				case (4):
 				{				
 					Gate NewNand(nand_name, NAND4, nand_inputs, nand_output);
 					CGate.push_back(NewNand);
+					for (unsigned j=0; j<4; j++)
+					{
+						nand_input = nand_inputs[j];
+						for (unsigned i=0; i<CWire.size(); i++)
+						{
+							if(CWire[i].GetWireName() == nand_input)
+							{
+								CWire[i].AddFanOut(&CGate.back());	
+							}
+						}
+					}
+					
+					for (unsigned i=0; i<CWire.size(); i++)
+					{
+						if (CWire[i].GetWireName() == nand_output)
+						{
+							CWire[i].SetFanIn(&CGate.back());
+						}
+					}
+					break;
 				}
 				default: ;
 			}

@@ -30,11 +30,17 @@ class Wire
 
 		void SetStack(bool is_stack, DType v){IsStack = is_stack; Value = v;}
 
+		void AddFanOut(Gate* NewGate){ FanOutGate.push_back(NewGate); }
+
+		void SetFanIn(Gate* NewGate){ FanInGate = NewGate; }
+
 		void initialize(){IsStack = false; Value = X;}
 		
 		WType GetWireType(){return Type;}
 
 		string GetWireName(){return WName;}
+
+		
 
 
 		

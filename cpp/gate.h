@@ -21,4 +21,6 @@ class Gate
 		int GetInputSize(){return GInputs.size();}
 
 		void PrintGate();
+
+		string GetGateName(){return GName;}
 };
