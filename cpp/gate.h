@@ -19,4 +19,6 @@ class Gate
 		Gate(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 		
 		int GetInputSize(){return GInputs.size();}
+
+		void PrintGate();
 };
