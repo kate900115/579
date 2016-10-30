@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 				Wire NewInput(word, INPUT, 0, X);
 				CWire.push_back(NewInput);
 			}
-	    }
+	   	}
 
 		else if (word=="output")
 		{
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewAnd);	
 							}
 						}
 					}
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == and_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewAnd);
 						}
 					}
 					break;
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewAnd);	
 							}
 						}
 					}
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == and_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewAnd);
 						}
 					}
 					break;
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewAnd);	
 							}
 						}
 					}
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == and_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewAnd);
 						}
 					}
 					break;
@@ -254,7 +254,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewOr);	
 							}
 						}
 					}
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewOr);
 						}
 					}
 					break;
@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewOr);	
 							}
 						}
 					}
@@ -288,7 +288,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewOr);
 						}
 					}
 					break;
@@ -304,7 +304,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewOr);	
 							}
 						}
 					}
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewOr);
 						}
 					}
 					break;
@@ -350,7 +350,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNor);	
 							}
 						}
 					}
@@ -359,7 +359,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNor);
 						}
 					}
 					break;
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNor);	
 							}
 						}
 					}
@@ -384,7 +384,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNor);
 						}
 					}
 					break;
@@ -400,7 +400,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNor);	
 							}
 						}
 					}
@@ -409,7 +409,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNor);
 						}
 					}
 					break;
@@ -446,7 +446,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNand);	
 							}
 						}
 					}
@@ -455,7 +455,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNand);
 						}
 					}
 					break;
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNand);	
 							}
 						}
 					}
@@ -480,7 +480,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNand);
 						}
 					}
 					break;
@@ -496,7 +496,7 @@ int main(int argc, char **argv)
 						{
 							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i].AddFanOut(&CGate.back());	
+								CWire[i].AddFanOut(&NewNand);	
 							}
 						}
 					}
@@ -505,7 +505,7 @@ int main(int argc, char **argv)
 					{
 						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i].SetFanIn(&CGate.back());
+							CWire[i].SetFanIn(&NewNand);
 						}
 					}
 					break;
