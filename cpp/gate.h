@@ -17,6 +17,8 @@ class Gate
 	public:
 		//constructor
 		Gate(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
+
+		void Init(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 		
 		int GetInputSize(){return GInputs.size();}
 

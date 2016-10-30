@@ -40,6 +40,8 @@ class Wire
 
 		string GetWireName(){return WName;}
 
+		Gate* GetFanIn(){return FanInGate;}
+
 		
 
 
