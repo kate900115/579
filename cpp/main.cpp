@@ -8,6 +8,8 @@
 
 using namespace std;
 
+bool PODEM();
+
 vector<Wire> CWire;
 vector<Gate> CGate;
 vector<bool> TestVector;
@@ -264,27 +266,28 @@ int main(int argc, char **argv)
 	for (int i=0; i<WireSize; i++)
 	{
 
-		//first s-a-0;
+		//first s-a-0
 		CWire[i].SetStack(true,D);
 		if(PODEM()==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector";
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector"<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector";
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector"<<endl;
 		}
+
+		//then s-a-1
 		CWire[i].SetStack(true,DNOT);
-		if()
 		if(PODEM()==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector";
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/1 has test vector"<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector";
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/1 has no test vector"<<endl;
 		}		
 	}
 	return 0;

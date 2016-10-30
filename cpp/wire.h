@@ -25,7 +25,7 @@ class Wire
 
 		void PrintWire();
 
-		void SetStack(bool is_stack, DType v){IsStack = is_stack; DType = v;}
+		void SetStack(bool is_stack, DType v){IsStack = is_stack; Value = v;}
 
 		WType GetWireType(){return Type;}
 
