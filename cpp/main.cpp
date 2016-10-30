@@ -247,6 +247,12 @@ int main(int argc, char **argv)
 		CGate[i].PrintGate();
 	}
 
+	int WireSize = CWire.size();
+	for (int i=0; i<WireSize; i++)
+	{
+		CWire[i].PrintWire();
+	}
+
 
 	return 0;
 }

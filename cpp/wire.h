@@ -23,5 +23,7 @@ class Wire
 		//constructor
 		Wire (string name, WType type, bool is_stack, DType v){WName = name; Type = type; IsStack = is_stack; Value = v;}
 
+		void PrintWire();
+
 		
 };
