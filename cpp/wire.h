@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "gate.h"
 
 using namespace std;
 
@@ -18,10 +19,12 @@ class Wire
 		WType Type;
 		bool IsStack;
 		DType Value;
+		Gate* FanInGate;
+		vector<Gate*> FanOutGate;
 
 	public:
 		//constructor
-		Wire (string name, WType type, bool is_stack, DType v){WName = name; Type = type; IsStack = is_stack; Value = v;}
+		Wire (string name, WType type, bool is_stack, DType v){WName = name; Type = type; IsStack = is_stack; Value = v; FanInGate = NULL; FanOutGate=vector<Gate*>();}
 
 		void PrintWire();
 
@@ -32,6 +35,7 @@ class Wire
 		WType GetWireType(){return Type;}
 
 		string GetWireName(){return WName;}
+
 
 		
 };

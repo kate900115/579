@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "gate.h"
+#include <stack>
 #include "wire.h"
 #include <string>
 
@@ -13,7 +13,11 @@ void Initialize();
 
 vector<Wire> CWire;
 vector<Gate> CGate;
+
+stack<Wire> BacktraceWire;
+
 vector<bool> TestVector;
+
 int InputSize=0;
 
 int main(int argc, char **argv)
@@ -246,30 +250,34 @@ int main(int argc, char **argv)
   
 	cout << "file " << FileName << " successfully read." << endl;
 	inFile.close();
-
+	
+	/*--------------------for test--------------------*/
+	//print all the Gate read from input file 
 	int GateSize=CGate.size();
 	for (int i=0; i<GateSize; i++)
 	{
 		CGate[i].PrintGate();
 	}
-
+	//print all the Wire read from input file
 	int WireSize = CWire.size();
 	for (int i=0; i<WireSize; i++)
 	{
 		CWire[i].PrintWire();
 	}
+	/*--------------------for test--------------------*/
 
-	bool TestVector[InputSize];
+
 	int TestNumber = 0;
 	// PODEM
 	// for each wire we will generate 
 	// s-a-0 fault and s-a-1 fault
 	for (int i=0; i<WireSize; i++)
 	{
-
-		//first s-a-0
+		//intialize and set s-a-0 fault
 		Initialize();
 		CWire[i].SetStack(true,D);
+
+
 		if(PODEM()==true)
 		{	
 			TestNumber++;
@@ -280,7 +288,7 @@ int main(int argc, char **argv)
 			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector"<<endl;
 		}
 
-		//then s-a-1
+		//initialize and set s-a-1 fault
 		Initialize();
 		CWire[i].SetStack(true,DNOT);
 		if(PODEM()==true)
@@ -300,6 +308,7 @@ bool PODEM()
 {
 	//if Stack at fault is at primary output
 	//we don't need to generate test vector
+	
 	/*
 	if (CWire[i].GetWireType()==OUTPUT)
 	{
@@ -307,12 +316,13 @@ bool PODEM()
 		{
 			TestVector[j]=0;
 		}
+		return true;
 	}
 	else
 	{
+		
 
-	}
-	*/
+	}*/
 	return true;
 }
 
