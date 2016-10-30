@@ -8,11 +8,13 @@
 
 using namespace std;
 
+vector<Wire> CWire;
+vector<Gate> CGate;
+vector<bool> TestVector;
+int InputSize=0;
+
 int main(int argc, char **argv)
 {
-	vector<Wire> CWire;
-	vector<Gate> CGate;
-
 	//read inputfile
 	string FileName = string(argv[1]);
 	ifstream inFile;
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
 				Wire NewInput(word, INPUT, 0, X);
 				CWire.push_back(NewInput);
 			}
-	    	}
+	    }
 
 		else if (word=="output")
 		{
@@ -62,6 +64,7 @@ int main(int argc, char **argv)
 			{
 				Wire NewWire(word, WIRE, 0, X);
 				CWire.push_back(NewWire);
+				InputSize++;
 			}	
 		}
 		else if (word=="dff")
@@ -253,7 +256,56 @@ int main(int argc, char **argv)
 		CWire[i].PrintWire();
 	}
 
+	bool TestVector[InputSize];
+	int TestNumber = 0;
+	// PODEM
+	// for each wire we will generate 
+	// s-a-0 fault and s-a-1 fault
+	for (int i=0; i<WireSize; i++)
+	{
 
+		//first s-a-0;
+		CWire[i].SetStack(true,D);
+		if(PODEM()==true)
+		{	
+			TestNumber++;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector";
+		}
+		else
+		{
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector";
+		}
+		CWire[i].SetStack(true,DNOT);
+		if()
+		if(PODEM()==true)
+		{	
+			TestNumber++;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector";
+		}
+		else
+		{
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector";
+		}		
+	}
 	return 0;
 }
 
+bool PODEM()
+{
+	//if Stack at fault is at primary output
+	//we don't need to generate test vector
+	/*
+	if (CWire[i].GetWireType()==OUTPUT)
+	{
+		for (int j=0; j<InputSize; j++)
+		{
+			TestVector[j]=0;
+		}
+	}
+	else
+	{
+
+	}
+	*/
+	return true;
+}
