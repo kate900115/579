@@ -9,6 +9,7 @@
 using namespace std;
 
 bool PODEM();
+void Initialize();
 
 vector<Wire> CWire;
 vector<Gate> CGate;
@@ -267,6 +268,7 @@ int main(int argc, char **argv)
 	{
 
 		//first s-a-0
+		Initialize();
 		CWire[i].SetStack(true,D);
 		if(PODEM()==true)
 		{	
@@ -279,6 +281,7 @@ int main(int argc, char **argv)
 		}
 
 		//then s-a-1
+		Initialize();
 		CWire[i].SetStack(true,DNOT);
 		if(PODEM()==true)
 		{	
@@ -311,4 +314,13 @@ bool PODEM()
 	}
 	*/
 	return true;
+}
+
+void Initialize()
+{
+	int size = CWire.size();
+	for (int i=0; i<size; i++)
+	{
+		CWire[i].initialize();
+	}
 }

@@ -27,6 +27,8 @@ class Wire
 
 		void SetStack(bool is_stack, DType v){IsStack = is_stack; Value = v;}
 
+		void initialize(){IsStack = false; Value = X;}
+		
 		WType GetWireType(){return Type;}
 
 		string GetWireName(){return WName;}
