@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Wire.h"
 
 using namespace std;
 
@@ -11,13 +10,13 @@ class Gate
 {
 	private:
 		string GName;
-		string GType;
+		GType Type;
 		vector<string> GInputs;
 		string GOutput;
 
 	public:
 		//constructor
-		Gate(string name, string type, vector<string> inputs, string output){GName = name; GType = type; GInputs = inputs; GOutput = output;}
+		Gate(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 		
 		int GetInputSize(){return GInputs.size();}
 };
