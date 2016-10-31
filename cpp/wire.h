@@ -12,8 +12,12 @@ enum DType {ZERO, ONE, D, DNOT, X, ZERO_X, ONE_X, X_ZERO, X_ONE};
 //Define the type of the wire
 enum WType {INPUT, OUTPUT, WIRE};
 
+class Gate;
+
 class Wire
 {
+	friend class Gate;
+
 	private:
 		string WName;
 		WType Type;

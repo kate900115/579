@@ -11,7 +11,7 @@ using namespace std;
 bool PODEM();
 void Initialize();
 
-vector<Wire*> CWire;
+vector<Wire> CWire;
 vector<Gate*> CGate;
 
 stack<Wire> BacktraceWire;
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 		{
 			while (sstr >> word)
 			{
-				Wire* NewInput = new Wire(word, INPUT, 0, X);
+				Wire NewInput(word, INPUT, 0, X);
 				CWire.push_back(NewInput);
 			}
 	   	}
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 		{
 			while (sstr >> word)
 			{
-				Wire* NewOutput = new Wire(word, OUTPUT, 0, X);
+				Wire NewOutput(word, OUTPUT, 0, X);
 				CWire.push_back(NewOutput);
 			}
 		}
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 		{
 			while (sstr >> word)
 			{
-				Wire* NewWire = new Wire(word, WIRE, 0, X);
+				Wire NewWire(word, WIRE, 0, X);
 				CWire.push_back(NewWire);
 				InputSize++;
 			}	
@@ -92,13 +92,13 @@ int main(int argc, char **argv)
 			
 			for (unsigned i=0; i<CWire.size(); i++)
 			{
-				if(CWire[i]->GetWireName() == dff_output)
+				if(CWire[i].GetWireName() == dff_output)
 				{
-					CWire[i]->SetFanIn(NewDFF);	
+					CWire[i].SetFanIn(NewDFF);	
 				}
-				if (CWire[i]->GetWireName() == dff_input)
+				if (CWire[i].GetWireName() == dff_input)
 				{
-					CWire[i]->AddFanOut(NewDFF);
+					CWire[i].AddFanOut(NewDFF);
 				}
 			}
 		}
@@ -119,13 +119,13 @@ int main(int argc, char **argv)
 
 			for (unsigned i=0; i<CWire.size(); i++)
 			{
-				if(CWire[i]->GetWireName() == not_output)
+				if(CWire[i].GetWireName() == not_output)
 				{
-					CWire[i]->SetFanIn(NewNot);	
+					CWire[i].SetFanIn(NewNot);	
 				}
-				if (CWire[i]->GetWireName() == not_input)
+				if (CWire[i].GetWireName() == not_input)
 				{
-					CWire[i]->AddFanOut(NewNot);
+					CWire[i].AddFanOut(NewNot);
 				}
 			}
 		}
@@ -157,20 +157,20 @@ int main(int argc, char **argv)
 						and_input = and_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == and_input)
+							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i]->AddFanOut(NewAnd);	
+								CWire[i].AddFanOut(NewAnd);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == and_output)
+						if (CWire[i].GetWireName() == and_output)
 						{
 
-							CWire[i]->SetFanIn(NewAnd);
-							//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+							CWire[i].SetFanIn(NewAnd);
+							cout<<CWire[i].GetFanIn()->GetGateName()<<endl;
 						}
 					}
 					break;
@@ -184,18 +184,18 @@ int main(int argc, char **argv)
 						and_input = and_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == and_input)
+							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i]->AddFanOut(NewAnd);	
+								CWire[i].AddFanOut(NewAnd);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == and_output)
+						if (CWire[i].GetWireName() == and_output)
 						{
-							CWire[i]->SetFanIn(NewAnd);
+							CWire[i].SetFanIn(NewAnd);
 						}
 					}
 					break;
@@ -209,18 +209,18 @@ int main(int argc, char **argv)
 						and_input = and_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == and_input)
+							if(CWire[i].GetWireName() == and_input)
 							{
-								CWire[i]->AddFanOut(NewAnd);	
+								CWire[i].AddFanOut(NewAnd);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == and_output)
+						if (CWire[i].GetWireName() == and_output)
 						{
-							CWire[i]->SetFanIn(NewAnd);
+							CWire[i].SetFanIn(NewAnd);
 						}
 					}
 					break;
@@ -255,19 +255,19 @@ int main(int argc, char **argv)
 						or_input = or_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == or_input)
+							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i]->AddFanOut(NewOr);	
+								CWire[i].AddFanOut(NewOr);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == or_output)
+						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i]->SetFanIn(NewOr);
-							//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+							CWire[i].SetFanIn(NewOr);
+							cout<<CWire[i].GetFanIn()->GetGateName()<<endl;
 						}
 					}
 					break;
@@ -281,9 +281,9 @@ int main(int argc, char **argv)
 						or_input = or_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == or_input)
+							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i]->AddFanOut(NewOr);
+								CWire[i].AddFanOut(NewOr);
 								
 							}
 						}
@@ -291,10 +291,10 @@ int main(int argc, char **argv)
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == or_output)
+						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i]->SetFanIn(NewOr);
-							//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;	
+							CWire[i].SetFanIn(NewOr);
+							cout<<CWire[i].GetFanIn()->GetGateName()<<endl;	
 						}
 					}
 					break;
@@ -308,18 +308,18 @@ int main(int argc, char **argv)
 						or_input = or_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == or_input)
+							if(CWire[i].GetWireName() == or_input)
 							{
-								CWire[i]->AddFanOut(NewOr);	
+								CWire[i].AddFanOut(NewOr);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == or_output)
+						if (CWire[i].GetWireName() == or_output)
 						{
-							CWire[i]->SetFanIn(NewOr);
+							CWire[i].SetFanIn(NewOr);
 						}
 					}
 					break;
@@ -354,19 +354,19 @@ int main(int argc, char **argv)
 						nor_input = nor_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nor_input)
+							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i]->AddFanOut(NewNor);	
+								CWire[i].AddFanOut(NewNor);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nor_output)
+						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i]->SetFanIn(NewNor);
-							cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+							CWire[i].SetFanIn(NewNor);
+							cout<<CWire[i].GetFanIn()->GetGateName()<<endl;
 						}
 					}
 					break;
@@ -380,18 +380,18 @@ int main(int argc, char **argv)
 						nor_input = nor_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nor_input)
+							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i]->AddFanOut(NewNor);	
+								CWire[i].AddFanOut(NewNor);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nor_output)
+						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i]->SetFanIn(NewNor);
+							CWire[i].SetFanIn(NewNor);
 						}
 					}
 					break;
@@ -405,18 +405,18 @@ int main(int argc, char **argv)
 						nor_input = nor_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nor_input)
+							if(CWire[i].GetWireName() == nor_input)
 							{
-								CWire[i]->AddFanOut(NewNor);	
+								CWire[i].AddFanOut(NewNor);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nor_output)
+						if (CWire[i].GetWireName() == nor_output)
 						{
-							CWire[i]->SetFanIn(NewNor);
+							CWire[i].SetFanIn(NewNor);
 						}
 					}
 					break;
@@ -451,19 +451,19 @@ int main(int argc, char **argv)
 						nand_input = nand_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nand_input)
+							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i]->AddFanOut(NewNand);	
+								CWire[i].AddFanOut(NewNand);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nand_output)
+						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i]->SetFanIn(NewNand);
-							cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+							CWire[i].SetFanIn(NewNand);
+							cout<<CWire[i].GetFanIn()->GetGateName()<<endl;
 						}
 					}
 					break;
@@ -477,18 +477,18 @@ int main(int argc, char **argv)
 						nand_input = nand_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nand_input)
+							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i]->AddFanOut(NewNand);	
+								CWire[i].AddFanOut(NewNand);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nand_output)
+						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i]->SetFanIn(NewNand);
+							CWire[i].SetFanIn(NewNand);
 						}
 					}
 					break;
@@ -502,18 +502,18 @@ int main(int argc, char **argv)
 						nand_input = nand_inputs[j];
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
-							if(CWire[i]->GetWireName() == nand_input)
+							if(CWire[i].GetWireName() == nand_input)
 							{
-								CWire[i]->AddFanOut(NewNand);	
+								CWire[i].AddFanOut(NewNand);	
 							}
 						}
 					}
 					
 					for (unsigned i=0; i<CWire.size(); i++)
 					{
-						if (CWire[i]->GetWireName() == nand_output)
+						if (CWire[i].GetWireName() == nand_output)
 						{
-							CWire[i]->SetFanIn(NewNand);
+							CWire[i].SetFanIn(NewNand);
 						}
 					}
 					break;
@@ -538,7 +538,7 @@ int main(int argc, char **argv)
 	int WireSize = CWire.size();
 	for (int i=0; i<WireSize; i++)
 	{
-		CWire[i]->PrintWire();
+		CWire[i].PrintWire();
 	}
 	/*--------------------for test--------------------*/
 
@@ -551,30 +551,30 @@ int main(int argc, char **argv)
 	{
 		//intialize and set s-a-0 fault
 		Initialize();
-		CWire[i]->SetStack(true,D);
+		CWire[i].SetStack(true,D);
 
 
 		if(PODEM()==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has test vector"<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/0 has no test vector"<<endl;
 		}
 
 		//initialize and set s-a-1 fault
 		Initialize();
-		CWire[i]->SetStack(true,DNOT);
+		CWire[i].SetStack(true,DNOT);
 		if(PODEM()==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/1 has test vector"<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<"Wire "<<CWire[i].GetWireName()<<"/1 has no test vector"<<endl;
 		}		
 	}
 	return 0;
@@ -586,7 +586,7 @@ bool PODEM()
 	//we don't need to generate test vector
 	
 	/*
-	if (CWire[i]->GetWireType()==OUTPUT)
+	if (CWire[i].GetWireType()==OUTPUT)
 	{
 		for (int j=0; j<InputSize; j++)
 		{
@@ -607,6 +607,6 @@ void Initialize()
 	int size = CWire.size();
 	for (int i=0; i<size; i++)
 	{
-		CWire[i]->initialize();
+		CWire[i].initialize();
 	}
 }
