@@ -15,7 +15,7 @@ class Gate
 	private:
 		string GName;
 		GType Type;
-		vector<string> GInputs;
+		vector<Wire*> GInputs;
 		string GOutput;
 
 	public:

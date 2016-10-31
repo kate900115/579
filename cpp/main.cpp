@@ -86,8 +86,24 @@ int main(int argc, char **argv)
 	
 			vector<string> d_inputs;
 			d_inputs.push_back(dff_input);
+
+			Wire* DffOutput;
+			vector<Wire*> DffInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if (CWire[i]->GetWireName()==dff_input)
+				{
+					DffInputs.push_back(CWire[i]);
+					
+				}
+				if (CWire[i]->GetWireName()==dff_output)
+				{
+					DffOutput = CWire[i];
+				}
+			}
 		
-			Gate* NewDFF = new Gate(dff_name, DFF, d_inputs, dff_output);
+			Gate* NewDFF = new Gate(dff_name, DFF, DffInputs, DffOutput);
 			CGate.push_back(NewDFF);
 			
 			for (unsigned i=0; i<CWire.size(); i++)
@@ -110,11 +126,24 @@ int main(int argc, char **argv)
 			sstr >> not_name;
 			sstr >> not_output;
 			sstr >> not_input;
-		
-			vector<string> n_inputs;
-			n_inputs.push_back(not_input);
+
+			Wire* NotOutput;
+			vector<Wire*> NotInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if (CWire[i]->GetWireName()==not_input)
+				{
+					NotInputs.push_back(CWire[i]);
+					
+				}
+				if (CWire[i]->GetWireName()==not_output)
+				{
+					NotOutput = CWire[i];
+				}
+			}
 			
-			Gate* NewNot = new Gate(not_name, NOT, n_inputs, not_output);
+			Gate* NewNot = new Gate(not_name, NOT, NotInputs, NotOutput);
 			CGate.push_back(NewNot);
 
 			for (unsigned i=0; i<CWire.size(); i++)
@@ -137,11 +166,19 @@ int main(int argc, char **argv)
 			string and_output;
 			sstr >> and_output;
 		
-			vector<string> and_inputs;
 			string and_input;
+
+			Wire* AndOutput;
+			Wire* AndInput;
+			vector<Wire*> AndInputs;
+
 			while (sstr >> and_input)
 			{	
-				and_inputs.push_back(and_input);
+				for (unsigned i=0; i<CWire.size(); i++)
+				{
+					if (CWire[i]->GetWireName()==and_input)
+					{
+						AndInputs.push_back(CWire[i]);
 			}
 				
 			int size = and_inputs.size();
