@@ -670,7 +670,26 @@ DType LookUpTable(Gate* G)
 	}
 	else if (G->GetGateType()==AND)
 	{
-		
+		vector<DType> InputValues;
+		for (unsigned i=0; i<G->GetInputSize(); i++)
+		{
+			if((G->GetInputs())[i]->GetValue()==ZERO)
+			{
+				return ZERO;
+			}
+			else if ((G->GetInputs())[i]->GetValue()==X)
+			{
+				return X;
+			}
+			else
+			{
+				InputValues.push_back((G->GetInputs())[i]);
+			}
+		}	
+		if (InputValues.size()==2)
+		{
+			
+		}
 	}
 	else if (G->GetGateType()==OR)
 	{
