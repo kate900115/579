@@ -29,4 +29,8 @@ class Gate
 		void PrintGate();
 
 		string GetGateName(){return GName;}
+
+		Wire* GetOutput(){return GOutput;}
+
+		vector<Wire*> GetInputs(){return GInputs;}
 };

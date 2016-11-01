@@ -638,6 +638,11 @@ int main(int argc, char **argv)
 	for (int i=0; i<GateSize; i++)
 	{
 		CGate[i]->PrintGate();
+		for (int j=0; j<CGate[i]->GetInputSize(); j++)
+		{
+			cout<<"input"<<j<<"="<<(CGate[i]->GetInputs())[j]->GetWireName()<<", ";
+		}
+		cout<<"output = "<<CGate[i]->GetOutput()->GetWireName()<<endl;
 	}
 	//print all the Wire read from input file
 	int WireSize = CWire.size();
