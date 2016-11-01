@@ -9,8 +9,13 @@
 using namespace std;
 
 bool PODEM(Wire* W);
-void Objective(Gate* G, Wire* W);
 void Initialize();
+void ImplyBackward(Gate* G);
+void ImplyForward(vector<Wire*> Ws);
+void ImplyForward(vector<Gate*> Gs);
+vector<Wire*> Objective(Gate* G, Wire* W);
+DType LookUpTable(Gate* G);
+
 
 vector<Wire*> CWire;
 vector<Gate*> CGate;
@@ -423,7 +428,7 @@ int main(int argc, char **argv)
 	}
 	/*--------------------for test--------------------*/
 
-
+/*
 	int TestNumber = 0;
 	// PODEM
 	// for each wire we will generate 
@@ -457,7 +462,7 @@ int main(int argc, char **argv)
 		{
 			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 		}		
-	}
+	}*/
 	return 0;
 }
 
@@ -498,9 +503,12 @@ bool PODEM(Wire* W)
 			}
 		}
 
-		Backtrace();
+		//Backtrace();
 		
-		ImplyForward()
+		//ImplyForward();
+
+		//Backtrack();
+
 
 
 
@@ -540,18 +548,18 @@ void ImplyBackward(Gate* G)
 void ImplyForward(vector<Gate*> Gs)
 {
 	//Implication to the front
-	for (int i=0; i<Gs.size(); i++)
+	for (unsigned i=0; i<Gs.size(); i++)
 	{
 		if (Gs[i]->GetVisited() == false)
 		{
 			Gate* CurrentGate = Gs[i];
 			CurrentGate->GetOutput()->SetValue(LookUpTable(CurrentGate));
 		
-			if (CurrentGate->GetOutput()-GetValue()!=X)
+			if (CurrentGate->GetOutput()->GetValue()!=X)
 			{
 				CurrentGate->SetVisited(true);
 				Gs.erase(Gs.begin()+i);
-				Gs.insert(Gs.end(), CurrentGate->GetOutput()->GetFanout().begin(), CurrentGate->GetOutput()->GetFanout().end());
+				Gs.insert(Gs.end(), CurrentGate->GetOutput()->GetFanOut().begin(), CurrentGate->GetOutput()->GetFanOut().end());
 				i--;
 			}		
 		}
@@ -568,8 +576,10 @@ void ImplyForward(vector<Wire*> Ws)
 
 
 
-void Objective(Gate* G, Wire* W)
+vector<Wire*> Objective(Gate* G, Wire* W)
 {
+	vector<Wire*> ObjResults;
+
 	if (G->GetGateType()==AND)
 	{
 		G->GetOutput()->SetValue(W->GetValue());
@@ -578,17 +588,19 @@ void Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
+				ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
 	else if (G->GetGateType()==OR)
-	{
+	{	
 		G->GetOutput()->SetValue(W->GetValue());
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
+				ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
@@ -607,6 +619,7 @@ void Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
+				ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
@@ -625,9 +638,11 @@ void Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
+				ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
+	return ObjResults;
 }
 
 
@@ -641,7 +656,7 @@ DType LookUpTable(Gate* G)
 {
 	if (G->GetGateType()==NOT)
 	{
-		DType InputValue = G->GetInputs()[0]->GetValue();
+		DType InputValue = (G->GetInputs())[0]->GetValue();
 		if (InputValue == D)
 		{return DNOT;}
 		if (InputValue == DNOT)
@@ -654,6 +669,18 @@ DType LookUpTable(Gate* G)
 		{return X;}
 	}
 	else if (G->GetGateType()==AND)
+	{
+		
+	}
+	else if (G->GetGateType()==OR)
+	{
+
+	}
+	else if (G->GetGateType()==NAND)
+	{
+
+	}
+	else if (G->GetGateType()==NOR)
 	{
 
 	}
