@@ -674,19 +674,45 @@ DType LookUpTable(Gate* G)
 		for (unsigned i=0; i<G->GetInputSize(); i++)
 		{
 			if((G->GetInputs())[i]->GetValue()==ZERO)
-			{
-				return ZERO;
-			}
+			{return ZERO;}
 			else if ((G->GetInputs())[i]->GetValue()==X)
-			{
-				return X;
-			}
+			{return X;}
 			else
 			{
-				InputValues.push_back((G->GetInputs())[i]);
+				InputValues.push_back((G->GetInputs())[i]->GetValue());
 			}
 		}	
 		if (InputValues.size()==2)
+		{	
+			// input = 11, output = 1;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE))
+			{return ONE;}
+			//input = 1D, output = D;
+			else if ((InputValues[0]==ONE)&&(InputValues[1]==D))
+			{return D;}
+			//input = D1, output = D;
+			else if ((InputValues[0]==D)&&(InputValues[1]==ONE))
+			{return D;}
+			//input 1D', output = D';
+			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT))
+			{return DNOT;}
+			//input D'1, output = D'
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE))
+			{return DNOT;}
+			//input DD, output D
+			else if ((InputValues[0]==D)&&(InputValues[1]==D))
+			{return D;}
+			//input DD', output 0
+			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT))
+			{return ZERO;}
+			//input D'D', output D'
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			{return DNOT;}
+			//input D'D, output 0
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			{return ZERO;}
+		}
+		if (InputValues.size()==3)
 		{
 			
 		}
@@ -703,5 +729,5 @@ DType LookUpTable(Gate* G)
 	{
 
 	}
-	{return X;}
+	return X;
 }
