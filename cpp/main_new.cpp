@@ -477,27 +477,16 @@ bool PODEM(Wire* W)
 	}
 	else
 	{
+		//Implication to the back
+		Gate* DBack = CurrentWire->GetFanIn();
+		ImplyBackward(DBack);
+
 		//find D-frontier
+		// the remaining problem is if we change 
+		//DFront, will it affect the real Fanout of current wire 
 		vector<Gate*> DFront = CurrentWire->GetFanOut();
+		ImplyForward(DFront);
 
-		//Implication
-		//to the front
-		for (int i=0; i<DFront.size(); i++)
-		{
-			if (DFront[i]->GetVisited() == false)
-			{
-				if (DFront[i]->GetGateType()==NOT)
-				{
-					Gate* CurrentGate = DFront[i];
-					CurrentGate->SetVisited(true);
-					CurrentGate->GetOutput()->SetValue(LookUpTable(CurrentGate));
-
-					DFront.erase(DFront.begin()+i);
-					DFront.insert(DFront.end(), CurrentGate->GetOutput()->GetFanout().begin(), CurrentGate->GetOutput()->GetFanout().end());
-
-				}
-			}
-		}
 
 		//pick up a gate to do objective()
 		for (int i=0; i<DFront.size(); i++)
@@ -508,6 +497,12 @@ bool PODEM(Wire* W)
 				break;
 			}
 		}
+
+		Backtrace();
+		
+		ImplyForward()
+
+
 
 	}
 	return true;
@@ -520,7 +515,57 @@ void Initialize()
 	{
 		CWire[i]->initialize();
 	}
+	size = CGate.size();
+	for (int i=0; i<size; i++)
+	{
+		CGate[i]->initialize();
+	}
 }
+
+
+
+
+void ImplyBackward(Gate* G)
+{
+	if (G->GetGateType()==NOT)
+	{
+		if (G->GetOutput()->GetValue()==ONE)
+		{
+			
+		}
+	}
+}
+
+
+void ImplyForward(vector<Gate*> Gs)
+{
+	//Implication to the front
+	for (int i=0; i<Gs.size(); i++)
+	{
+		if (Gs[i]->GetVisited() == false)
+		{
+			Gate* CurrentGate = Gs[i];
+			CurrentGate->GetOutput()->SetValue(LookUpTable(CurrentGate));
+		
+			if (CurrentGate->GetOutput()-GetValue()!=X)
+			{
+				CurrentGate->SetVisited(true);
+				Gs.erase(Gs.begin()+i);
+				Gs.insert(Gs.end(), CurrentGate->GetOutput()->GetFanout().begin(), CurrentGate->GetOutput()->GetFanout().end());
+				i--;
+			}		
+		}
+	}
+}
+
+
+//from primary input to forward gates
+void ImplyForward(vector<Wire*> Ws)
+{
+
+}	
+
+
 
 
 void Objective(Gate* G, Wire* W)
@@ -608,6 +653,9 @@ DType LookUpTable(Gate* G)
 		if (InputValue == X)
 		{return X;}
 	}
-	else //need change
+	else if (G->GetGateType()==AND)
+	{
+
+	}
 	{return X;}
 }

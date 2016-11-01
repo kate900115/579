@@ -23,11 +23,10 @@ class Gate
 		//constructor
 		Gate(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output; IsVisited = false;}
 
-		void Init(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
+		void initialize(){IsVisited = false;}
 		
+		//get the private value
 		int GetInputSize(){return GInputs.size();}
-
-		void PrintGate();
 
 		string GetGateName(){return GName;}
 
@@ -35,9 +34,14 @@ class Gate
 
 		Wire* GetOutput(){return GOutput;}
 
+		bool GetVisited(){return IsVisited;}
+
 		vector<Wire*> GetInputs(){return GInputs;}
 
-		bool GetVisited(){return IsVisited;}
 		
+		//Set the private value
 		void SetVisited(bool isvisited){IsVisited = isvisited;}
+
+		//print the value
+		void PrintGate();
 };
