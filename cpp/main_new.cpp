@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 
 			Gate* NewAnd = new Gate(and_name, AND, AndInputs, AndOutput);
 			CGate.push_back(NewAnd);
-			for (unsigned j=0; j<2; j++)
+			for (int j=0; j<size; j++)
 			{
 				and_input = AndInputs[j]->GetWireName();
 				for (unsigned i=0; i<CWire.size(); i++)
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 
 			Gate* NewOr = new Gate(or_name, OR, OrInputs, OrOutput);
 			CGate.push_back(NewOr);
-			for (unsigned j=0; j<2; j++)
+			for (int j=0; j<size; j++)
 			{
 				or_input = OrInputs[j]->GetWireName();
 				for (unsigned i=0; i<CWire.size(); i++)
@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 
 			Gate* NewNor = new Gate(nor_name, NOR, NorInputs, NorOutput);
 			CGate.push_back(NewNor);
-			for (unsigned j=0; j<size; j++)
+			for (int j=0; j<size; j++)
 			{
 				nor_input = NorInputs[j]->GetWireName();
 				for (unsigned i=0; i<CWire.size(); i++)
@@ -382,7 +382,7 @@ int main(int argc, char **argv)
 
 			Gate* NewNand = new Gate(nand_name, NAND, NandInputs, NandOutput);
 			CGate.push_back(NewNand);
-			for (unsigned j=0; j<size; j++)
+			for (int j=0; j<size; j++)
 			{
 				nand_input = NandInputs[j]->GetWireName();
 				for (unsigned i=0; i<CWire.size(); i++)
@@ -428,7 +428,7 @@ int main(int argc, char **argv)
 	}
 	/*--------------------for test--------------------*/
 
-/*
+
 	int TestNumber = 0;
 	// PODEM
 	// for each wire we will generate 
@@ -462,7 +462,7 @@ int main(int argc, char **argv)
 		{
 			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 		}		
-	}*/
+	}
 	return 0;
 }
 
@@ -494,7 +494,7 @@ bool PODEM(Wire* W)
 
 
 		//pick up a gate to do objective()
-		for (int i=0; i<DFront.size(); i++)
+		for (unsigned i=0; i<DFront.size(); i++)
 		{
 			if (DFront[i]->GetVisited() == false)
 			{
@@ -671,7 +671,7 @@ DType LookUpTable(Gate* G)
 	else if (G->GetGateType()==AND)
 	{
 		vector<DType> InputValues;
-		for (unsigned i=0; i<G->GetInputSize(); i++)
+		for (int i=0; i<G->GetInputSize(); i++)
 		{
 			if((G->GetInputs())[i]->GetValue()==ZERO)
 			{return ZERO;}
@@ -714,7 +714,9 @@ DType LookUpTable(Gate* G)
 		}
 		if (InputValues.size()==3)
 		{
-			
+			// input = 111, output = 1;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE))
+			{return ONE;}
 		}
 	}
 	else if (G->GetGateType()==OR)
