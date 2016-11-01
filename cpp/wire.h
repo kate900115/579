@@ -46,6 +46,12 @@ class Wire
 
 		Gate* GetFanIn(){return FanInGate;}
 
+		DType GetValue(){return Value;}
+
+		vector<Gate*> GetFanOut(){return FanOutGate;}
+
+		void SetValue(DType V){Value = V;}
+
 		
 
 

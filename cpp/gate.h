@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum GType{NOT, AND2, AND3, AND4, NAND2, NAND3, NAND4, OR2, OR3, OR4, NOR2, NOR3, NOR4, DFF};
+enum GType{NOT, AND, NAND, OR, NOR, DFF};
 
 class Wire;
 
@@ -17,10 +17,11 @@ class Gate
 		GType Type;
 		vector<Wire*> GInputs;
 		Wire* GOutput;
+		bool IsVisited;
 
 	public:
 		//constructor
-		Gate(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
+		Gate(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output; IsVisited = false;}
 
 		void Init(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 		
@@ -30,7 +31,13 @@ class Gate
 
 		string GetGateName(){return GName;}
 
+		GType GetGateType(){return Type;}
+
 		Wire* GetOutput(){return GOutput;}
 
 		vector<Wire*> GetInputs(){return GInputs;}
+
+		bool GetVisited(){return IsVisited;}
+		
+		void SetVisited(bool isvisited){IsVisited = isvisited;}
 };

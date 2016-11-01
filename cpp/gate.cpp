@@ -26,7 +26,7 @@ void Gate::PrintGate()
 	//	}
 	//	cout<<"output = "<<GOutput<<endl;
 	}
-	else if ((Type==AND2)||(Type==AND3)||(Type==AND4))
+	else if (Type==AND)
 	{
 		cout<<"Name: "<<GName<<", Type: AND, ";
 	//	int size =GInputs.size();
@@ -36,7 +36,7 @@ void Gate::PrintGate()
 	//	}
 	//	cout<<"output = "<<GOutput<<endl;
 	}
-	else if ((Type==NAND2)||(Type==NAND3)||(Type==NAND4))
+	else if (Type==NAND)
 	{
 		cout<<"Name: "<<GName<<", Type: NAND, ";
 	//	int size =GInputs.size();
@@ -46,7 +46,7 @@ void Gate::PrintGate()
 	//	}
 	//	cout<<"output = "<<GOutput<<endl;
 	}
-	else if ((Type==OR2)||(Type==OR3)||(Type==OR4))
+	else if (Type==OR)
 	{
 		cout<<"Name: "<<GName<<", Type: OR, ";
 	//	int size =GInputs.size();
@@ -56,7 +56,7 @@ void Gate::PrintGate()
 	//	}
 	//	cout<<"output = "<<GOutput<<endl;
 	}
-	else if ((Type==NOR2)||(Type==NOR3)||(Type==NOR4))
+	else if (Type==NOR)
 	{
 		cout<<"Name: "<<GName<<", Type: NOR, ";
 	//	int size =GInputs.size();
