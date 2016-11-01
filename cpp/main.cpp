@@ -44,6 +44,8 @@ int main(int argc, char **argv)
 	    	sstr << line;
 	    	string word;
 	    	vector<string> words;
+
+		
     		
 		//to get the type
 		sstr >>word;
@@ -169,8 +171,16 @@ int main(int argc, char **argv)
 			string and_input;
 
 			Wire* AndOutput;
-			Wire* AndInput;
 			vector<Wire*> AndInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i]->GetWireName()==and_output)
+				{
+					AndOutput = CWire[i];
+					break;
+				}
+			}
 
 			while (sstr >> and_input)
 			{	
@@ -179,19 +189,21 @@ int main(int argc, char **argv)
 					if (CWire[i]->GetWireName()==and_input)
 					{
 						AndInputs.push_back(CWire[i]);
+					}
+				}
 			}
 				
-			int size = and_inputs.size();
+			int size = AndInputs.size();
 
 			switch (size)
 			{
 				case (2):
 				{
-					Gate* NewAnd = new Gate(and_name, AND2, and_inputs, and_output);
+					Gate* NewAnd = new Gate(and_name, AND2, AndInputs, AndOutput);
 					CGate.push_back(NewAnd);
 					for (unsigned j=0; j<2; j++)
 					{
-						and_input = and_inputs[j];
+						and_input = AndInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == and_input)
@@ -214,11 +226,11 @@ int main(int argc, char **argv)
 				}
 				case (3):
 				{			
-					Gate* NewAnd = new Gate(and_name, AND3, and_inputs, and_output);
+					Gate* NewAnd = new Gate(and_name, AND3, AndInputs, AndOutput);
 					CGate.push_back(NewAnd);
 					for (unsigned j=0; j<3; j++)
 					{
-						and_input = and_inputs[j];
+						and_input = AndInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == and_input)
@@ -239,11 +251,11 @@ int main(int argc, char **argv)
 				}
 				case (4):
 				{			
-					Gate* NewAnd = new Gate(and_name, AND4, and_inputs, and_output);
+					Gate* NewAnd = new Gate(and_name, AND4, AndInputs, AndOutput);
 					CGate.push_back(NewAnd);
 					for (unsigned j=0; j<4; j++)
 					{
-						and_input = and_inputs[j];
+						and_input = AndInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == and_input)
@@ -273,23 +285,41 @@ int main(int argc, char **argv)
 			string or_output;
 			sstr >> or_output;
 		
-			vector<string> or_inputs;
 			string or_input;
+
+			Wire* OrOutput;
+			vector<Wire*> OrInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i]->GetWireName()==or_output)
+				{
+					OrOutput = CWire[i];
+					break;
+				}
+			}
+
 			while (sstr >> or_input)
 			{	
-				or_inputs.push_back(or_input);
+				for (unsigned i=0; i<CWire.size(); i++)
+				{
+					if (CWire[i]->GetWireName()==or_input)
+					{
+						OrInputs.push_back(CWire[i]);
+					}
+				}
 			}
-			
-			int size = or_inputs.size();
+				
+			int size = OrInputs.size();
 			switch (size)
 			{
 				case (2):
 				{
-					Gate* NewOr = new Gate(or_name, OR2, or_inputs, or_output);
+					Gate* NewOr = new Gate(or_name, OR2, OrInputs, OrOutput);
 					CGate.push_back(NewOr);
 					for (unsigned j=0; j<2; j++)
 					{
-						or_input = or_inputs[j];
+						or_input = OrInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == or_input)
@@ -311,11 +341,11 @@ int main(int argc, char **argv)
 				}
 				case (3):	
 				{
-					Gate* NewOr = new Gate(or_name, OR3, or_inputs, or_output);
+					Gate* NewOr = new Gate(or_name, OR3, OrInputs, OrOutput);
 					CGate.push_back(NewOr);
 					for (unsigned j=0; j<3; j++)
 					{
-						or_input = or_inputs[j];
+						or_input = OrInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == or_input)
@@ -338,11 +368,11 @@ int main(int argc, char **argv)
 				}
 				case (4):	
 				{				
-					Gate* NewOr = new Gate(or_name, OR4, or_inputs, or_output);
+					Gate* NewOr = new Gate(or_name, OR4, OrInputs, OrOutput);
 					CGate.push_back(NewOr);	
 					for (unsigned j=0; j<4; j++)
 					{
-						or_input = or_inputs[j];
+						or_input = OrInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == or_input)
@@ -371,24 +401,43 @@ int main(int argc, char **argv)
 
 			string nor_output;
 			sstr >> nor_output;
-			
-			vector<string> nor_inputs;
+
 			string nor_input;
-			while (sstr >> nor_input)
-			{	
-				nor_inputs.push_back(nor_input);
+			
+			Wire* NorOutput;
+			vector<Wire*> NorInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i]->GetWireName()==nor_output)
+				{
+					NorOutput = CWire[i];
+					break;
+				}
 			}
 
-			int size = nor_inputs.size();
+			while (sstr >> nor_input)
+			{	
+				for (unsigned i=0; i<CWire.size(); i++)
+				{
+					if (CWire[i]->GetWireName()==nor_input)
+					{
+						NorInputs.push_back(CWire[i]);
+					}
+				}
+			}
+				
+			int size = NorInputs.size();
+
 			switch (size)
 			{
 				case (2):
 				{
-					Gate* NewNor = new Gate(nor_name, NOR2, nor_inputs, nor_output);
+					Gate* NewNor = new Gate(nor_name, NOR2, NorInputs, NorOutput);
 					CGate.push_back(NewNor);
 					for (unsigned j=0; j<2; j++)
 					{
-						nor_input = nor_inputs[j];
+						nor_input = NorInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nor_input)
@@ -410,11 +459,11 @@ int main(int argc, char **argv)
 				}
 				case (3):
 				{				
-					Gate* NewNor = new Gate(nor_name, NOR3, nor_inputs, nor_output);
+					Gate* NewNor = new Gate(nor_name, NOR3, NorInputs, NorOutput);
 					CGate.push_back(NewNor);
 					for (unsigned j=0; j<3; j++)
 					{
-						nor_input = nor_inputs[j];
+						nor_input = NorInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nor_input)
@@ -435,11 +484,11 @@ int main(int argc, char **argv)
 				}
 				case (4):
 				{
-					Gate* NewNor = new Gate(nor_name, NOR4, nor_inputs, nor_output);
+					Gate* NewNor = new Gate(nor_name, NOR4, NorInputs, NorOutput);
 					CGate.push_back(NewNor);
 					for (unsigned j=0; j<4; j++)
 					{
-						nor_input = nor_inputs[j];
+						nor_input = NorInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nor_input)
@@ -469,23 +518,42 @@ int main(int argc, char **argv)
 			string nand_output;
 			sstr >> nand_output;
 		
-			vector<string> nand_inputs;
 			string nand_input;
+
+			Wire* NandOutput;
+			vector<Wire*> NandInputs;
+
+			for (unsigned i=0; i<CWire.size(); i++)
+			{
+				if(CWire[i]->GetWireName()== nand_output)
+				{
+					NandOutput = CWire[i];
+					break;
+				}
+			}
+
 			while (sstr >> nand_input)
 			{	
-				nand_inputs.push_back(nand_input);
+				for (unsigned i=0; i<CWire.size(); i++)
+				{
+					if (CWire[i]->GetWireName()==nand_input)
+					{
+						NandInputs.push_back(CWire[i]);
+					}
+				}
 			}
 				
-			int size = nand_inputs.size();
+			int size = NandInputs.size();
+
 			switch (size)
 			{
 				case (2):
 				{
-					Gate* NewNand = new Gate(nand_name, NAND2, nand_inputs, nand_output);
+					Gate* NewNand = new Gate(nand_name, NAND2, NandInputs, NandOutput);
 					CGate.push_back(NewNand);
 					for (unsigned j=0; j<2; j++)
 					{
-						nand_input = nand_inputs[j];
+						nand_input = NandInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nand_input)
@@ -507,11 +575,11 @@ int main(int argc, char **argv)
 				}
 				case (3):
 				{
-					Gate* NewNand = new Gate(nand_name, NAND3, nand_inputs, nand_output);
+					Gate* NewNand = new Gate(nand_name, NAND3, NandInputs, NandOutput);
 					CGate.push_back(NewNand);
 					for (unsigned j=0; j<3; j++)
 					{
-						nand_input = nand_inputs[j];
+						nand_input = NandInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nand_input)
@@ -532,11 +600,11 @@ int main(int argc, char **argv)
 				}
 				case (4):
 				{				
-					Gate* NewNand = new Gate(nand_name, NAND4, nand_inputs, nand_output);
+					Gate* NewNand = new Gate(nand_name, NAND4, NandInputs, NandOutput);
 					CGate.push_back(NewNand);
 					for (unsigned j=0; j<4; j++)
 					{
-						nand_input = nand_inputs[j];
+						nand_input = NandInputs[j]->GetWireName();
 						for (unsigned i=0; i<CWire.size(); i++)
 						{
 							if(CWire[i]->GetWireName() == nand_input)

@@ -16,13 +16,13 @@ class Gate
 		string GName;
 		GType Type;
 		vector<Wire*> GInputs;
-		string GOutput;
+		Wire* GOutput;
 
 	public:
 		//constructor
-		Gate(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
+		Gate(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 
-		void Init(string name, GType type, vector<string> inputs, string output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
+		void Init(string name, GType type, vector<Wire*> inputs, Wire* output){GName = name; Type = type; GInputs = inputs; GOutput = output;}
 		
 		int GetInputSize(){return GInputs.size();}
 
