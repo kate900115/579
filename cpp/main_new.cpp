@@ -466,6 +466,10 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+
+
+//functions
+
 bool PODEM(Wire* W)
 {
 	//if Stack at fault is at primary output
@@ -538,9 +542,46 @@ void ImplyBackward(Gate* G)
 	if (G->GetGateType()==NOT)
 	{
 		if (G->GetOutput()->GetValue()==ONE)
-		{
-			
-		}
+		{(G->GetInputs())[0]->SetValue(ZERO);}
+		else if (G->GetOutput()->GetValue()==ZERO)
+		{(G->GetInputs())[0]->SetValue(ONE);}
+		else if (G->GetOutput()->GetValue()==D)
+		{(G->GetInputs())[0]->SetValue(ZERO);}
+		else if (G->GetOutput()->GetValue()==DNOT)
+		{(G->GetInputs())[0]->SetValue(ONE);}
+		G->SetVisited(true);
+	}
+	else if (G->GetGateType()==AND)
+	{
+		if (G->GetOutput()->GetValue()==ONE)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
+		else if (G->GetOutput()->GetValue()==D)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
+		G->SetVisited(true);
+	}
+	else if (G->GetGateType()==NAND)
+	{
+		if (G->GetOutput()->GetValue()==ZERO)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
+		else if (G->GetOutput()->GetValue()==DNOT)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
+		G->SetVisited(true);
+	}
+	else if (G->GetGateType()==OR)
+	{
+		if (G->GetOutput()->GetValue()==ZERO)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
+		else if (G->GetOutput()->GetValue()==DNOT)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
+		G->SetVisited(true);
+	}
+	else if (G->GetGateType()==NOR)
+	{
+		if (G->GetOutput()->GetValue()==ONE)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
+		else if (G->GetOutput()->GetValue()==D)
+			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
+		G->SetVisited(true);
 	}
 }
 
@@ -738,7 +779,7 @@ DType LookUpTable(Gate* G)
 	}
 	else if (G->GetGateType()==OR)
 	{
-
+		//haowei hu
 	}
 	else if (G->GetGateType()==NAND)
 	{
