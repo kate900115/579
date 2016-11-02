@@ -547,20 +547,21 @@ void ImplyBackward(Gate* G)
 
 void ImplyForward(vector<Gate*> Gs)
 {
+	vector<Gate*> gates = Gs;
 	//Implication to the front
-	for (unsigned i=0; i<Gs.size(); i++)
+
+	while (gates.size()!=0)
 	{
-		if (Gs[i]->GetVisited() == false)
+		if (gates.front()->GetVisited() == false)
 		{
-			Gate* CurrentGate = Gs[i];
+			Gate* CurrentGate = gates.front();
 			CurrentGate->GetOutput()->SetValue(LookUpTable(CurrentGate));
 		
 			if (CurrentGate->GetOutput()->GetValue()!=X)
 			{
 				CurrentGate->SetVisited(true);
-				Gs.erase(Gs.begin()+i);
-				Gs.insert(Gs.end(), CurrentGate->GetOutput()->GetFanOut().begin(), CurrentGate->GetOutput()->GetFanOut().end());
-				i--;
+				gates.erase(gates.begin());
+				gates.insert(gates.end(), CurrentGate->GetOutput()->GetFanOut().begin(), CurrentGate->GetOutput()->GetFanOut().end());
 			}		
 		}
 	}
@@ -570,7 +571,23 @@ void ImplyForward(vector<Gate*> Gs)
 //from primary input to forward gates
 void ImplyForward(vector<Wire*> Ws)
 {
+	vector<Wire*> wires = Ws;
 
+	while (wires.size()!=0)
+	{
+		vector<Gate*>fanout = wires.front()->GetFanOut();
+		int gatesize = fanout.size();
+		for (int j=0; j<gatesize; j++)
+		{
+			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetVisited()==false))
+			{
+				fanout[j]->SetVisited(true);
+				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
+				wires.push_back(fanout[j]->GetOutput());
+			}
+		}
+		wires.erase(wires.begin());
+	}
 }	
 
 
