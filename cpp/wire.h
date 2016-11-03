@@ -25,12 +25,22 @@ class Wire
 		DType Value;
 		Gate* FanInGate;
 		vector<Gate*> FanOutGate;
+		bool BTVisited;
 
 	public:
 		//constructor
-		Wire (string name, WType type, bool is_stack, DType v){WName = name; Type = type; IsStack = is_stack; Value = v; FanInGate = NULL; FanOutGate=vector<Gate*>();}
+		Wire (string name, WType type, bool is_stack, DType v)
+		{
+			WName = name; 
+			Type = type; 
+			IsStack = is_stack; 
+			Value = v; 
+			FanInGate = NULL; 
+			FanOutGate=vector<Gate*>(); 
+			BTVisited = false;
+		}
 
-		void initialize(){IsStack = false; Value = X;}
+		void initialize(){IsStack = false; Value = X; BTVisited = false;}
 
 
 		//get the private value
@@ -43,6 +53,8 @@ class Wire
 		DType GetValue(){return Value;}
 
 		vector<Gate*> GetFanOut(){return FanOutGate;}
+
+		bool GetBTVisited(){return BTVisited;}
 		
 		//set the private value
 		void SetValue(DType V){Value = V;}
@@ -52,6 +64,8 @@ class Wire
 		void AddFanOut(Gate* NewGate){ FanOutGate.push_back(NewGate); }
 
 		void SetFanIn(Gate* NewGate){ FanInGate = NewGate; }
+
+		void SetBTVisited(bool is_visited){BTVisited = is_visited;}
 
 		void PrintWire();
 		

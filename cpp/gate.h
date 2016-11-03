@@ -37,7 +37,6 @@ class Gate
 		bool GetVisited(){return IsVisited;}
 
 		vector<Wire*> GetInputs(){return GInputs;}
-
 		
 		//Set the private value
 		void SetVisited(bool isvisited){IsVisited = isvisited;}

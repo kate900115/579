@@ -846,9 +846,62 @@ vector<Wire*> Objective(Gate* G, Wire* W)
 }
 
 
-void Backtrace()
+void Backtrace(Gate* G)
 {
+	vector<Wire*> wires = G->GetInputs();
+	for (unsigned i=0; i<G->GetInputs.size(); i++)
+	{
+		if ((G->GetInputs())[i]->GetBTVisited()==false)
+		{
+			G->GetInputs[i]->SetBTVisted(true);
+			G->GetInputs[i]->SetValue(BTLookUpTable(G));
+			Backtrace((G->GetInputs())[i]->GetFanIn());
+			break;
+		}
+	}
+}
 
+
+DType BTLookUpTable(Gate* G)
+{
+	DType OutputValue = G->GetOutput()->GetValue;	
+	DType result;
+	if (G->GetGateType()==NOT)
+	{
+		if (OutputValue==ONE)
+		{result = ZERO;}
+		else if (OutputValue==ZERO)
+		{result = ONE;}
+	}
+	else if (G->GetGateType()==AND)
+	{
+		if (OutputValue==ONE)
+		{result = ONE;}
+		else if (OutputValue==ZERO)
+		{result = ZERO;}
+	}
+	else if (G->GetGateType()==NAND)
+	{
+		if (OutputValue==ONE)
+		{result = ZERO;}
+		else if (OutputValue==ZERO)
+		{result = ONE;}
+	}
+	else if (G->GetGateType()==OR)
+	{
+		if (OutputValue==ONE)
+		{result = ONE;}
+		else if (OutputValue==ZERO)
+		{result = ZERO;}
+	}
+	else if (G->GetGateType()==NOR)
+	{
+		if (OutputValue==ONE)
+		{result = ZERO;}
+		else if (OutputValue==ZERO)
+		{result = ONE;}
+	}
+	return result;
 }
 
 
