@@ -539,49 +539,191 @@ void Initialize()
 
 void ImplyBackward(Gate* G)
 {
-	if (G->GetGateType()==NOT)
+	vector<Gate*> gates;
+	gates.push_back(G);
+	while (gates.size()!=0)
 	{
-		if (G->GetOutput()->GetValue()==ONE)
-		{(G->GetInputs())[0]->SetValue(ZERO);}
-		else if (G->GetOutput()->GetValue()==ZERO)
-		{(G->GetInputs())[0]->SetValue(ONE);}
-		else if (G->GetOutput()->GetValue()==D)
-		{(G->GetInputs())[0]->SetValue(ZERO);}
-		else if (G->GetOutput()->GetValue()==DNOT)
-		{(G->GetInputs())[0]->SetValue(ONE);}
-		G->SetVisited(true);
-	}
-	else if (G->GetGateType()==AND)
-	{
-		if (G->GetOutput()->GetValue()==ONE)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
-		else if (G->GetOutput()->GetValue()==D)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
-		G->SetVisited(true);
-	}
-	else if (G->GetGateType()==NAND)
-	{
-		if (G->GetOutput()->GetValue()==ZERO)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
-		else if (G->GetOutput()->GetValue()==DNOT)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ONE);}
-		G->SetVisited(true);
-	}
-	else if (G->GetGateType()==OR)
-	{
-		if (G->GetOutput()->GetValue()==ZERO)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
-		else if (G->GetOutput()->GetValue()==DNOT)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
-		G->SetVisited(true);
-	}
-	else if (G->GetGateType()==NOR)
-	{
-		if (G->GetOutput()->GetValue()==ONE)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
-		else if (G->GetOutput()->GetValue()==D)
-			for (int i=0; i<G->GetInputSize(); i++){(G->GetInputs())[i]->SetValue(ZERO);}
-		G->SetVisited(true);
+		if (gates.front()->GetGateType()==NOT)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ONE)
+			{
+				(gates.front()->GetInputs())[0]->SetValue(ZERO);
+				gates.front()->SetVisited(true);
+				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==ZERO)
+			{
+				(gates.front()->GetInputs())[0]->SetValue(ONE);
+				gates.front()->SetVisited(true);
+				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==D)
+			{	
+				(gates.front()->GetInputs())[0]->SetValue(ZERO);
+				gates.front()->SetVisited(true);
+				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==DNOT)
+			{	
+				(gates.front()->GetInputs())[0]->SetValue(ONE);
+				gates.front()->SetVisited(true);
+				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}			
+		}
+		else if (gates.front()->GetGateType()==AND)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ONE)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ONE);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==D)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ONE);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+		}
+		else if (gates.front()->GetGateType()==NAND)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ZERO)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ONE);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==DNOT)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ONE);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+		}
+		else if (gates.front()->GetGateType()==OR)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ZERO)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ZERO);					
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==DNOT)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ZERO);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+
+		}
+		else if (gates.front()->GetGateType()==NOR)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ONE)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ZERO);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==D)
+			{
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					(gates.front()->GetInputs())[i]->SetValue(ZERO);
+				}
+				gates.front()->SetVisited(true);
+
+				for (int i=0; i<gates.front()->GetInputSize(); i++)
+				{
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+					}
+				}
+			}
+		}
+		gates.erase(gates.begin());
 	}
 }
 
