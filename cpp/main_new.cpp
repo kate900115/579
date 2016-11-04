@@ -490,6 +490,13 @@ bool PODEM(Wire* W)
 	}
 	else
 	{
+		//imply, if there is a conflict
+		//return unsuccess
+		if (!ImplyForward(InputWires))
+		{
+			return false;
+		}
+
 		//Implication to the back
 		Gate* DBack = CurrentWire->GetFanIn();
 		ImplyBackward(DBack);
@@ -518,60 +525,27 @@ bool PODEM(Wire* W)
 		
 		//ImplyForward to see if there is a contradiction
 
-		bool ImplyResult = ImplyForward(InputWires);
-		
-		if (!ImplyResult)
-		{
-			return false;
-		}
+		if (PODEM(FrontierGate)==true) return true;	
+
 		for (unsigned i=0; i<ComputedInputs.size(); i++)
 		{
-			if (PODEM()==true) return true;
 			if(ComputedInputs[i]->GetValue()==ONE)
 			{
 				ComputedInputs[i]->SetValue(ZERO);
-				if (PODEM()==true) return true;
+				if (PODEM(FrontierGate)==true) return true;
 				ComputedInputs[i]->SetValue(X);
 				return false;
 			}
 			else
 			{
 				ComputedInputs[i]->SetValue(ONE);
-				if (PODEM()==true) return true;
+				if (PODEM(FrontierGate)==true) return true;
 				ComputedInputs[i]->SetValue(X);
 				return false;
 			}
-						
 		}
-		if (PODEM(FrontierGate)) 
-		{
-			ComputedInputs.pop_back();
-			return true;
-		}
-		
-		
-		
-
-		ImplyResult = ImplyForward(InputWires);
-		if (!ImplyResult)
-		{
-			return false;
-		}
-		if (PODEM(FrontierGate)) 
-		{
-			ComputedInputs.pop_back();
-			return true;
-		}
-		ComputedInputs.back()->SetValue(X);
-		ComputedInputs.pop_back();
-		
 		return false;
-
-
-
-
 	}
-	return true;
 }
 
 void Initialize()
