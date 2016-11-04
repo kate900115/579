@@ -11,8 +11,9 @@ using namespace std;
 bool PODEM(Wire* W);
 void Initialize();
 void ImplyBackward(Gate* G);
-void ImplyForward(vector<Wire*> Ws);
+bool ImplyForward(vector<Wire*> Ws);
 void ImplyForward(vector<Gate*> Gs);
+void Backtrace(Gate* G);
 vector<Wire*> Objective(Gate* G, Wire* W);
 DType LookUpTable(Gate* G);
 DType BTLookUpTable(Gate* G);
@@ -20,10 +21,8 @@ DType BTLookUpTable(Gate* G);
 
 vector<Wire*> CWire;
 vector<Gate*> CGate;
-
 vector<Wire*> InputWires;
-
-vector<wire*> ComputedInputs;
+vector<Wire*> ComputedInputs;
 
 int InputSize=0;
 
@@ -483,16 +482,17 @@ bool PODEM(Wire* W)
 		{
 			if (InputWires[j]->GetValue()==X)
 			{
-				InputWires[i]->SetValue(ZERO);
+				InputWires[j]->SetValue(ZERO);
 			}
 		}
 		return true;
 	}
 	else
 	{
-		//imply, if there is a conflict
+		//imply, if there is a conflict from
+		//input to output
 		//return unsuccess
-		if (!ImplyForward(InputWires))
+		if (!(ImplyForward(InputWires)))
 		{
 			return false;
 		}
@@ -521,25 +521,28 @@ bool PODEM(Wire* W)
 		}
 
 		//Backtrace//need change
-		Backtrace();
+		for (int i=0; i<FrontierGate->GetInputSize(); i++)
+		{
+				Backtrace((FrontierGate->GetInputs())[i]->GetFanIn());
+		}
 		
 		//ImplyForward to see if there is a contradiction
 
-		if (PODEM(FrontierGate)==true) return true;	
+		if (PODEM(FrontierGate->GetOutput())==true) return true;	
 
 		for (unsigned i=0; i<ComputedInputs.size(); i++)
 		{
 			if(ComputedInputs[i]->GetValue()==ONE)
 			{
 				ComputedInputs[i]->SetValue(ZERO);
-				if (PODEM(FrontierGate)==true) return true;
+				if (PODEM(FrontierGate->GetOutput())==true) return true;
 				ComputedInputs[i]->SetValue(X);
 				return false;
 			}
 			else
 			{
 				ComputedInputs[i]->SetValue(ONE);
-				if (PODEM(FrontierGate)==true) return true;
+				if (PODEM(FrontierGate->GetOutput())==true) return true;
 				ComputedInputs[i]->SetValue(X);
 				return false;
 			}
@@ -791,12 +794,12 @@ bool ImplyForward(vector<Wire*> Ws)
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
-			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetWireType()==X))
+			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetValue()==X))
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
 				wires.push_back(fanout[j]->GetOutput());
 			}
-			else if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetWireType()!=LookUpTable(fanout[j])))
+			else if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetValue()!=LookUpTable(fanout[j])))
 			{
 				return false;
 			}
@@ -903,7 +906,7 @@ void Backtrace(Gate* G)
 DType BTLookUpTable(Gate* G)
 {
 	DType OutputValue = G->GetOutput()->GetValue();	
-	DType result;
+	DType result = X;
 	if (G->GetGateType()==NOT)
 	{
 		if (OutputValue==ONE)
