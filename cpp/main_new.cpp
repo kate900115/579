@@ -14,7 +14,8 @@ void ImplyBackward(Gate* G);
 bool ImplyForward(vector<Wire*> Ws);
 void ImplyForward(vector<Gate*> Gs);
 void Backtrace(Gate* G);
-vector<Wire*> Objective(Gate* G, Wire* W);
+//vector<Wire*> Objective(Gate* G, Wire* W);
+void Objective(Gate* G, Wire* W);
 DType LookUpTable(Gate* G);
 DType BTLookUpTable(Gate* G);
 
@@ -509,7 +510,7 @@ bool PODEM(Wire* W)
 
 
 		//pick up a gate to do objective()
-		Gate* FrontierGate;
+		Gate* FrontierGate= NULL;
 		for (unsigned i=0; i<DFront.size(); i++)
 		{
 			if (DFront[i]->GetVisited() == false)
@@ -812,7 +813,7 @@ bool ImplyForward(vector<Wire*> Ws)
 
 
 
-vector<Wire*> Objective(Gate* G, Wire* W)
+void Objective(Gate* G, Wire* W)
 {
 	vector<Wire*>ObjResults;
 
@@ -824,7 +825,7 @@ vector<Wire*> Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
-				ObjResults.push_back(G->GetInputs()[i]);
+				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
@@ -836,7 +837,7 @@ vector<Wire*> Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
-				ObjResults.push_back(G->GetInputs()[i]);
+				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
@@ -855,7 +856,7 @@ vector<Wire*> Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{	
 				G->GetInputs()[i]->SetValue(ONE);
-				ObjResults.push_back(G->GetInputs()[i]);
+				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
@@ -874,11 +875,10 @@ vector<Wire*> Objective(Gate* G, Wire* W)
 			if (G->GetInputs()[i]!=W)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
-				ObjResults.push_back(G->GetInputs()[i]);
+				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
-
 }
 
 
