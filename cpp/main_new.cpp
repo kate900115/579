@@ -853,8 +853,9 @@ void Backtrace(Gate* G)
 	{
 		if ((G->GetInputs())[i]->GetBTVisited()==false)
 		{
-			G->GetInputs[i]->SetBTVisted(true);
+			G->GetInputs()[i]->SetBTVisted(true);
 			G->GetInputs[i]->SetValue(BTLookUpTable(G));
+			if (G->GetInputs[i])
 			Backtrace((G->GetInputs())[i]->GetFanIn());
 			break;
 		}
