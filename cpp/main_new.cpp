@@ -11,11 +11,11 @@ using namespace std;
 bool PODEM(Wire* W);
 void Initialize();
 void ImplyBackward(Gate* G);
-bool ImplyForward(vector<Wire*> Ws);
+bool InputImplyForward();
 void ImplyForward(vector<Gate*> Gs);
-void Backtrace(Gate* G);
+Wire* Backtrace(Gate* G);
 //vector<Wire*> Objective(Gate* G, Wire* W);
-void Objective(Gate* G, Wire* W);
+void Objective(Gate* G);
 DType LookUpTable(Gate* G);
 DType BTLookUpTable(Gate* G);
 
@@ -438,9 +438,20 @@ int main(int argc, char **argv)
 	{
 		//intialize and set s-a-0 fault
 		Initialize();
-		CWire[i]->SetStack(true,D);
+		CWire[i]->SetStuck(true,D);
 
+		//Activate fault
+		//Implication to the back
+		Gate* DBack = CWire[i]->GetFanIn();
+		ImplyBackward(DBack);
 
+		//find D-frontier
+		//the remaining problem is if we change 
+		//DFront, will it affect the real Fanout of current wire 
+		vector<Gate*> DFront = CWire[i]->GetFanOut();
+		ImplyForward(DFront);
+
+		//Do PODEM
 		if(PODEM(CWire[i])==true)
 		{	
 			TestNumber++;
@@ -451,9 +462,22 @@ int main(int argc, char **argv)
 			cout<<"Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 		}
 
+
 		//initialize and set s-a-1 fault
 		Initialize();
-		CWire[i]->SetStack(true,DNOT);
+		CWire[i]->SetStuck(true,DNOT);
+
+		//Activate fault
+		//Implication to the back
+		DBack = CWire[i]->GetFanIn();
+		ImplyBackward(DBack);
+
+		//find D-frontier
+		//the remaining problem is if we change 
+		//DFront, will it affect the real Fanout of current wire 
+		DFront = CWire[i]->GetFanOut();
+		ImplyForward(DFront);
+
 		if(PODEM(CWire[i])==true)
 		{	
 			TestNumber++;
@@ -473,83 +497,88 @@ int main(int argc, char **argv)
 
 bool PODEM(Wire* W)
 {
-	//if Stack at fault is at primary output
+	//if Stuck at fault is at primary output
 	//we don't need to generate test vector
 	Wire* CurrentWire = W;	
 		
-	if (CurrentWire->GetWireType()==OUTPUT)
+	if (CurrentWire->GetWireType()==OUTPUT) return true;
+	
+	//If No DFrontier, untestable
+	//return false
+	for (unsigned i=0; i<CurrentWire->GetFanOut().size(); i++)
 	{
-		for (unsigned j=0; j<InputWires.size(); j++)
+		if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==X)
+		{break;}
+		else if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==D)
+		{break;}
+		else if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==DNOT)
+		{break;}
+		if (i == CurrentWire->GetFanOut().size()-1)
+		{return false;}
+	}
+
+
+	//pick up a gate from D-frontier
+	//to do objective()
+	Gate* FrontierGate = CurrentWire->GetFanOut()[0];
+	while (FrontierGate->GetGateType()==NOT)
+	{
+		if ((FrontierGate->GetInputs())[0]->GetValue()==D) FrontierGate->GetOutput()->SetValue(DNOT);
+		else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGate->GetOutput()->SetValue(D);
+		CurrentWire = FrontierGate->GetOutput();
+		FrontierGate = CurrentWire->GetFanOut()[0];
+	}	
+
+	//objective
+	Objective(FrontierGate);
+	FrontierGate->GetOutput()->SetValue(LookUpTable(FrontierGate));
+
+	//Backtrace
+	Wire* BTResult = Backtrace(FrontierGate);
+		
+	//if all the Backtrace is done, current wire change 
+	//and frontier gate changes
+	if(BTResult==NULL)
+	{
+		FrontierGate = CurrentWire->GetFanOut()[0];
+		CurrentWire = FrontierGate->GetOutput();
+		
+
+		//if the frontier gate is not gate
+		//we need to propagate it further
+		//until the frontier is not a Not gate.
+		while (FrontierGate->GetGateType()==NOT)
 		{
-			if (InputWires[j]->GetValue()==X)
-			{
-				InputWires[j]->SetValue(ZERO);
-			}
-		}
-		return true;
+			if ((FrontierGate->GetInputs())[0]->GetValue()==D) FrontierGate->GetOutput()->SetValue(DNOT);
+			else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGate->GetOutput()->SetValue(D);
+
+			FrontierGate = CurrentWire->GetFanOut()[0];
+			CurrentWire = FrontierGate->GetOutput();
+		}	
+	}
+
+	//ImplyForward BTResult to see if there is a contradiction
+	if (InputImplyForward())
+	{
+		if (PODEM(CurrentWire)==true) return true;
 	}
 	else
-	{
-		//imply, if there is a conflict from
-		//input to output
-		//return unsuccess
-		if (!(ImplyForward(InputWires)))
+	{	
+		//implyForward BTResult' to see if there is a contradiction
+		if(BTResult->GetValue()==ONE)
+			{BTResult->SetValue(ZERO);}
+		else if (BTResult->GetValue()==ZERO)
+			{BTResult->SetValue(ONE);}
+		if(InputImplyForward())
 		{
-			return false;
+			if (PODEM(CurrentWire)==true) return true;
 		}
-
-		//Implication to the back
-		Gate* DBack = CurrentWire->GetFanIn();
-		ImplyBackward(DBack);
-
-		//find D-frontier
-		// the remaining problem is if we change 
-		//DFront, will it affect the real Fanout of current wire 
-		vector<Gate*> DFront = CurrentWire->GetFanOut();
-		ImplyForward(DFront);
-
-
-		//pick up a gate to do objective()
-		Gate* FrontierGate= NULL;
-		for (unsigned i=0; i<DFront.size(); i++)
-		{
-			if (DFront[i]->GetVisited() == false)
-			{
-				Objective(DFront[i],CurrentWire);
-				FrontierGate = DFront[i];
-				break;
-			}
-		}
-
-		//Backtrace//need change
-		for (int i=0; i<FrontierGate->GetInputSize(); i++)
-		{
-				Backtrace((FrontierGate->GetInputs())[i]->GetFanIn());
-		}
-		
-		//ImplyForward to see if there is a contradiction
-
-		if (PODEM(FrontierGate->GetOutput())==true) return true;	
-
-		for (unsigned i=0; i<ComputedInputs.size(); i++)
-		{
-			if(ComputedInputs[i]->GetValue()==ONE)
-			{
-				ComputedInputs[i]->SetValue(ZERO);
-				if (PODEM(FrontierGate->GetOutput())==true) return true;
-				ComputedInputs[i]->SetValue(X);
-				return false;
-			}
-			else
-			{
-				ComputedInputs[i]->SetValue(ONE);
-				if (PODEM(FrontierGate->GetOutput())==true) return true;
-				ComputedInputs[i]->SetValue(X);
-				return false;
-			}
-		}
-		return false;
 	}
+
+	//Imply BTResult= X
+	BTResult->SetValue(ZERO);
+	InputImplyForward();
+	return false;
 }
 
 void Initialize()
@@ -785,9 +814,9 @@ void ImplyForward(vector<Gate*> Gs)
 
 //from primary input to forward gates
 //check if there is a contradiction
-bool ImplyForward(vector<Wire*> Ws)
+bool InputImplyForward()
 {
-	vector<Wire*> wires = Ws;
+	vector<Wire*> wires = InputWires;
 
 	while (wires.size()!=0)
 	{
@@ -811,98 +840,83 @@ bool ImplyForward(vector<Wire*> Ws)
 }	
 
 
-
-
-void Objective(Gate* G, Wire* W)
+//G: the gate that needs to be objective
+//W: wires that contains D
+void Objective(Gate* G)
 {
-	vector<Wire*>ObjResults;
-
 	if (G->GetGateType()==AND)
 	{
-		G->GetOutput()->SetValue(W->GetValue());
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]!=W)
+			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
-				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
 	else if (G->GetGateType()==OR)
 	{	
-		G->GetOutput()->SetValue(W->GetValue());
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]!=W)
+			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
-				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
 	else if (G->GetGateType()==NAND)
 	{
-		if (W->GetValue()==D)
-		{
-			G->GetOutput()->SetValue(DNOT);
-		}
-		else if (W->GetValue()==DNOT)
-		{
-			G->GetOutput()->SetValue(D);
-		}
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]!=W)
-			{	
+			if (G->GetInputs()[i]->GetValue()==X)
+			{
 				G->GetInputs()[i]->SetValue(ONE);
-				//ObjResults.push_back(G->GetInputs()[i]);
 			}
 		}
 	}
 	else if (G->GetGateType()==NOR)
 	{
-		if (W->GetValue()==D)
-		{
-			G->GetOutput()->SetValue(DNOT);
-		}
-		else if (W->GetValue()==DNOT)
-		{
-			G->GetOutput()->SetValue(D);
-		}
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]!=W)
+			if (G->GetInputs()[i]->GetValue()==X)
 			{
-				G->GetInputs()[i]->SetValue(ZERO);
-				//ObjResults.push_back(G->GetInputs()[i]);
+				G->GetInputs()[i]->SetValue(ONE);
 			}
 		}
 	}
 }
 
 
-void Backtrace(Gate* G)
+Wire* Backtrace(Gate* G)
 {
+	Wire* BTResult=NULL;
 	for (unsigned i=0; i<G->GetInputs().size(); i++)
 	{
-		if ((G->GetInputs())[i]->GetBTVisited()==false)
+		(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
+		if ((G->GetInputs())[i]->GetWireType()==INPUT)
 		{
-			(G->GetInputs())[i]->SetBTVisited(true);
-			(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
-			if ((G->GetInputs())[i]->GetWireType()==INPUT)
-			{
-				ComputedInputs.push_back((G->GetInputs())[i]);
-			}
-			else
-			{
-				Backtrace((G->GetInputs())[i]->GetFanIn());
+			if ((G->GetInputs())[i]->GetBTVisited()==false)
+			{	
+				(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
+				(G->GetInputs())[i]->SetBTVisited(true);
+				BTResult = (G->GetInputs())[i];
+				break;
 			}
 		}
+		else
+		{	
+			(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
+			BTResult = Backtrace((G->GetInputs())[i]->GetFanIn());
+			if (BTResult!=NULL) break;
+		}
 	}
+	return BTResult;
 }
 
 
+//Giving output of Gate G,
+//Set the input of Gate G
+//This is used only in backtrace
 DType BTLookUpTable(Gate* G)
 {
 	DType OutputValue = G->GetOutput()->GetValue();	
@@ -945,7 +959,8 @@ DType BTLookUpTable(Gate* G)
 	return result;
 }
 
-
+//giving input of the gate G,
+//get output of gate G.
 DType LookUpTable(Gate* G)
 {
 	if (G->GetGateType()==NOT)
