@@ -964,7 +964,7 @@ bool InputImplyForward()
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
-			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetFixed()==false))
+			if (fanout[j]->GetOutput()->GetFixed()==false)
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
 				wires.push_back(fanout[j]->GetOutput());
