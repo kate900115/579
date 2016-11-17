@@ -441,6 +441,7 @@ int main(int argc, char **argv)
 	{
 		//intialize and set s-a-0 fault
 		Initialize();
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
 
 		CWire[i]->SetStuck(true,D);
 		CWire[i]->SetFixed(true);
@@ -708,6 +709,7 @@ bool PODEM(Wire* W)
 				CWire[m]->PrintWire();
 			}
 			/*--------------------for test--------------------*/
+
 			if (PODEM(CurrentWire)==true) return true;
 		}
 	}
@@ -741,42 +743,56 @@ void ImplyBackward(Gate* G)
 	gates.push_back(G);
 	while (gates.size()!=0)
 	{
+		gates.front()->PrintGate();
+		cout<<endl;
 		if (gates.front()->GetGateType()==NOT)
 		{
 			if (gates.front()->GetOutput()->GetValue()==ONE)
 			{
 				(gates.front()->GetInputs())[0]->SetValue(ZERO);
 				gates.front()->SetVisited(true);
-				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
 				{
-					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==ZERO)
 			{
 				(gates.front()->GetInputs())[0]->SetValue(ONE);
 				gates.front()->SetVisited(true);
-				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
-				{
-					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
+				{	
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==D)
 			{	
 				(gates.front()->GetInputs())[0]->SetValue(ZERO);
 				gates.front()->SetVisited(true);
-				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
 				{
-					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==DNOT)
 			{	
 				(gates.front()->GetInputs())[0]->SetValue(ONE);
 				gates.front()->SetVisited(true);
-				if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
 				{
-					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					{
+						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+					}
 				}
 			}			
 		}
@@ -792,9 +808,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -808,9 +827,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -827,9 +849,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -843,9 +868,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -862,9 +890,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -878,9 +909,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -898,9 +932,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
@@ -914,9 +951,12 @@ void ImplyBackward(Gate* G)
 
 				for (int i=0; i<gates.front()->GetInputSize(); i++)
 				{
-					if (gates.front()->GetInputs()[0]->GetFanIn()->GetVisited()==false)
+					if (gates.front()->GetInputs()[i]->GetWireType()!=INPUT)
 					{
-						gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						if (gates.front()->GetInputs()[i]->GetFanIn()->GetVisited()==false)
+						{
+							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
+						}
 					}
 				}
 			}
