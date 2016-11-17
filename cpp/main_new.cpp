@@ -24,6 +24,8 @@ vector<Gate*> CGate;
 vector<Wire*> InputWires;
 vector<Wire*> ComputedInputs;
 
+Gate* FrontierGate;
+
 int InputSize=0;
 
 int main(int argc, char **argv)
@@ -577,7 +579,7 @@ bool PODEM(Wire* W)
 	
 	//pick up a gate from D-frontier
 	//to do objective()
-	Gate* FrontierGate = CurrentWire->GetFanOut()[0];
+	FrontierGate = CurrentWire->GetFanOut()[0];
 
 	/*-------------------for test-------------------*/
 	cout<<"Frontier Gate is:";	
@@ -990,17 +992,12 @@ Wire* Backtrace(Gate* G)
 	Wire* BTResult=NULL;
 	for (unsigned i=0; i<G->GetInputs().size(); i++)
 	{
-		if ((G->GetInputs())[i]->GetBTVisited()==false)
-		{
-			(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
-		}
-
 		if ((G->GetInputs())[i]->GetWireType()==INPUT)
 		{
 			cout<<"aaaaaaaaaaaaaaaaaaaa"<<endl;
 			if ((G->GetInputs())[i]->GetBTVisited()==false)
 			{	
-				(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
+				(G->GetInputs())[i]->SetValue(ZERO);
 				(G->GetInputs())[i]->SetBTVisited(true);
 				BTResult = (G->GetInputs())[i];
 				break;
@@ -1008,7 +1005,6 @@ Wire* Backtrace(Gate* G)
 		}
 		else
 		{	
-			(G->GetInputs())[i]->SetValue(BTLookUpTable(G));
 			BTResult = Backtrace((G->GetInputs())[i]->GetFanIn());
 			if (BTResult!=NULL) break;
 		}
