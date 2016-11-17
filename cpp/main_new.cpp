@@ -989,7 +989,6 @@ Wire* Backtrace(Gate* G)
 	{
 		if ((G->GetInputs())[i]->GetWireType()==INPUT)
 		{
-			cout<<"aaaaaaaaaaaaaaaaaaaa"<<endl;
 			if ((G->GetInputs())[i]->GetBTVisited()==false)
 			{	
 				(G->GetInputs())[i]->SetValue(ZERO);
