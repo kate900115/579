@@ -433,23 +433,32 @@ int main(int argc, char **argv)
 	// PODEM
 	// for each wire we will generate 
 	// s-a-0 fault and s-a-1 fault
+
+
 	for (int i=0; i<WireSize; i++)
 	{
 		//intialize and set s-a-0 fault
 		Initialize();
+
 		CWire[i]->SetStuck(true,D);
 
 		//Activate fault
 		//Implication to the back
 		Gate* DBack = CWire[i]->GetFanIn();
-		ImplyBackward(DBack);
-
+	
+		
+		if (CWire[i]->GetWireType()!=INPUT)
+		{
+			ImplyBackward(DBack);
+		}
+		
 		//find D-frontier
 		//the remaining problem is if we change 
 		//DFront, will it affect the real Fanout of current wire 
 		vector<Gate*> DFront = CWire[i]->GetFanOut();
+		
 		ImplyForward(DFront);
-
+		cout<<"bbbbbbbbbbbbbbbbbbbbbb"<<endl;
 		//Do PODEM
 		if(PODEM(CWire[i])==true)
 		{	
@@ -469,7 +478,10 @@ int main(int argc, char **argv)
 		//Activate fault
 		//Implication to the back
 		DBack = CWire[i]->GetFanIn();
-		ImplyBackward(DBack);
+		if (CWire[i]->GetWireType()!=INPUT)
+		{
+			ImplyBackward(DBack);
+		}
 
 		//find D-frontier
 		//the remaining problem is if we change 
@@ -499,6 +511,7 @@ bool PODEM(Wire* W)
 	//if Stuck at fault is at primary output
 	//we don't need to generate test vector
 	Wire* CurrentWire = W;	
+	cout<<"aaaaaaaaaaaaaaaa"<<endl;
 		
 	if (CurrentWire->GetWireType()==OUTPUT) return true;
 	
@@ -792,21 +805,21 @@ void ImplyForward(vector<Gate*> Gs)
 {
 	vector<Gate*> gates = Gs;
 	//Implication to the front
-
+	//if there is NOT gate as frontier
+	//We can propagate D or D' further
 	while (gates.size()!=0)
 	{
-		if (gates.front()->GetVisited() == false)
+		if (gates.front()->GetGateType() == NOT)
 		{
-			Gate* CurrentGate = gates.front();
-			CurrentGate->GetOutput()->SetValue(LookUpTable(CurrentGate));
-		
-			if (CurrentGate->GetOutput()->GetValue()!=X)
+			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
+			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
 			{
-				CurrentGate->SetVisited(true);
-				gates.erase(gates.begin());
-				gates.insert(gates.end(), CurrentGate->GetOutput()->GetFanOut().begin(), CurrentGate->GetOutput()->GetFanOut().end());
-			}		
+				gates.push_back((gates.front()->GetOutput()->GetFanOut())[0]);
+			}
+		
+			
 		}
+		gates.erase(gates.begin());	
 	}
 }
 
@@ -816,7 +829,7 @@ void ImplyForward(vector<Gate*> Gs)
 bool InputImplyForward()
 {
 	vector<Wire*> wires = InputWires;
-
+	
 	while (wires.size()!=0)
 	{
 		vector<Gate*>fanout = wires.front()->GetFanOut();
