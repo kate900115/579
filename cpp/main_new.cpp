@@ -440,9 +440,10 @@ int main(int argc, char **argv)
 
 	for (int i=0; i<WireSize; i++)
 	{
-		//intialize and set s-a-0 fault
+		//intialize and set s-a-1 fault
 		Initialize();
 		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
+		cout<<"It's s-a-1 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
 		CWire[i]->SetFixed(true);
@@ -489,19 +490,21 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 			cout<<endl;
 		}
 
 
-		//initialize and set s-a-1 fault
+		//initialize and set s-a-0 fault
 		Initialize();
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
+		cout<<"It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,DNOT);
 		CWire[i]->SetFixed(true);
@@ -548,13 +551,13 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@  Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<"@@  Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 			cout<<endl;
 		}
 
@@ -615,11 +618,11 @@ bool PODEM(Wire* W)
 	//to do objective()
 	FrontierGate = CurrentWire->GetFanOut()[0];
 
-	/*-------------------for test-------------------*/
+	/*--------------------for test--------------------*/
 	cout<<"Frontier Gate is:";	
 	FrontierGate->PrintGate();
 	cout<<endl;
-	/*-------------------for test-------------------*/
+	/*--------------------for test--------------------*/
 
 	while (FrontierGate->GetGateType()==NOT)
 	{
@@ -693,7 +696,7 @@ bool PODEM(Wire* W)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
 			{BTResult->SetValue(ONE);}
-
+		/*--------------------for test--------------------*/
 		cout<<"---fail, we need to backtrack.---"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{
