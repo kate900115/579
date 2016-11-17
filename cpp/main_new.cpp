@@ -481,11 +481,6 @@ int main(int argc, char **argv)
 		/*--------------------for test--------------------*/
 
 
-
-
-
-
-
 		//Do PODEM
 		if(PODEM(PodemWire)==true)
 		{	
@@ -976,7 +971,7 @@ void Objective(Gate* G)
 		{
 			if (G->GetInputs()[i]->GetValue()==X)
 			{
-				G->GetInputs()[i]->SetValue(ONE);
+				G->GetInputs()[i]->SetValue(ZERO);
 				if (G->GetInputs()[i]->GetWireType()==INPUT)
 				{
 					G->GetInputs()[i]->SetBTVisited(true);
