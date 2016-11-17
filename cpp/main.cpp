@@ -469,7 +469,7 @@ int main(int argc, char **argv)
 		Gate* InitialFrontier = ImplyForward(DFront);
 		if (InitialFrontier != NULL)
 		{
-			PodemWire = InitialFrontier->GetOutput();
+			PodemWire = InitialFrontier->GetInputs()[0];
 		}	
 
 		//for test
@@ -499,7 +499,7 @@ int main(int argc, char **argv)
 			cout<<endl;
 		}
 
-
+		
 		//initialize and set s-a-0 fault
 		Initialize();
 		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
@@ -530,7 +530,7 @@ int main(int argc, char **argv)
 		InitialFrontier = ImplyForward(DFront);
 		if (InitialFrontier != NULL)
 		{
-			PodemWire = InitialFrontier->GetOutput();
+			PodemWire = InitialFrontier->GetInputs()[0];
 		}	
 
 		//for test
@@ -578,25 +578,14 @@ bool PODEM(Wire* W)
 	//print all the Gate read from input file 
 	cout<<endl;
 	cout<<"-----------------------------PODOM--------------------------------"<<endl;
-	/*int GateSize=CGate.size();
-	for (int m=0; m<GateSize; m++)
-	{
-		CGate[m]->PrintGate();
-		for (int n=0; n<CGate[n]->GetInputSize(); n++)
-		{
-			cout<<"input"<<n<<"="<<(CGate[n]->GetInputs())[n]->GetWireName()<<", ";
-		}
-		cout<<"output = "<<CGate[m]->GetOutput()->GetWireName()<<endl;
-	}*/
-	//print all the Wire read from input file
+
 	int WireSize = CWire.size();
-	/*for (int m=0; m<WireSize; m++)
-	{
-		CWire[m]->PrintWire();
-	}*/
+	cout<<"CurrentWire = ";
+	CurrentWire->PrintWire();
+	cout<<endl;
 	/*--------------------for test--------------------*/
 		
-	if (CurrentWire->GetWireType()==OUTPUT) return true;
+	if ((CurrentWire->GetWireType()==OUTPUT)&&(CurrentWire->GetValue()!=X)) return true;
 	
 	//If No DFrontier, untestable
 	//return false
@@ -609,9 +598,8 @@ bool PODEM(Wire* W)
 		else if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==DNOT)
 		{break;}
 		if (i == CurrentWire->GetFanOut().size()-1)
-		{return false;}
+		{return false;}		
 	}
-
 	
 	//pick up a gate from D-frontier
 	//to do objective()
@@ -631,6 +619,11 @@ bool PODEM(Wire* W)
 		FrontierGate = CurrentWire->GetFanOut()[0];
 	}	
 
+	/*--------------------for test--------------------*/
+	cout<<"{NEW} Frontier Gate is:";	
+	FrontierGate->PrintGate();
+	cout<<endl;
+	/*--------------------for test--------------------*/
 
 	//objective
 	Objective(FrontierGate);
