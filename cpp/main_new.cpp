@@ -489,13 +489,13 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 			cout<<endl;
 		}
 
@@ -548,13 +548,13 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@  Wire "<<PodemWire->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<"@@  Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 			cout<<endl;
 		}
 
@@ -759,6 +759,10 @@ void ImplyBackward(Gate* G)
 						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
 					}
 				}
+				else if(gates.front()->GetInputs()[0]->GetWireType()==INPUT)
+				{
+					gates.front()->GetInputs()[0]->SetFixed(true);
+				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==ZERO)
 			{
@@ -770,6 +774,10 @@ void ImplyBackward(Gate* G)
 					{
 						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
 					}
+				}
+				else if(gates.front()->GetInputs()[0]->GetWireType()==INPUT)
+				{
+					gates.front()->GetInputs()[0]->SetFixed(true);
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==D)
@@ -783,6 +791,10 @@ void ImplyBackward(Gate* G)
 						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
 					}
 				}
+				else if(gates.front()->GetInputs()[0]->GetWireType()==INPUT)
+				{
+					gates.front()->GetInputs()[0]->SetFixed(true);
+				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==DNOT)
 			{	
@@ -794,6 +806,10 @@ void ImplyBackward(Gate* G)
 					{
 						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
 					}
+				}
+				else if(gates.front()->GetInputs()[0]->GetWireType()==INPUT)
+				{
+					gates.front()->GetInputs()[0]->SetFixed(true);
 				}
 			}			
 		}
@@ -816,6 +832,10 @@ void ImplyBackward(Gate* G)
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
 					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==D)
@@ -834,6 +854,10 @@ void ImplyBackward(Gate* G)
 						{
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
+					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
 					}
 				}
 			}
@@ -857,6 +881,10 @@ void ImplyBackward(Gate* G)
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
 					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==DNOT)
@@ -875,6 +903,10 @@ void ImplyBackward(Gate* G)
 						{
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
+					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
 					}
 				}
 			}
@@ -898,6 +930,10 @@ void ImplyBackward(Gate* G)
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
 					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==DNOT)
@@ -916,6 +952,10 @@ void ImplyBackward(Gate* G)
 						{
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
+					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
 					}
 				}
 			}
@@ -940,6 +980,10 @@ void ImplyBackward(Gate* G)
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
 					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
+					}
 				}
 			}
 			else if (gates.front()->GetOutput()->GetValue()==D)
@@ -958,6 +1002,10 @@ void ImplyBackward(Gate* G)
 						{
 							gates.push_back((gates.front()->GetInputs())[i]->GetFanIn());
 						}
+					}
+					else if(gates.front()->GetInputs()[i]->GetWireType()==INPUT)
+					{
+						gates.front()->GetInputs()[i]->SetFixed(true);
 					}
 				}
 			}
@@ -1233,7 +1281,7 @@ Wire* Backtrace(Gate* G)
 	{
 		if ((G->GetInputs())[i]->GetWireType()==INPUT)
 		{
-			if ((G->GetInputs())[i]->GetBTVisited()==false)
+			if (((G->GetInputs())[i]->GetBTVisited()==false)&&((G->GetInputs())[i]->GetFixed()==false))
 			{	
 				(G->GetInputs())[i]->SetValue(ZERO);
 				(G->GetInputs())[i]->SetBTVisited(true);
