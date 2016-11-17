@@ -16,6 +16,7 @@ Gate* ImplyForward(vector<Gate*> Gs);
 Wire* Backtrace(Gate* G);
 void Objective(Gate* G);
 DType LookUpTable(Gate* G);
+DType DLookUpTable(Gate* G);
 DType BTLookUpTable(Gate* G);
 
 
@@ -1009,7 +1010,8 @@ bool InputImplyForward()
 				wires.push_back(fanout[j]->GetOutput());
 			}
 			else if ( (LookUpTable(fanout[j])!=X)
-				&&(fanout[j]->GetOutput()->GetValue()!=LookUpTable(fanout[j]))
+				&&(  ! (  (fanout[j]->GetOutput()->GetValue()==LookUpTable(fanout[j]))
+				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
 				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
 				return false;
@@ -1021,6 +1023,142 @@ bool InputImplyForward()
 }	
 
 
+
+
+DType DLookUpTable(Gate* G)
+{
+	if (G->GetGateType()==AND)
+	{
+		vector<DType> InputValues;
+		for (int i=0; i<G->GetInputSize(); i++)
+		{
+			if((G->GetInputs())[i]->GetValue()==ZERO)
+			{return DNOT;}
+			else
+			{
+				InputValues.push_back((G->GetInputs())[i]->GetValue());
+			}
+		}	
+		if (InputValues.size()==2)
+		{	
+			// input = 11, output = D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE))
+			{return D;}
+		}
+		else if(InputValues.size()==3)
+		{
+			// input = 111, output = D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE))
+			{return D;}
+		}
+		else if(InputValues.size()==4)
+		{
+			// input = 1111, output D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&(InputValues[3]==ONE))
+			{return D;}
+		}
+	}
+	else if (G->GetGateType()==OR)
+	{
+		vector<DType> InputValues;
+		for (int i=0; i<G->GetInputSize(); i++)
+		{
+			if((G->GetInputs())[i]->GetValue()==ONE)
+			{return D;}
+			else
+			{
+				InputValues.push_back((G->GetInputs())[i]->GetValue());
+			}
+		}	
+		if (InputValues.size()==2)
+		{	
+			// input = 00, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO))
+			{return DNOT;}
+		}
+		else if(InputValues.size()==3)
+		{
+			// input = 000, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO))
+			{return DNOT;}
+		}
+		else if(InputValues.size()==4)
+		{
+			// input = 0000, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&(InputValues[3]==ZERO))
+			{return DNOT;}
+		}
+	}
+	else if (G->GetGateType()==NAND)
+	{
+		vector<DType> InputValues;
+		for (int i=0; i<G->GetInputSize(); i++)
+		{
+			if((G->GetInputs())[i]->GetValue()==ZERO)
+			{return D;}
+			else
+			{
+				InputValues.push_back((G->GetInputs())[i]->GetValue());
+			}
+		}	
+		if (InputValues.size()==2)
+		{	
+			// input = 11, output = D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE))
+			{return DNOT;}
+		}
+		else if(InputValues.size()==3)
+		{
+			// input = 111, output = D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE))
+			{return DNOT;}
+		}
+		else if(InputValues.size()==4)
+		{
+			// input = 1111, output D;
+			if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&(InputValues[3]==ONE))
+			{return DNOT;}
+		}
+	}
+	else if (G->GetGateType()==NOR)
+	{
+		vector<DType> InputValues;
+		for (int i=0; i<G->GetInputSize(); i++)
+		{
+			if((G->GetInputs())[i]->GetValue()==ONE)
+			{return DNOT;}
+			else
+			{
+				InputValues.push_back((G->GetInputs())[i]->GetValue());
+			}
+		}	
+		if (InputValues.size()==2)
+		{	
+			// input = 00, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO))
+			{return D;}
+		}
+		else if(InputValues.size()==3)
+		{
+			// input = 000, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO))
+			{return D;}
+		}
+		else if(InputValues.size()==4)
+		{
+			// input = 0000, output = D';
+			if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&(InputValues[3]==ZERO))
+			{return D;}
+		}
+	}
+	return X;
+	
+}
+
+
+
+
+	
 //G: the gate that needs to be objective
 //W: wires that contains D
 void Objective(Gate* G)
