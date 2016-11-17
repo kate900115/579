@@ -1747,7 +1747,7 @@ DType LookUpTable(Gate* G)
 		for (int i=0; i<G->GetInputSize(); i++)
 		{
 			if((G->GetInputs())[i]->GetValue()==ZERO)
-			{return ZERO;}
+			{return ONE;}
 			else if ((G->GetInputs())[i]->GetValue()==X)
 			{return X;}
 			else
@@ -2123,7 +2123,7 @@ DType LookUpTable(Gate* G)
 		for (int i=0; i<G->GetInputSize(); i++)
 		{
 			if((G->GetInputs())[i]->GetValue()==ONE)
-			{return ONE;}
+			{return ZERO;}
 			else if ((G->GetInputs())[i]->GetValue()==X)
 			{return X;}
 			else
