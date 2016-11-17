@@ -631,7 +631,7 @@ bool PODEM(Wire* W)
 	FrontierGate->GetOutput()->SetValue(LookUpTable(FrontierGate));
 
 	/*--------------------for test--------------------*/
-	cout<<"-----after objective-----------"<<endl;
+	cout<<"-------after objective---------"<<endl;
 	for (int m=0; m<WireSize; m++)
 	{
 		CWire[m]->PrintWire();
@@ -641,7 +641,7 @@ bool PODEM(Wire* W)
 	//Backtrace
 	Wire* BTResult = Backtrace(FrontierGate);
 	/*--------------------for test--------------------*/
-	cout<<"-----after backtrace-----------"<<endl;
+	cout<<"-------after backtrace---------"<<endl;
 	for (int m=0; m<WireSize; m++)
 	{
 		CWire[m]->PrintWire();
@@ -1883,7 +1883,7 @@ DType LookUpTable(Gate* G)
 			else if ((InputValues[0]==D)&&(InputValues[1]==ONE))
 			{return DNOT;}
 			//input 1D', output = D;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D))
+			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT))
 			{return D;}
 			//input D'1, output = D
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE))
@@ -1898,7 +1898,7 @@ DType LookUpTable(Gate* G)
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
 			{return D;}
 			//input D'D, output 1
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D))
 			{return ONE;}
 		}
 		if (InputValues.size()==3)
