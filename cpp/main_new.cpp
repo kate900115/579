@@ -708,7 +708,6 @@ bool PODEM(Wire* W)
 				CWire[m]->PrintWire();
 			}
 			/*--------------------for test--------------------*/
-			cout<<"imply result is true"<<endl;
 			if (PODEM(CurrentWire)==true) return true;
 		}
 	}
@@ -973,7 +972,6 @@ bool InputImplyForward()
 				&&(fanout[j]->GetOutput()->GetValue()!=LookUpTable(fanout[j]))
 				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
-				cout<<"hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"<<endl;
 				return false;
 			}
 		}
