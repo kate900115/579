@@ -443,6 +443,7 @@ int main(int argc, char **argv)
 		Initialize();
 
 		CWire[i]->SetStuck(true,D);
+		CWire[i]->SetFixed(true);
 		if (CWire[i]->GetWireType()==INPUT)
 		{
 			CWire[i]->SetBTVisited(true);
@@ -501,6 +502,7 @@ int main(int argc, char **argv)
 		Initialize();
 
 		CWire[i]->SetStuck(true,DNOT);
+		CWire[i]->SetFixed(true);
 		if (CWire[i]->GetWireType()==INPUT)
 		{
 			CWire[i]->SetBTVisited(true);
@@ -673,17 +675,40 @@ bool PODEM(Wire* W)
 	//ImplyForward BTResult to see if there is a contradiction
 	if (InputImplyForward())
 	{
+		/*--------------------for test--------------------*/
+		cout<<"-------after imply---------"<<endl;
+		for (int m=0; m<WireSize; m++)
+		{
+			CWire[m]->PrintWire();
+		}
+		/*--------------------for test--------------------*/
 		if (PODEM(CurrentWire)==true) return true;
 	}
-	else
+	//else
 	{	
 		//implyForward BTResult' to see if there is a contradiction
 		if(BTResult->GetValue()==ONE)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
 			{BTResult->SetValue(ONE);}
+
+		cout<<"---fail, we need to backtrack.---"<<endl;
+		for (int m=0; m<WireSize; m++)
+		{
+			CWire[m]->PrintWire();
+		}
+		/*--------------------for test--------------------*/
 		if(InputImplyForward())
 		{
+			/*--------------------for test--------------------*/
+
+			cout<<"-------after imply---------"<<endl;
+			for (int m=0; m<WireSize; m++)
+			{
+				CWire[m]->PrintWire();
+			}
+			/*--------------------for test--------------------*/
+			cout<<"imply result is true"<<endl;
 			if (PODEM(CurrentWire)==true) return true;
 		}
 	}
@@ -914,6 +939,7 @@ Gate* ImplyForward(vector<Gate*> Gs)
 		if (gates.front()->GetGateType() == NOT)
 		{
 			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
+			gates.front()->GetOutput()->SetFixed(true);
 			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
 			{
 				NewFrontier = (gates.front()->GetOutput()->GetFanOut())[0];
@@ -938,13 +964,16 @@ bool InputImplyForward()
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
-			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetValue()==X))
+			if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetFixed()==false))
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
 				wires.push_back(fanout[j]->GetOutput());
 			}
-			else if ((LookUpTable(fanout[j])!=X)&&(fanout[j]->GetOutput()->GetValue()!=LookUpTable(fanout[j])))
+			else if ( (LookUpTable(fanout[j])!=X)
+				&&(fanout[j]->GetOutput()->GetValue()!=LookUpTable(fanout[j]))
+				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
+				cout<<"hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"<<endl;
 				return false;
 			}
 		}
@@ -965,6 +994,7 @@ void Objective(Gate* G)
 			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
+				G->GetInputs()[i]->SetFixed(true);
 				if (G->GetInputs()[i]->GetWireType()==INPUT)
 				{
 					G->GetInputs()[i]->SetBTVisited(true);
@@ -979,6 +1009,7 @@ void Objective(Gate* G)
 			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
+				G->GetInputs()[i]->SetFixed(true);
 				if (G->GetInputs()[i]->GetWireType()==INPUT)
 				{
 					G->GetInputs()[i]->SetBTVisited(true);
@@ -993,6 +1024,7 @@ void Objective(Gate* G)
 			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ONE);
+				G->GetInputs()[i]->SetFixed(true);
 				if (G->GetInputs()[i]->GetWireType()==INPUT)
 				{
 					G->GetInputs()[i]->SetBTVisited(true);
@@ -1007,6 +1039,7 @@ void Objective(Gate* G)
 			if (G->GetInputs()[i]->GetValue()==X)
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
+				G->GetInputs()[i]->SetFixed(true);
 				if (G->GetInputs()[i]->GetWireType()==INPUT)
 				{
 					G->GetInputs()[i]->SetBTVisited(true);

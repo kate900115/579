@@ -26,6 +26,7 @@ class Wire
 		Gate* FanInGate;
 		vector<Gate*> FanOutGate;
 		bool BTVisited;
+		bool IsFixed;
 
 	public:
 		//constructor
@@ -36,11 +37,12 @@ class Wire
 			IsStuck = is_stuck; 
 			Value = v; 
 			FanInGate = NULL; 
-			FanOutGate=vector<Gate*>(); 
+			FanOutGate = vector<Gate*>(); 
 			BTVisited = false;
+			IsFixed= false;
 		}
 
-		void initialize(){IsStuck = false; Value = X; BTVisited = false;}
+		void initialize(){IsStuck = false; Value = X; BTVisited = false; IsFixed = false;}
 
 
 		//get the private value
@@ -55,6 +57,10 @@ class Wire
 		vector<Gate*> GetFanOut(){return FanOutGate;}
 
 		bool GetBTVisited(){return BTVisited;}
+
+		bool GetFixed(){return IsFixed;}
+		
+		void SetFixed(bool fix){IsFixed = fix;}
 
 		bool GetStuck(){return IsStuck;}
 		
