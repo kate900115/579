@@ -485,41 +485,75 @@ int main(int argc, char **argv)
 		if(PODEM(PodemWire)==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<PodemWire->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<endl;
+			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<PodemWire->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<endl;
+			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<endl;
 		}
 
 
 		//initialize and set s-a-1 fault
 		Initialize();
+
 		CWire[i]->SetStuck(true,DNOT);
+		if (CWire[i]->GetWireType()==INPUT)
+		{
+			CWire[i]->SetBTVisited(true);
+		}
 
 		//Activate fault
 		//Implication to the back
 		DBack = CWire[i]->GetFanIn();
+	
+		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
 			ImplyBackward(DBack);
 		}
-
+		
 		//find D-frontier
-		//the remaining problem is if we change 
-		//DFront, will it affect the real Fanout of current wire 
+		//imply forward if there are NOT gates
+		//and then update the frontier wire
 		DFront = CWire[i]->GetFanOut();
-		ImplyForward(DFront);
+		PodemWire = CWire[i];
+		InitialFrontier = ImplyForward(DFront);
+		if (InitialFrontier != NULL)
+		{
+			PodemWire = InitialFrontier->GetOutput();
+		}	
 
-		if(PODEM(CWire[i])==true)
+		//for test
+		PodemWire->PrintWire();
+		/*--------------------for test--------------------*/
+		//print all the Wire read from input file
+		WireSize = CWire.size();
+		for (int m=0; m<WireSize; m++)
+		{
+			CWire[m]->PrintWire();
+		}
+		/*--------------------for test--------------------*/
+
+
+		//Do PODEM
+		if(PODEM(PodemWire)==true)
 		{	
 			TestNumber++;
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<endl;
+			cout<<"@@  Wire "<<PodemWire->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<endl;
 		}
 		else
 		{
-			cout<<"Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
-		}		
+			cout<<endl;
+			cout<<"@@ Wire "<<PodemWire->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<endl;
+		}
+
 	}
 	return 0;
 }
@@ -536,6 +570,7 @@ bool PODEM(Wire* W)
 
 	/*--------------------for test--------------------*/
 	//print all the Gate read from input file 
+	cout<<endl;
 	cout<<"-----------------------------PODOM--------------------------------"<<endl;
 	/*int GateSize=CGate.size();
 	for (int m=0; m<GateSize; m++)
@@ -549,10 +584,10 @@ bool PODEM(Wire* W)
 	}*/
 	//print all the Wire read from input file
 	int WireSize = CWire.size();
-	for (int m=0; m<WireSize; m++)
+	/*for (int m=0; m<WireSize; m++)
 	{
 		CWire[m]->PrintWire();
-	}
+	}*/
 	/*--------------------for test--------------------*/
 		
 	if (CurrentWire->GetWireType()==OUTPUT) return true;
@@ -580,7 +615,7 @@ bool PODEM(Wire* W)
 	cout<<"Frontier Gate is:";	
 	FrontierGate->PrintGate();
 	cout<<endl;
-	/*------------------for test-------------------*/
+	/*-------------------for test-------------------*/
 
 	while (FrontierGate->GetGateType()==NOT)
 	{
