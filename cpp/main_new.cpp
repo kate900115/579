@@ -697,8 +697,7 @@ bool PODEM(Wire* W)
 	{	
 		//implyForward BTResult' to see if there is a contradiction
 		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
-		{	
-			return false;}
+		{return false;}
 		if(BTResult->GetValue()==ONE)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
