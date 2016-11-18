@@ -473,7 +473,7 @@ int main(int argc, char **argv)
 		}	
 
 		//for test
-		PodemWire->PrintWire();
+		//PodemWire->PrintWire();
 		/*--------------------for test--------------------*/
 		//print all the Wire read from input file
 		int WireSize = CWire.size();
@@ -534,7 +534,7 @@ int main(int argc, char **argv)
 		}	
 
 		//for test
-		PodemWire->PrintWire();
+		//PodemWire->PrintWire();
 		/*--------------------for test--------------------*/
 		//print all the Wire read from input file
 		WireSize = CWire.size();
@@ -722,11 +722,6 @@ void Initialize()
 	for (int i=0; i<size; i++)
 	{
 		CWire[i]->initialize();
-	}
-	size = CGate.size();
-	for (int i=0; i<size; i++)
-	{
-		CGate[i]->initialize();
 	}
 }
 
