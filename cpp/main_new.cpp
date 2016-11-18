@@ -453,11 +453,12 @@ int main(int argc, char **argv)
 
 		//Activate fault
 		//Implication to the back
-		Gate* DBack = CWire[i]->GetFanIn();
+		
 	
 		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
+			Gate* DBack = CWire[i]->GetFanIn();
 			ImplyBackward(DBack);
 		}
 		
@@ -499,7 +500,7 @@ int main(int argc, char **argv)
 			cout<<endl;
 		}
 
-		
+		//---------------------------------------------------------------------------------------------------------------
 		//initialize and set s-a-0 fault
 		Initialize();
 		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
@@ -514,11 +515,9 @@ int main(int argc, char **argv)
 
 		//Activate fault
 		//Implication to the back
-		DBack = CWire[i]->GetFanIn();
-	
-		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
+			Gate* DBack = CWire[i]->GetFanIn();
 			ImplyBackward(DBack);
 		}
 		
@@ -728,6 +727,8 @@ bool PODEM(Wire* W)
 
 	//Imply BTResult= X
 	BTResult->SetValue(X);
+	BTResult->SetFixed(false);
+	BTResult->SetBTVisited(false);
 	InputImplyForward();
 	return false;
 }
@@ -956,7 +957,7 @@ bool InputImplyForward()
 				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
 				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
-				cout<<"return false"<<endl;
+				cout<<fanout[j]->GetGateName()<<" return false"<<endl;
 				return false;
 			}
 		}
