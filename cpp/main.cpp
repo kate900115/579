@@ -691,35 +691,33 @@ bool PODEM(Wire* W)
 	{
 		return false;
 	}
-	//else
-	{	
-		//implyForward BTResult' to see if there is a contradiction
-		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
+	
+	//implyForward BTResult' to see if there is a contradiction
+	if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
 		{return false;}
-		if(BTResult->GetValue()==ONE)
-			{BTResult->SetValue(ZERO);}
-		else if (BTResult->GetValue()==ZERO)
-			{BTResult->SetValue(ONE);}
+	if(BTResult->GetValue()==ONE)
+		{BTResult->SetValue(ZERO);}
+	else if (BTResult->GetValue()==ZERO)
+		{BTResult->SetValue(ONE);}
+	/*--------------------for test--------------------*/
+	cout<<"---fail, we need to backtrack.---"<<endl;
+	for (int m=0; m<WireSize; m++)
+	{
+		CWire[m]->PrintWire();
+	}
+	/*--------------------for test--------------------*/
+
+	if(InputImplyForward())
+	{
 		/*--------------------for test--------------------*/
-		cout<<"---fail, we need to backtrack.---"<<endl;
+		cout<<"-------after imply---------"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{
 			CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
 
-		if(InputImplyForward())
-		{
-			/*--------------------for test--------------------*/
-			cout<<"-------after imply---------"<<endl;
-			for (int m=0; m<WireSize; m++)
-			{
-				CWire[m]->PrintWire();
-			}
-			/*--------------------for test--------------------*/
-
-			if (PODEM(CurrentWire)==true) return true;
-		}
+		if (PODEM(CurrentWire)==true) return true;
 	}
 
 	//Imply BTResult= X
@@ -730,6 +728,8 @@ bool PODEM(Wire* W)
 	return false;
 }
 
+
+//set all the wire to X
 void Initialize()
 {
 	int size = CWire.size();
