@@ -690,9 +690,16 @@ bool PODEM(Wire* W)
 		/*--------------------for test--------------------*/
 		if (PODEM(CurrentWire)==true) return true;
 	}
+	if (BTResult==NULL)
+	{
+		return false;
+	}
 	//else
 	{	
 		//implyForward BTResult' to see if there is a contradiction
+		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
+		{	
+			return false;}
 		if(BTResult->GetValue()==ONE)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
@@ -705,11 +712,9 @@ bool PODEM(Wire* W)
 		}
 		/*--------------------for test--------------------*/
 
-		cout<<"cdddddddddddddddddddddddddd"<<endl;
 		if(InputImplyForward())
 		{
 			/*--------------------for test--------------------*/
-			cout<<"cdddddddddddddddddddddddddd"<<endl;
 			cout<<"-------after imply---------"<<endl;
 			for (int m=0; m<WireSize; m++)
 			{
@@ -935,12 +940,12 @@ bool InputImplyForward()
 	vector<Wire*> wires = InputWires;
 	while (wires.size()!=0)
 	{
-		cout<<"hhhhhhhhhhhhhhhhhhhhh"<<endl;
+
 		vector<Gate*>fanout = wires.front()->GetFanOut();
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
-			cout<<"sssssssssssssssssssssss"<<endl;
+
 			if (fanout[j]->GetOutput()->GetFixed()==false)
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
@@ -951,11 +956,13 @@ bool InputImplyForward()
 				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
 				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
+				cout<<"return false"<<endl;
 				return false;
 			}
 		}
 		wires.erase(wires.begin());
 	}
+	cout<<"return true"<<endl;
 	return true;
 }	
 

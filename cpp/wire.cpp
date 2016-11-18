@@ -58,7 +58,16 @@ void Wire::PrintWire()
 	
 	if (FanInGate!=NULL)
 	{
-		cout<<", FanIn ="<<FanInGate->GetGateName()<<endl;
+		cout<<", FanIn ="<<FanInGate->GetGateName();
+	}
+	if (FanOutGate.size()!=0)
+	{	
+		cout<<", FanOut =";
+		for (unsigned i=0; i<FanOutGate.size(); i++)
+		{
+			cout<<FanOutGate[i]->GetGateName()<<", ";
+		}
+		cout<<endl;
 	}
 	else
 	{
