@@ -441,8 +441,7 @@ int main(int argc, char **argv)
 	{
 		//intialize and set s-a-1 fault
 		Initialize();
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
-		cout<<"It's s-a-1 fault."<<endl;
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
 		CWire[i]->SetFixed(true);
@@ -453,11 +452,12 @@ int main(int argc, char **argv)
 
 		//Activate fault
 		//Implication to the back
-		Gate* DBack = CWire[i]->GetFanIn();
+		
 	
 		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
+			Gate* DBack = CWire[i]->GetFanIn();
 			ImplyBackward(DBack);
 		}
 		
@@ -489,21 +489,20 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 			cout<<endl;
 		}
 
-		
+		//---------------------------------------------------------------------------------------------------------------
 		//initialize and set s-a-0 fault
 		Initialize();
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site."<<endl;
-		cout<<"It's s-a-0 fault."<<endl;
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,DNOT);
 		CWire[i]->SetFixed(true);
@@ -514,11 +513,9 @@ int main(int argc, char **argv)
 
 		//Activate fault
 		//Implication to the back
-		DBack = CWire[i]->GetFanIn();
-	
-		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
+			Gate* DBack = CWire[i]->GetFanIn();
 			ImplyBackward(DBack);
 		}
 		
@@ -550,13 +547,13 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@  Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		else
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 			cout<<endl;
 		}
 
@@ -611,12 +608,18 @@ bool PODEM(Wire* W)
 	cout<<endl;
 	/*--------------------for test--------------------*/
 
-	while (FrontierGate->GetGateType()==NOT)
+	vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
+	while (FrontierGates.size()!=0)
 	{
-		if ((FrontierGate->GetInputs())[0]->GetValue()==D) FrontierGate->GetOutput()->SetValue(DNOT);
-		else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGate->GetOutput()->SetValue(D);
-		CurrentWire = FrontierGate->GetOutput();
-		FrontierGate = CurrentWire->GetFanOut()[0];
+		if (FrontierGates.front()->GetGateType()==NOT)
+		{
+			if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
+			else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
+			FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
+			FrontierGate = FrontierGates.front();
+			CurrentWire = FrontierGate->GetOutput();
+		}
+		FrontierGates.erase(FrontierGates.begin());
 	}	
 
 	/*--------------------for test--------------------*/
@@ -652,20 +655,23 @@ bool PODEM(Wire* W)
 	//and frontier gate changes
 	if(BTResult==NULL)
 	{
-		FrontierGate = CurrentWire->GetFanOut()[0];
-		CurrentWire = FrontierGate->GetOutput();
-		
-
 		//if the frontier gate is not gate
 		//we need to propagate it further
 		//until the frontier is not a Not gate.
-		while (FrontierGate->GetGateType()==NOT)
+		FrontierGates = CurrentWire->GetFanOut();
+		CurrentWire = FrontierGate->GetOutput();
+		cout<<FrontierGates.size()<<endl;
+		while (FrontierGates.size()!=0)
 		{
-			if ((FrontierGate->GetInputs())[0]->GetValue()==D) FrontierGate->GetOutput()->SetValue(DNOT);
-			else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGate->GetOutput()->SetValue(D);
-
-			FrontierGate = CurrentWire->GetFanOut()[0];
-			CurrentWire = FrontierGate->GetOutput();
+			if (FrontierGates.front()->GetGateType()==NOT)
+			{
+				if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
+				else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
+				FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
+				FrontierGate = FrontierGates.front();
+				CurrentWire = FrontierGate->GetOutput();
+			}
+			FrontierGates.erase(FrontierGates.begin());
 		}	
 	}
 
@@ -681,9 +687,15 @@ bool PODEM(Wire* W)
 		/*--------------------for test--------------------*/
 		if (PODEM(CurrentWire)==true) return true;
 	}
+	if (BTResult==NULL)
+	{
+		return false;
+	}
 	//else
 	{	
 		//implyForward BTResult' to see if there is a contradiction
+		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
+		{return false;}
 		if(BTResult->GetValue()==ONE)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
@@ -695,10 +707,10 @@ bool PODEM(Wire* W)
 			CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
+
 		if(InputImplyForward())
 		{
 			/*--------------------for test--------------------*/
-
 			cout<<"-------after imply---------"<<endl;
 			for (int m=0; m<WireSize; m++)
 			{
@@ -711,7 +723,9 @@ bool PODEM(Wire* W)
 	}
 
 	//Imply BTResult= X
-	BTResult->SetValue(ZERO);
+	BTResult->SetValue(X);
+	BTResult->SetFixed(false);
+	BTResult->SetBTVisited(false);
 	InputImplyForward();
 	return false;
 }
@@ -922,13 +936,14 @@ Gate* ImplyForward(vector<Gate*> Gs)
 bool InputImplyForward()
 {
 	vector<Wire*> wires = InputWires;
-	
 	while (wires.size()!=0)
 	{
+
 		vector<Gate*>fanout = wires.front()->GetFanOut();
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
+
 			if (fanout[j]->GetOutput()->GetFixed()==false)
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
@@ -939,11 +954,13 @@ bool InputImplyForward()
 				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
 				&&(fanout[j]->GetOutput()->GetFixed()==true))
 			{
+				cout<<fanout[j]->GetGateName()<<" return false"<<endl;
 				return false;
 			}
 		}
 		wires.erase(wires.begin());
 	}
+	cout<<"return true"<<endl;
 	return true;
 }	
 
