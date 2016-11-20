@@ -55,6 +55,8 @@ void Wire::PrintWire()
 	{
 		cout<<"X/0";
 	}
+
+	cout<<", Is fixed= "<<IsFixed;
 	
 	if (FanInGate!=NULL)
 	{

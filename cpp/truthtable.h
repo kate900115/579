@@ -50,14 +50,10 @@ DType LookUpTable(Gate* G)
 			//input DD, output D
 			else if ((InputValues[0]==D)&&(InputValues[1]==D))
 			{return D;}
-			//input DD', output 0
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT))
-			{return ZERO;}
 			//input D'D', output D'
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
 			{return DNOT;}
-			//input D'D, output 0
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			else 
 			{return ZERO;}
 		}
 		if (InputValues.size()==3)
@@ -107,41 +103,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D', output = D';
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
 			{return DNOT;}
-			// input = D'1D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'D1, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE))
-			{return ZERO;}
-			// input = DD'1, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE))
-			{return ZERO;}
-			// input = D1D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = 1DD', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = 1D'D, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = DDD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = DD'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE))
-			{return ZERO;}
-			// input = DD'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = D'DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
+			else
 			{return ZERO;}			
 			
 		}
@@ -240,155 +202,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D'D', output = D';
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
 			{return DNOT;}
-			// input = 11DD', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 1D1D', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D11D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 11D'D, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 1D'1D, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'11D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'11, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D1D'1, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = 1DD'1, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D'D11, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D'1D1, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = 1D'D1, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = DDD'1, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = DD1D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D1DD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 1DDD', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D1, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D'DD1, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D'D1D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'1DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 1D'DD, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D1D'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'1D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 1DD'D, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'D1, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = D'D'1D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'1D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 1D'D'D, output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'DD'1, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = DD'D'1, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ZERO;}
-			// input = DD'1D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D1D'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 1DD'D', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'1DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'D1D', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 1D'DD', output = 0;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DDD'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'DD'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'DD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DDD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DDD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DDD'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'DD, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DDDD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'D'D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DD'D', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
+			else
 			{return ZERO;}
 		}
 	}
@@ -433,7 +247,7 @@ DType LookUpTable(Gate* G)
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
 			{return DNOT;}
 			//input D'D, output 1
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D))
 			{return ONE;}
 		}
 		if (InputValues.size()==3)
@@ -483,41 +297,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D', output = D';
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
 			{return DNOT;}
-			// input = D'0D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'D0, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO))
-			{return ONE;}
-			// input = DD'0, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO))
-			{return ONE;}
-			// input = D0D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = 0DD', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = 0D'D, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = DDD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = DD'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = DD'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = D'DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
+			else
 			{return ONE;}			
 			
 		}
@@ -616,155 +396,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D'D', output = D';
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
 			{return DNOT;}
-			// input = 00DD', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 0D0D', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D00D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 00D'D, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 0D'0D, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'00D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'00, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D0D'0, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = 0DD'0, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D'D00, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D'0D0, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = 0D'D0, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = DDD'0; output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = DD0D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D0DD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 0DDD', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D0, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D'DD0, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D'D0D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'0DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 0D'DD, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D0D'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'0D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 0DD'D, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'D0, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = D'D'0D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'0D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 0D'D'D, output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'DD'0, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = DD'D'0, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ONE;}
-			// input = DD'0D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D0D'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 0DD'D', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'0DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'D0D', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 0D'DD', output = 1;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DDD'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'DD'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'DD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DDD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DDD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DDD'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'DD, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DDDD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'D'D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DD'D', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
+			else
 			{return ONE;}
 		}
 	}
@@ -859,41 +491,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D', output = D;
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
 			{return D;}
-			// input = D'1D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'D1, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE))
-			{return ONE;}
-			// input = DD'1, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE))
-			{return ONE;}
-			// input = D1D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = 1DD', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = 1D'D, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = DDD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = DD'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D))
-			{return ONE;}
-			// input = D'D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE))
-			{return ONE;}
-			// input = DD'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
-			{return ONE;}
-			// input = D'DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
+			else
 			{return ONE;}			
 			
 		}
@@ -992,155 +590,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D'D', output = D;
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
 			{return D;}
-			// input = 11DD', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 1D1D', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D11D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 11D'D, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 1D'1D, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'11D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'11, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D1D'1, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = 1DD'1, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D'D11, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D'1D1, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = 1D'D1, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = DDD'1, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = DD1D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D1DD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 1DDD', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D1, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D'DD1, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D'D1D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'1DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 1D'DD, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D1D'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'1D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 1DD'D, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'D1, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = D'D'1D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'1D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = 1D'D'D, output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'DD'1, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = DD'D'1, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==ONE))
-			{return ONE;}
-			// input = DD'1D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D1D'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ONE)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 1DD'D', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'1DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ONE)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'D1D', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ONE)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = 1D'DD', output = 1;
-			else if ((InputValues[0]==ONE)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DDD'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'DD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'DD'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'DD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DDD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DDD, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DDD'D, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DD'DD, output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = DDDD', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'D'D'D, output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ONE;}
-			// input = D'D'DD', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = D'DD'D', output = 1;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ONE;}
-			// input = DD'D'D', output = 1;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
+			else
 			{return ONE;}
 		}
 	}
@@ -1185,7 +635,7 @@ DType LookUpTable(Gate* G)
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
 			{return D;}
 			//input D'D, output 0
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT))
+			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D))
 			{return ZERO;}
 		}
 		if (InputValues.size()==3)
@@ -1235,41 +685,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D', output = D;
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
 			{return D;}
-			// input = D'0D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'D0, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO))
-			{return ZERO;}
-			// input = DD'0, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO))
-			{return ZERO;}
-			// input = D0D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = 0DD', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = 0D'D, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = DDD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = DD'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = D'D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D))
-			{return ZERO;}
-			// input = DD'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT))
-			{return ZERO;}
-			// input = D'DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT))
+			else
 			{return ZERO;}			
 			
 		}
@@ -1368,155 +784,7 @@ DType LookUpTable(Gate* G)
 			// input = D'D'D'D', output = D;
 			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
 			{return D;}
-			// input = 00DD', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 0D0D', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D00D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 00D'D, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 0D'0D, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'00D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'00, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D0D'0, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = 0DD'0, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D'D00, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D'0D0, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = 0D'D0, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = DDD'0; output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = DD0D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D0DD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 0DDD', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D0, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D'DD0, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D'D0D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'0DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 0D'DD, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D0D'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'0D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 0DD'D, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'D0, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = D'D'0D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'0D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = 0D'D'D, output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'DD'0, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = DD'D'0, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==ZERO))
-			{return ZERO;}
-			// input = DD'0D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D0D'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==ZERO)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 0DD'D', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'0DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==ZERO)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'D0D', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==ZERO)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = 0D'DD', output = 0;
-			else if ((InputValues[0]==ZERO)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DDD'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'DD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'DD'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'DD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DDD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DDD, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DDD'D, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DD'DD, output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = DDDD', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==D)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'D'D'D, output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==D))
-			{return ZERO;}
-			// input = D'D'DD', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==DNOT)&&(InputValues[2]==D)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = D'DD'D', output = 0;
-			else if ((InputValues[0]==DNOT)&&(InputValues[1]==D)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
-			{return ZERO;}
-			// input = DD'D'D', output = 0;
-			else if ((InputValues[0]==D)&&(InputValues[1]==DNOT)&&(InputValues[2]==DNOT)&&(InputValues[3]==DNOT))
+			else
 			{return ZERO;}
 		}
 	}
