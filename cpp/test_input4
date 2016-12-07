@@ -1,0 +1,13 @@
+input G0 G1 G2 G3 G4
+output G11 G13
+wire G5 G6 G7 G8 G9 G10 G12 
+dff BUF_1 G12 G9
+nand NAND2_1 G5 G0 G1 
+nand NAND2_2 G6 G1 G2
+nand NAND2_3 G8 G5 G6
+not NOT_1 G7 G5
+or OR2_1 G9 G3 G4
+or OR2_2 G10 G7 G8
+nor NOR3_1 G11 G10 G6 G12 
+and AND2_1 G13 G5 G8
+
