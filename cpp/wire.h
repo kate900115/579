@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdlib>
 #include "gate.h"
 
 using namespace std;
@@ -10,7 +11,7 @@ using namespace std;
 enum DType {ZERO, ONE, D, DNOT, X, ZERO_X, ONE_X, X_ZERO, X_ONE};
 
 //Define the type of the wire
-enum WType {INPUT, OUTPUT, WIRE};
+enum WType {INPUT, OUTPUT, WIRE, S_INPUT, S_OUTPUT};
 
 class Gate;
 
@@ -27,6 +28,9 @@ class Wire
 		vector<Gate*> FanOutGate;
 		bool BTVisited;
 		bool IsFixed;
+		string FirstHalf;
+		string HalfName;
+		int FrameNum;
 
 	public:
 		//constructor
@@ -40,6 +44,9 @@ class Wire
 			FanOutGate = vector<Gate*>(); 
 			BTVisited = false;
 			IsFixed= false;
+			HalfName = name.substr(0, name.size()-3);
+			string a = name.substr(name.length()-1);
+			FrameNum = atoi(a.c_str());
 		}
 
 		void initialize(){IsStuck = false; Value = X; BTVisited = false; IsFixed = false;}

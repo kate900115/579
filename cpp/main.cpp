@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 	ifstream inFile;
 
-	for (int i=0; i<3; i++)
+	for (int FrameNum=0; FrameNum<3; FrameNum++)
 	{
 		// clean up every thing
 		while (!CWire.empty())		
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 		{DFrontiers.pop_back();}
 
 
-		inFile.open(FileName[i].c_str());
+		inFile.open(FileName[FrameNum].c_str());
 
 	
 	
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 					CWire.push_back(NewInput);
 					InputWires.push_back(NewInput);
 				}
-		   	}
+			}
 
 			else if (word=="output")
 			{
@@ -513,11 +513,6 @@ int main(int argc, char **argv)
 				DFrontiers.pop_back();
 			}
 			DFrontiers = PodemWire->GetFanOut();
-		//	DFrontiers.push_back(PodemWire->GetFanout[0]);
-	
-		//	cout<<DFrontiers.size()<<endl;
-		//	cout<<InitialFrontier->GetGateName()<<endl;
-		//	cout<<DFrontiers.front()->GetGateName()<<endl;
 
 			//Do PODEM
 			if(PODEM(PodemWire)==true)
@@ -533,20 +528,6 @@ int main(int argc, char **argv)
 				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 				cout<<endl;
 			}
-
-
-			/*--------------------for test--------------------*/
-			// to test the DFrontier
-		/*	int DF_size = DFrontiers.size();
-			if (DFrontiers.size()!=0)
-			{
-				cout<<"DFrontier list is shown below:"<<endl;
-				for (int i=0; i<DF_size; i++)
-				{
-					cout<<DFrontiers[i]->GetGateName();
-					cout<<endl;
-				}
-			}*/
 	
 
 
@@ -614,21 +595,6 @@ int main(int argc, char **argv)
 				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 				cout<<endl;
 			}
-
-
-			/*--------------------for test--------------------*/
-			// to test the DFrontier
-		/*	DF_size = DFrontiers.size();
-			if (DFrontiers.size()!=0)
-			{
-				cout<<"DFrontier list is shown below:"<<endl;
-				for (int i=0; i<DF_size; i++)
-				{
-					DFrontiers[i]->PrintGate();
-					cout<<endl;
-				}
-			}*/
-
 		}
 	}
 	return 0;
@@ -948,9 +914,6 @@ bool PODEM(Wire* W)
 				NotLists.erase(NotLists.begin());
 			}
 			//DFrontiers.erase(GPointer);
-			cout<<"66666667777777777788888888888887777777777776666666"<<endl;
-			
-	
 		}
 
 		//ImplyForward BTResult to see if there is a contradiction
