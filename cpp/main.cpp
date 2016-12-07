@@ -635,7 +635,12 @@ bool PODEM(Wire* W)
 	cout<<endl;
 	/*--------------------for test--------------------*/
 		
-	if ((CurrentWire->GetWireType()==OUTPUT)&&(CurrentWire->GetValue()!=X)) return true;
+	if ((CurrentWire->GetWireType()==OUTPUT)&&(CurrentWire->GetValue()!=X)&&(CurrentWire->GetValue()!=ZERO)&&(CurrentWire->GetValue()!=ONE)) 
+		return true;
+	else
+	{
+		
+
 	
 	//If No DFrontier, untestable
 	//return false
@@ -657,13 +662,6 @@ bool PODEM(Wire* W)
 	
 	//pick up a gate from D-frontier
 	//to do objective()
-	FrontierGate = CurrentWire->GetFanOut()[0];
-
-	/*--------------------for test--------------------*/
-	cout<<"Frontier Gate is:";	
-	FrontierGate->PrintGate();
-	cout<<endl;
-	/*--------------------for test--------------------*/
 
 	vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
 	int F_size = FrontierGates.size();
@@ -729,14 +727,7 @@ bool PODEM(Wire* W)
 		NotLists.erase(NotLists.begin());
 	}
 
-	/*--------------------for test--------------------*/
-	cout<<"DFrontiers are: ";
-	for (unsigned i=0; i<DFrontiers.size(); i++)
-	{
-		cout<<DFrontiers[i]->GetGateName()<<",";
-	}	
-	cout<<endl;
-	/*--------------------for test--------------------*/	
+	
 
 	if (DFrontiers.size()==0)	
 	{
@@ -902,6 +893,7 @@ bool PODEM(Wire* W)
 	BTResult->SetBTVisited(false);
 	InputImplyForward();
 	return false;
+	}
 }
 
 
