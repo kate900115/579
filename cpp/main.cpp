@@ -661,9 +661,9 @@ bool PODEM(Wire* W)
 			{
 				bool update_flag = true;
 				int D_size = DFrontiers.size();
-				for (int i=0; i<D_size; i++)
+				for (int j=0; j<D_size; i++)
 				{
-					if (DFrontiers[i]==FrontierGates.front())
+					if (DFrontiers[j]==FrontierGates[i])
 					{
 						update_flag = false;
 						break;
@@ -671,7 +671,7 @@ bool PODEM(Wire* W)
 				}
 				if (update_flag)
 				{
-					DFrontiers.push_back(FrontierGates.front());
+					DFrontiers.push_back(FrontierGates[i]);
 				}
 			}
 		}
@@ -782,8 +782,89 @@ bool PODEM(Wire* W)
 			//until the frontier is not a Not gate.
 			CurrentWire = FrontierGate->GetOutput();
 			FrontierGates = CurrentWire->GetFanOut();
-			DFrontiers.pop_back();
+			//vector<Gate*>::iterator GPointer = DFrontiers.end();
+			int F_size = FrontierGates.size();
 
+			vector <Gate*> NotLists;
+
+			for (int i=0; i<F_size; i++)
+			{
+				if (FrontierGates[i]->GetGateType()==NOT)
+				{	
+					NotLists.push_back(FrontierGates[i]);
+				}
+				else if (FrontierGates[i]->GetGateType()==BUFFER)
+				{	
+					NotLists.push_back(FrontierGates[i]);
+				}
+				else
+				{
+					bool update_flag = true;
+					int D_size = DFrontiers.size();
+					for (int j=0; j<D_size; i++)
+					{
+						if (DFrontiers[j]==FrontierGates[i])
+						{
+							update_flag = false;
+							break;
+						}
+					}
+					if (update_flag)
+					{
+						DFrontiers.push_back(FrontierGates[i]);
+					}
+				}
+			}
+	
+			while (!NotLists.empty())
+			{
+				if (NotLists.front()->GetGateType()==NOT)
+				{
+					if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+					{
+						NotLists.front()->GetOutput()->SetValue(DNOT);
+					}
+					else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+					{
+						NotLists.front()->GetOutput()->SetValue(D);
+					}
+					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				}
+				else if (NotLists.front()->GetGateType()==BUFFER)
+				{
+					if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+					{
+						NotLists.front()->GetOutput()->SetValue(D);
+					}
+					else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+					{
+						NotLists.front()->GetOutput()->SetValue(DNOT);
+					}
+					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				}
+				else
+				{
+					bool update_flag = true;
+					int D_size = DFrontiers.size();
+					for (int i=0; i<D_size; i++)
+					{
+						if (DFrontiers[i]==NotLists.front())
+						{
+							update_flag = false;
+							break;
+						}
+					}
+					if (update_flag)
+					{
+						DFrontiers.push_back(NotLists.front());
+					}
+				}	
+				NotLists.erase(NotLists.begin());
+			}
+			//DFrontiers.erase(GPointer);
+			DFrontiers.pop_back();
+			
+	
 		}
 
 		//ImplyForward BTResult to see if there is a contradiction
