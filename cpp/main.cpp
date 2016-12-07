@@ -698,7 +698,14 @@ bool PODEM(Wire* W)
 				{
 					NotLists.front()->GetOutput()->SetValue(D);
 				}
-				NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+				{
+					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				}
+				else
+				{
+					CurrentWire = NotLists.front()->GetOutput();
+				}
 			}
 			else if (NotLists.front()->GetGateType()==BUFFER)
 			{
@@ -710,7 +717,14 @@ bool PODEM(Wire* W)
 				{
 					NotLists.front()->GetOutput()->SetValue(DNOT);
 				}
-				NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+				{
+					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+				}
+				else
+				{
+					CurrentWire = NotLists.front()->GetOutput();
+				}
 			}
 			else
 			{
@@ -847,20 +861,30 @@ bool PODEM(Wire* W)
 					}
 				}
 			}
-	
+
 			while (!NotLists.empty())
 			{
 				if (NotLists.front()->GetGateType()==NOT)
 				{
 					if (NotLists.front()->GetInputs()[0]->GetValue()==D)
 					{
+						cout<<"D"<<endl;
 						NotLists.front()->GetOutput()->SetValue(DNOT);
 					}
 					else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
 					{
+						cout<<"DNOT"<<endl;
 						NotLists.front()->GetOutput()->SetValue(D);
 					}
-					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+					{
+						cout <<"xxxxxxxxxxxxx"<<endl;
+						NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					}
+					else
+					{
+						CurrentWire = NotLists.front()->GetOutput();
+					}
 				}
 				else if (NotLists.front()->GetGateType()==BUFFER)
 				{
@@ -872,7 +896,15 @@ bool PODEM(Wire* W)
 					{
 						NotLists.front()->GetOutput()->SetValue(DNOT);
 					}
-					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+					{
+						NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					}
+					else
+					{
+						CurrentWire = NotLists.front()->GetOutput();
+					}
+
 				}
 				else
 				{
@@ -894,7 +926,7 @@ bool PODEM(Wire* W)
 				NotLists.erase(NotLists.begin());
 			}
 			//DFrontiers.erase(GPointer);
-			
+			cout<<"66666667777777777788888888888887777777777776666666"<<endl;
 			
 	
 		}
