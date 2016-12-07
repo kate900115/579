@@ -451,8 +451,8 @@ int main(int argc, char **argv)
 		{
 			CWire[i]->PrintWire();
 		}
+		cout<<endl;
 		/*--------------------for test--------------------*/
-
 
 		int TestNumber = 0;
 		// PODEM
