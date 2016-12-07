@@ -23,6 +23,7 @@ vector<Wire*> CWire;
 vector<Gate*> CGate;
 vector<Wire*> InputWires;
 vector<Wire*> ComputedInputs;
+vector<Gate*> DFrontiers;
 
 Gate* FrontierGate;
 
@@ -558,6 +559,15 @@ int main(int argc, char **argv)
 		}
 
 	}
+	
+	/*--------------------for test--------------------*/
+	// to test the DFrontier
+	int DF_size = DFrontiers.size();
+	for (int i=0; i<DF_size; i++)
+	{
+		DFrontiers[i]->PrintGate();
+		cout<<endl;
+	}
 	return 0;
 }
 
@@ -616,11 +626,35 @@ bool PODEM(Wire* W)
 			if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
 			else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
 			FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
-			FrontierGate = FrontierGates.front();
+			//FrontierGate = FrontierGates.front();
 			CurrentWire = FrontierGate->GetOutput();
 		}
+		else
+		{
+			int D_size = DFrontiers.size();
+			bool update_flag = true;
+			for (int i=0; i<D_size; i++)
+			{
+				if (DFrontiers[i]==FrontierGates.front())
+				{
+					update_flag = false;
+					break;
+				}
+			}
+			
+			if (update_flag)
+			{
+				DFrontiers.push_back(FrontierGates.front());
+			}
+		}
+		
 		FrontierGates.erase(FrontierGates.begin());
-	}	
+	}
+	
+	FrontierGate = DFrontiers.back();
+	DFrontiers.pop_back();
+
+	
 
 	/*--------------------for test--------------------*/
 	cout<<"{NEW} Frontier Gate is:";	
@@ -658,9 +692,9 @@ bool PODEM(Wire* W)
 		//if the frontier gate is not gate
 		//we need to propagate it further
 		//until the frontier is not a Not gate.
-		FrontierGates = CurrentWire->GetFanOut();
+	//	FrontierGates = CurrentWire->GetFanOut();
 		CurrentWire = FrontierGate->GetOutput();
-		cout<<FrontierGates.size()<<endl;
+	/*	cout<<FrontierGates.size()<<endl;
 		while (FrontierGates.size()!=0)
 		{
 			if (FrontierGates.front()->GetGateType()==NOT)
@@ -668,11 +702,17 @@ bool PODEM(Wire* W)
 				if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
 				else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
 				FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
-				FrontierGate = FrontierGates.front();
+				//FrontierGate = FrontierGates.front();
 				CurrentWire = FrontierGate->GetOutput();
 			}
+			else
+			{
+				DFrontiers.push_back(FrontierGates.front());
+			}
 			FrontierGates.erase(FrontierGates.begin());
-		}	
+		}
+		FrontierGate = DFrontiers.back();
+		DFrontiers.pop_back();	*/
 	}
 
 	//ImplyForward BTResult to see if there is a contradiction
