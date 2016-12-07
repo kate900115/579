@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 				}
 			}
 		
-			Gate* NewDFF = new Gate(dff_name, DFF, DffInputs, DffOutput);
+			Gate* NewDFF = new Gate(dff_name, BUFFER, DffInputs, DffOutput);
 			CGate.push_back(NewDFF);
 			
 			for (unsigned i=0; i<CWire.size(); i++)

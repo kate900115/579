@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum GType{NOT, AND, NAND, OR, NOR, DFF};
+enum GType{NOT, AND, NAND, OR, NOR, BUFFER};
 
 class Wire;
 

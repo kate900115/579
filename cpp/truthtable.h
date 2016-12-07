@@ -16,6 +16,20 @@ DType LookUpTable(Gate* G)
 		if (InputValue == X)
 		{return X;}
 	}
+	else if (G->GetGateType()==BUFFER)
+	{
+		DType InputValue = (G->GetInputs())[0]->GetValue();
+		if (InputValue == D)
+		{return D;}
+		if (InputValue == DNOT)
+		{return DNOT;}
+		if (InputValue == ONE)
+		{return ONE;}
+		if (InputValue == ZERO)
+		{return ZERO;}
+		if (InputValue == X)
+		{return X;}
+	}
 	else if (G->GetGateType()==AND)
 	{
 		vector<DType> InputValues;
@@ -795,7 +809,21 @@ DType LookUpTable(Gate* G)
 
 DType DLookUpTable(Gate* G)
 {
-	if (G->GetGateType()==AND)
+	if (G->GetGateType()==NOT)
+	{
+		if (G->GetInputs()[0]->GetValue()==ONE)
+		{return DNOT;}
+		else if (G->GetInputs()[0]->GetValue()==ZERO)
+		{return D;}
+	}
+	else if (G->GetGateType()==BUFFER)
+	{
+		if (G->GetInputs()[0]->GetValue()==ZERO)
+		{return DNOT;}
+		else if (G->GetInputs()[0]->GetValue()==ONE)
+		{return D;}
+	}
+	else if (G->GetGateType()==AND)
 	{
 		vector<DType> InputValues;
 		for (int i=0; i<G->GetInputSize(); i++)

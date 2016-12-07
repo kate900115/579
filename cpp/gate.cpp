@@ -16,7 +16,7 @@ void Gate::PrintGate()
 	//	}
 	//	cout<<"output = "<<GOutput<<endl;
 	}
-	else if (Type==DFF)
+	else if (Type==BUFFER)
 	{
 		cout<<"Name: "<<GName<<", Type: DFF, ";
 	//	int size =GInputs.size();
