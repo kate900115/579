@@ -644,6 +644,15 @@ bool PODEM(Wire* W)
 
 		vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
 		int F_size = FrontierGates.size();
+		/*--------------------for test-------------------*/
+		cout<<"frontier gates are: "<<endl;
+		for(unsigned i=0; i<FrontierGates.size(); i++)
+		{
+			cout<<FrontierGates[i]->GetGateName()<<",";
+		}
+		cout<<endl;
+		/*--------------------for test-------------------*/
+		
 
 		vector <Gate*> NotLists;
 
@@ -661,11 +670,12 @@ bool PODEM(Wire* W)
 			{
 				bool update_flag = true;
 				int D_size = DFrontiers.size();
-				for (int j=0; j<D_size; i++)
+				for (int j=0; j<D_size; j++)
 				{
 					if (DFrontiers[j]==FrontierGates[i])
 					{
 						update_flag = false;
+						cout<<"Gate "<<FrontierGates[i]->GetGateName()<<" don't need to be pushed into the DFrontier Gate."<<endl;
 						break;
 					}
 				}
@@ -760,6 +770,7 @@ bool PODEM(Wire* W)
 		{
 			CWire[m]->PrintWire();
 		}
+		cout<<endl;
 		/*--------------------for test--------------------*/
 
 		//Backtrace
@@ -782,6 +793,26 @@ bool PODEM(Wire* W)
 			//until the frontier is not a Not gate.
 			CurrentWire = FrontierGate->GetOutput();
 			FrontierGates = CurrentWire->GetFanOut();
+
+			/*--------------------for test-------------------*/
+			cout<<"frontier gates are: "<<endl;
+			for(unsigned i=0; i<FrontierGates.size(); i++)
+			{
+				cout<<FrontierGates[i]->GetGateName()<<",";
+			}
+			cout<<endl;
+			/*--------------------for test-------------------*/
+
+			/*--------------------for test--------------------*/
+			cout<<"DFrontiers are: ";
+			for (unsigned i=0; i<DFrontiers.size(); i++)
+			{
+				cout<<DFrontiers[i]->GetGateName()<<",";
+			}	
+			cout<<endl;
+			/*--------------------for test--------------------*/
+
+			DFrontiers.pop_back();
 			//vector<Gate*>::iterator GPointer = DFrontiers.end();
 			int F_size = FrontierGates.size();
 
@@ -801,11 +832,12 @@ bool PODEM(Wire* W)
 				{
 					bool update_flag = true;
 					int D_size = DFrontiers.size();
-					for (int j=0; j<D_size; i++)
+					for (int j=0; j<D_size; j++)
 					{
 						if (DFrontiers[j]==FrontierGates[i])
 						{
 							update_flag = false;
+							cout<<"Gate "<<FrontierGates[i]->GetGateName()<<" don't need to be pushed into the DFrontier Gate."<<endl;
 							break;
 						}
 					}
@@ -862,7 +894,7 @@ bool PODEM(Wire* W)
 				NotLists.erase(NotLists.begin());
 			}
 			//DFrontiers.erase(GPointer);
-			DFrontiers.pop_back();
+			
 			
 	
 		}
