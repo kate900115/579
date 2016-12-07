@@ -639,260 +639,188 @@ bool PODEM(Wire* W)
 		return true;
 	else
 	{
-		
+		//pick up a gate from D-frontier
+		//to do objective()
 
-	
-	//If No DFrontier, untestable
-	//return false
+		vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
+		int F_size = FrontierGates.size();
 
-/*
-	for (unsigned i=0; i<CurrentWire->GetFanOut().size(); i++)
-	{
-		if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==X)
-		{break;}
-		else if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==D)
-		{break;}
-		else if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==DNOT)
-		{break;}
-		if (i == CurrentWire->GetFanOut().size()-1)
-		{return false;}		
-	}
-*/
+		vector <Gate*> NotLists;
 
-	
-	//pick up a gate from D-frontier
-	//to do objective()
-
-	vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
-	int F_size = FrontierGates.size();
-
-	vector <Gate*> NotLists;
-
-	for (int i=0; i<F_size; i++)
-	{
-		if (FrontierGates[i]->GetGateType()==NOT)
+		for (int i=0; i<F_size; i++)
 		{
-			NotLists.push_back(FrontierGates[i]);
-		}
-		else
-		{
-			bool update_flag = true;
-			int D_size = DFrontiers.size();
-			for (int i=0; i<D_size; i++)
-			{
-				if (DFrontiers[i]==FrontierGates.front())
-				{
-					update_flag = false;
-					break;
-				}
-			}
-			if (update_flag)
-			{
-				DFrontiers.push_back(FrontierGates.front());
-			}
-		}
-	}
-
-	while (!NotLists.empty())
-	{
-		if (NotLists.front()->GetGateType()==NOT)
-		{
-			if (NotLists.front()->GetInputs()[0]->GetValue()==D)
-			{
-				NotLists.front()->GetOutput()->SetValue(DNOT);
-			}
-			else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
-			{
-				NotLists.front()->GetOutput()->SetValue(D);
-			}
-			NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
-		}
-		else
-		{
-			bool update_flag = true;
-			int D_size = DFrontiers.size();
-			for (int i=0; i<D_size; i++)
-			{
-				if (DFrontiers[i]==FrontierGates.front())
-				{
-					update_flag = false;
-					break;
-				}
-			}
-			if (update_flag)
-			{
-				DFrontiers.push_back(NotLists.front());
-			}
-		}	
-		NotLists.erase(NotLists.begin());
-	}
-
-	
-
-	if (DFrontiers.size()==0)	
-	{
-		return false;
-	}
-/*
-	while (FrontierGates.size()!=0)
-	{
-		if (FrontierGates.front()->GetGateType()==NOT)
-		{
-			if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
-			else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
-			FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
-			//FrontierGate = FrontierGates.front();
-			CurrentWire = FrontierGate->GetOutput();
-		}
-		else
-		{
-			int D_size = DFrontiers.size();
-			bool update_flag = true;
-			for (int i=0; i<D_size; i++)
-			{
-				if (DFrontiers[i]==FrontierGates.front())
-				{
-					cout<<"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"<<endl;
-					update_flag = false;
-					break;
-				}
-			}
-			
-			if (update_flag)
-			{
-				DFrontiers.push_back(FrontierGates.front());
-			}
-		}
-		
-		FrontierGates.erase(FrontierGates.begin());
-	}
-	*/
-	/*--------------------for test--------------------*/
-	cout<<"DFrontiers are: ";
-	for (unsigned i=0; i<DFrontiers.size(); i++)
-	{
-		cout<<DFrontiers[i]->GetGateName()<<",";
-	}	
-	cout<<endl;
-	/*--------------------for test--------------------*/
-
-	FrontierGate = DFrontiers.back();
-	//DFrontiers.erase(DFrontiers.begin());
-
-	
-
-	/*--------------------for test--------------------*/
-	cout<<"{NEW} Frontier Gate is:";	
-	FrontierGate->PrintGate();
-	cout<<endl;
-	/*--------------------for test--------------------*/
-
-	//objective
-	Objective(FrontierGate);
-	FrontierGate->GetOutput()->SetValue(LookUpTable(FrontierGate));
-
-	/*--------------------for test--------------------*/
-	cout<<"-------after objective---------"<<endl;
-	for (int m=0; m<WireSize; m++)
-	{
-		CWire[m]->PrintWire();
-	}
-	/*--------------------for test--------------------*/
-
-	//Backtrace
-	Wire* BTResult = Backtrace(FrontierGate);
-	/*--------------------for test--------------------*/
-	cout<<"-------after backtrace---------"<<endl;
-	for (int m=0; m<WireSize; m++)
-	{
-		CWire[m]->PrintWire();
-	}
-	/*--------------------for test--------------------*/
-
-		
-	//if all the Backtrace is done, current wire change 
-	//and frontier gate changes
-	if(BTResult==NULL)
-	{
-		//if the frontier gate is not gate
-		//we need to propagate it further
-		//until the frontier is not a Not gate.
-	//	FrontierGates = CurrentWire->GetFanOut();
-		CurrentWire = FrontierGate->GetOutput();
-		FrontierGates = CurrentWire->GetFanOut();
-		DFrontiers.pop_back();
-	/*	cout<<FrontierGates.size()<<endl;
-		while (FrontierGates.size()!=0)
-		{
-			if (FrontierGates.front()->GetGateType()==NOT)
-			{
-				if ((FrontierGates.front()->GetInputs())[0]->GetValue()==D) FrontierGates.front()->GetOutput()->SetValue(DNOT);
-				else if ((FrontierGate->GetInputs())[0]->GetValue()==DNOT) FrontierGates.front()->GetOutput()->SetValue(D);
-				FrontierGates.push_back(FrontierGates.front()->GetOutput()->GetFanOut()[0]);
-				//FrontierGate = FrontierGates.front();
-				CurrentWire = FrontierGate->GetOutput();
+			if (FrontierGates[i]->GetGateType()==NOT)
+			{	
+				NotLists.push_back(FrontierGates[i]);
 			}
 			else
 			{
-				DFrontiers.push_back(FrontierGates.front());
+				bool update_flag = true;
+				int D_size = DFrontiers.size();
+				for (int i=0; i<D_size; i++)
+				{
+					if (DFrontiers[i]==FrontierGates.front())
+					{
+						update_flag = false;
+						break;
+					}
+				}
+				if (update_flag)
+				{
+					DFrontiers.push_back(FrontierGates.front());
+				}
 			}
-			FrontierGates.erase(FrontierGates.begin());
 		}
+
+		while (!NotLists.empty())
+		{
+			if (NotLists.front()->GetGateType()==NOT)
+			{
+				if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+				{
+					NotLists.front()->GetOutput()->SetValue(DNOT);
+				}
+				else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+				{
+					NotLists.front()->GetOutput()->SetValue(D);
+				}
+				NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+			}
+			else
+			{
+				bool update_flag = true;
+				int D_size = DFrontiers.size();
+				for (int i=0; i<D_size; i++)
+				{
+					if (DFrontiers[i]==FrontierGates.front())
+					{
+						update_flag = false;
+						break;
+					}
+				}
+				if (update_flag)
+				{
+					DFrontiers.push_back(NotLists.front());
+				}
+			}	
+			NotLists.erase(NotLists.begin());
+		}
+
+		//If No DFrontier, untestable
+		//return false
+
+		if (DFrontiers.size()==0)	
+		{
+			return false;
+		}
+
+		/*--------------------for test--------------------*/
+		cout<<"DFrontiers are: ";
+		for (unsigned i=0; i<DFrontiers.size(); i++)
+		{
+			cout<<DFrontiers[i]->GetGateName()<<",";
+		}	
+		cout<<endl;
+		/*--------------------for test--------------------*/
+
 		FrontierGate = DFrontiers.back();
-		DFrontiers.pop_back();	*/
-	}
+		//DFrontiers.erase(DFrontiers.begin());
 
-	//ImplyForward BTResult to see if there is a contradiction
-	if (InputImplyForward())
-	{
-		/*--------------------for test--------------------*/
-		cout<<"-------after imply---------"<<endl;
-		for (int m=0; m<WireSize; m++)
-		{
-			CWire[m]->PrintWire();
-		}
-		/*--------------------for test--------------------*/
-		if (PODEM(CurrentWire)==true) return true;
-	}
-	if (BTResult==NULL)
-	{
-		return false;
-	}
 	
-	//implyForward BTResult' to see if there is a contradiction
-	if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
-		{return false;}
-	if(BTResult->GetValue()==ONE)
-		{BTResult->SetValue(ZERO);}
-	else if (BTResult->GetValue()==ZERO)
-		{BTResult->SetValue(ONE);}
-	/*--------------------for test--------------------*/
-	cout<<"---fail, we need to backtrack.---"<<endl;
-	for (int m=0; m<WireSize; m++)
-	{
-		CWire[m]->PrintWire();
-	}
-	/*--------------------for test--------------------*/
 
-	if(InputImplyForward())
-	{
 		/*--------------------for test--------------------*/
-		cout<<"-------after imply---------"<<endl;
+		cout<<"{NEW} Frontier Gate is:";	
+		FrontierGate->PrintGate();
+		cout<<endl;
+		/*--------------------for test--------------------*/
+
+		//objective
+		Objective(FrontierGate);
+		FrontierGate->GetOutput()->SetValue(LookUpTable(FrontierGate));
+
+		/*--------------------for test--------------------*/
+		cout<<"-------after objective---------"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{
 			CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
 
-		if (PODEM(CurrentWire)==true) return true;
-	}
+		//Backtrace
+		Wire* BTResult = Backtrace(FrontierGate);
+		/*--------------------for test--------------------*/
+		cout<<"-------after backtrace---------"<<endl;
+		for (int m=0; m<WireSize; m++)
+		{
+			CWire[m]->PrintWire();
+		}	
+		/*--------------------for test--------------------*/
 
-	//Imply BTResult= X
-	BTResult->SetValue(X);
-	BTResult->SetFixed(false);
-	BTResult->SetBTVisited(false);
-	InputImplyForward();
-	return false;
+		
+		//if all the Backtrace is done, current wire change 
+		//and frontier gate changes
+		if(BTResult==NULL)
+		{
+			//if the frontier gate is not gate
+			//we need to propagate it further
+			//until the frontier is not a Not gate.
+			CurrentWire = FrontierGate->GetOutput();
+			FrontierGates = CurrentWire->GetFanOut();
+			DFrontiers.pop_back();
+
+		}
+
+		//ImplyForward BTResult to see if there is a contradiction
+		if (InputImplyForward())
+		{
+			/*--------------------for test--------------------*/
+			cout<<"-------after imply---------"<<endl;
+			for (int m=0; m<WireSize; m++)
+			{
+				CWire[m]->PrintWire();
+			}
+			/*--------------------for test--------------------*/
+			if (PODEM(CurrentWire)==true) return true;
+		}
+		if (BTResult==NULL)
+		{
+			return false;
+		}
+	
+		//implyForward BTResult' to see if there is a contradiction
+		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
+			{return false;}
+		if(BTResult->GetValue()==ONE)
+			{BTResult->SetValue(ZERO);}
+		else if (BTResult->GetValue()==ZERO)
+			{BTResult->SetValue(ONE);}
+		/*--------------------for test--------------------*/
+		cout<<"---fail, we need to backtrack.---"<<endl;
+		for (int m=0; m<WireSize; m++)
+		{	
+			CWire[m]->PrintWire();
+		}
+		/*--------------------for test--------------------*/
+
+		if(InputImplyForward())
+		{
+			/*--------------------for test--------------------*/
+			cout<<"-------after imply---------"<<endl;
+			for (int m=0; m<WireSize; m++)
+			{
+				CWire[m]->PrintWire();
+			}
+			/*--------------------for test--------------------*/
+
+			if (PODEM(CurrentWire)==true) return true;
+		}
+
+		//Imply BTResult= X
+		BTResult->SetValue(X);
+		BTResult->SetFixed(false);
+		BTResult->SetBTVisited(false);
+		InputImplyForward();
+		return false;
 	}
 }
 
