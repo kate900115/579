@@ -653,6 +653,10 @@ bool PODEM(Wire* W)
 			{	
 				NotLists.push_back(FrontierGates[i]);
 			}
+			else if (FrontierGates[i]->GetGateType()==BUFFER)
+			{	
+				NotLists.push_back(FrontierGates[i]);
+			}
 			else
 			{
 				bool update_flag = true;
@@ -683,6 +687,18 @@ bool PODEM(Wire* W)
 				else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
 				{
 					NotLists.front()->GetOutput()->SetValue(D);
+				}
+				NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+			}
+			else if (NotLists.front()->GetGateType()==BUFFER)
+			{
+				if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+				{
+					NotLists.front()->GetOutput()->SetValue(D);
+				}
+				else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+				{
+					NotLists.front()->GetOutput()->SetValue(DNOT);
 				}
 				NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
 			}
@@ -887,6 +903,50 @@ void ImplyBackward(Gate* G)
 				}
 			}			
 		}
+
+		else if (gates.front()->GetGateType()==BUFFER)
+		{
+			if (gates.front()->GetOutput()->GetValue()==ONE)
+			{
+				(gates.front()->GetInputs())[0]->SetValue(ONE);
+				gates.front()->GetInputs()[0]->SetFixed(true);
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+
+			}
+			else if (gates.front()->GetOutput()->GetValue()==ZERO)
+			{
+				(gates.front()->GetInputs())[0]->SetValue(ZERO);
+				//gates.front()->SetVisited(true);
+				gates.front()->GetInputs()[0]->SetFixed(true);
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
+				{	
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==D)
+			{	
+				(gates.front()->GetInputs())[0]->SetValue(ONE);
+				gates.front()->GetInputs()[0]->SetFixed(true);
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
+				{
+					gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}
+			else if (gates.front()->GetOutput()->GetValue()==DNOT)
+			{	
+				(gates.front()->GetInputs())[0]->SetValue(ZERO);
+				gates.front()->GetInputs()[0]->SetFixed(true);
+				if (gates.front()->GetInputs()[0]->GetWireType()!=INPUT)
+				{
+						gates.push_back(gates.front()->GetInputs()[0]->GetFanIn());
+				}
+			}			
+		}
+
+
 		else if (gates.front()->GetGateType()==AND)
 		{
 			if (gates.front()->GetOutput()->GetValue()==ONE)
@@ -1012,6 +1072,16 @@ Gate* ImplyForward(vector<Gate*> Gs)
 	while (gates.size()!=0)
 	{
 		if (gates.front()->GetGateType() == NOT)
+		{
+			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
+			gates.front()->GetOutput()->SetFixed(true);
+			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
+			{
+				NewFrontier = (gates.front()->GetOutput()->GetFanOut())[0];
+				gates.push_back((gates.front()->GetOutput()->GetFanOut())[0]);
+			}
+		}
+		else if (gates.front()->GetGateType() == BUFFER)
 		{
 			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
 			gates.front()->GetOutput()->SetFixed(true);
