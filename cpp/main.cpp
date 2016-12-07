@@ -596,6 +596,8 @@ bool PODEM(Wire* W)
 	
 	//If No DFrontier, untestable
 	//return false
+
+/*
 	for (unsigned i=0; i<CurrentWire->GetFanOut().size(); i++)
 	{
 		if (CurrentWire->GetFanOut()[i]->GetOutput()->GetValue()==X)
@@ -607,7 +609,12 @@ bool PODEM(Wire* W)
 		if (i == CurrentWire->GetFanOut().size()-1)
 		{return false;}		
 	}
-	
+*/
+
+	if (DFrontiers.size()==0)	
+	{
+		return false;
+	}
 	//pick up a gate from D-frontier
 	//to do objective()
 	FrontierGate = CurrentWire->GetFanOut()[0];
