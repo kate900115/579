@@ -484,57 +484,80 @@ int main(int argc, char **argv)
 		/*--------------------for test--------------------*/
 
 		////////////////////////////////////////////////////////////////////////
-		//push the DFrontier in
+		//clear DFrontier List
 		while (!DFrontiers.empty())
 		{
 			DFrontiers.pop_back();
 		}
-		DFrontiers = PodemWire->GetFanOut();
+	//	DFrontiers = PodemWire->GetFanOut();
 	//	DFrontiers.push_back(PodemWire->GetFanout[0]);
 
 	//	cout<<DFrontiers.size()<<endl;
 	//	cout<<InitialFrontier->GetGateName()<<endl;
 	//	cout<<DFrontiers.front()->GetGateName()<<endl;
-
+		if(PODEM(PodemWire)==true)
+		{	
+			TestNumber++;
+			cout<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<endl;
+		}
 		//Do PODEM
-		bool success=false;
-		while (!DFrontiers.empty())
+		else
 		{
-			
-			if(PODEM(PodemWire)==true)
-			{	
-				TestNumber++;
-				cout<<endl;
-				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-				cout<<endl;
-				success = true;
-				break;
-			}
-			else
+			cout<<endl;
+			cout<<"fail!"<<endl;
+			cout<<endl;
+			DFrontiers.pop_back();					
+			ClearObjFixed();
+			for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 			{
-				cout<<endl;
-				cout<<"fail!"<<endl;
-				cout<<endl;
-				DFrontiers.pop_back();
-				ClearObjFixed();
-				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+				if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
 				{
-					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+					PodemWire = DFrontiers.back()->GetInputs()[m];
+					break;
+				}
+			}
+			bool success=false;
+			
+			while (!DFrontiers.empty())
+			{
+				
+				if(PODEM(PodemWire)==true)
+				{	
+					TestNumber++;
+					cout<<endl;
+					cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<endl;
+					success = true;
+					break;
+				}
+				else
+				{
+					cout<<endl;
+					cout<<"fail!"<<endl;
+					cout<<endl;
+					DFrontiers.pop_back();
+					ClearObjFixed();
+					for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 					{
-						PodemWire = DFrontiers.back()->GetInputs()[m];
-						break;
+						if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+						{
+							PodemWire = DFrontiers.back()->GetInputs()[m];
+							break;
+						}
 					}
 				}
 			}
-			
+			if (!success)
+			{
+				cout<<endl;
+				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+				cout<<endl;
+			}
 			
 		}
-		if (!success)
-		{
-			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
-			cout<<endl;
-		}
+		
 
 		/*--------------------for test--------------------*/
 		// to test the DFrontier
@@ -594,47 +617,65 @@ int main(int argc, char **argv)
 		/*--------------------for test--------------------*/
 
 		////////////////////////////////////////////////////////////////////////
-		//push the DFrontier in
+		//clear DFrontier List
 		while (!DFrontiers.empty())
 		{
 			DFrontiers.pop_back();
 		}
-		DFrontiers = PodemWire->GetFanOut();
+	//	DFrontiers = PodemWire->GetFanOut();
+	//	DFrontiers.push_back(PodemWire->GetFanout[0]);
 
+	//	cout<<DFrontiers.size()<<endl;
+	//	cout<<InitialFrontier->GetGateName()<<endl;
+	//	cout<<DFrontiers.front()->GetGateName()<<endl;
+		if(PODEM(PodemWire)==true)
+		{	
+			TestNumber++;
+			cout<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<endl;
+		}
 		//Do PODEM
-		success=false;
-		while (!DFrontiers.empty())
+		else
 		{
-			
-			ClearObjFixed();
-			if(PODEM(PodemWire)==true)
-			{	
-				TestNumber++;
-				cout<<endl;
-				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-				cout<<endl;
-				success = true;
-				break;
+			bool success=false;
+			while (!DFrontiers.empty())
+			{
+				
+				if(PODEM(PodemWire)==true)
+				{	
+					TestNumber++;
+					cout<<endl;
+						cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<endl;
+					success = true;
+					break;
+				}
+				else
+				{
+					cout<<endl;
+					cout<<"fail!"<<endl;
+					cout<<endl;
+					DFrontiers.pop_back();
+					ClearObjFixed();
+					for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+					{
+						if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+						{
+							PodemWire = DFrontiers.back()->GetInputs()[m];
+							break;
+						}
+					}
+				}
 			}
-			else if (PODEM(PodemWire)==false)
+			if (!success)
 			{
 				cout<<endl;
-				cout<<"fail! Need to Enter PODEM again"<<endl;
+				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 				cout<<endl;
-				DFrontiers.pop_back();
-				
-				PodemWire = DFrontiers.back()->GetOutput();
 			}
 			
-			
 		}
-		if (!success)
-		{
-			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
-			cout<<endl;
-		}
-
 
 		/*--------------------for test--------------------*/
 		// to test the DFrontier
@@ -724,6 +765,7 @@ bool PODEM(Wire* W)
 				if (update_flag)
 				{
 					DFrontiers.push_back(FrontierGates[i]);
+					FrontierGates[i]->SetDFrontierVisited(true);
 				}
 			}
 		}
@@ -768,22 +810,10 @@ bool PODEM(Wire* W)
 					CurrentWire = NotLists.front()->GetOutput();
 				}
 			}
-			else
+			else if (!NotLists.front()->GetDFrontierVisited())
 			{
-				bool update_flag = true;
-				int D_size = DFrontiers.size();
-				for (int i=0; i<D_size; i++)
-				{
-					if (DFrontiers[i]==FrontierGates.front())
-					{
-						update_flag = false;
-						break;
-					}
-				}
-				if (update_flag)
-				{
-					DFrontiers.push_back(NotLists.front());
-				}
+				DFrontiers.push_back(NotLists.front());
+				NotLists.front()->SetDFrontierVisited(true);
 			}	
 			NotLists.erase(NotLists.begin());
 		}
@@ -900,6 +930,7 @@ bool PODEM(Wire* W)
 					if (update_flag)
 					{
 						DFrontiers.push_back(FrontierGates[i]);
+						FrontierGates.front()->SetDFrontierVisited(true);
 					}
 				}
 			}
@@ -962,6 +993,7 @@ bool PODEM(Wire* W)
 					if (update_flag)
 					{
 						DFrontiers.push_back(NotLists.front());
+						NotLists.front()->SetDFrontierVisited(true);
 					}
 				}	
 				NotLists.erase(NotLists.begin());
