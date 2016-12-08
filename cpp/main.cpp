@@ -455,8 +455,6 @@ int main(int argc, char **argv)
 		//Activate fault
 		//Implication to the back
 		
-	
-		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
 			Gate* DBack = CWire[i]->GetFanIn();
@@ -597,17 +595,35 @@ int main(int argc, char **argv)
 		DFrontiers = PodemWire->GetFanOut();
 
 		//Do PODEM
-		if(PODEM(PodemWire)==true)
-		{	
-			TestNumber++;
-			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
-			cout<<endl;
+		success=false;
+		while (!DFrontiers.empty())
+		{
+			
+			if(PODEM(PodemWire)==true)
+			{	
+				TestNumber++;
+				cout<<endl;
+				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+				cout<<endl;
+				success = true;
+				break;
+			}
+			else
+			{
+				cout<<endl;
+				cout<<"fail!"<<endl;
+				cout<<endl;
+				DFrontiers.pop_back();
+				ClearObjFixed();
+				PodemWire = DFrontiers.back()->GetOutput();
+			}
+			
+			
 		}
-		else
+		if (!success)
 		{
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 			cout<<endl;
 		}
 
@@ -896,7 +912,6 @@ bool PODEM(Wire* W)
 					}
 					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
 					{
-						cout <<"xxxxxxxxxxxxx"<<endl;
 						NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
 					}
 					else
@@ -944,9 +959,6 @@ bool PODEM(Wire* W)
 				NotLists.erase(NotLists.begin());
 			}
 			//DFrontiers.erase(GPointer);
-			cout<<"66666667777777777788888888888887777777777776666666"<<endl;
-			
-	
 		}
 
 		//ImplyForward BTResult to see if there is a contradiction
