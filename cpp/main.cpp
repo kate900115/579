@@ -728,14 +728,29 @@ bool PODEM(Wire* W)
 		vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
 		int F_size = FrontierGates.size();
 		/*--------------------for test-------------------*/
-		cout<<"frontier gates are: "<<endl;
+		cout<<"frontier gates are: ";
 		for(unsigned i=0; i<FrontierGates.size(); i++)
 		{
 			cout<<FrontierGates[i]->GetGateName()<<",";
 		}
 		cout<<endl;
 		/*--------------------for test-------------------*/
-		
+
+
+		/*--------------------for test-------------------*/
+		cout<<endl<<"Gate information:"<<endl;
+		int GateSize=CGate.size();
+		for (int i=0; i<GateSize; i++)
+		{
+			CGate[i]->PrintGate();
+			for (int j=0; j<CGate[i]->GetInputSize(); j++)
+			{
+				cout<<"input"<<j<<"="<<(CGate[i]->GetInputs())[j]->GetWireName()<<", ";
+			}
+			cout<<"output = "<<CGate[i]->GetOutput()->GetWireName()<<", DFrontierVisited: "<<CGate[i]->GetDFrontierVisited()<<endl;
+		}
+
+		/*--------------------for test-------------------*/
 
 		vector <Gate*> NotLists;
 
@@ -749,24 +764,10 @@ bool PODEM(Wire* W)
 			{	
 				NotLists.push_back(FrontierGates[i]);
 			}
-			else
+			else if (!FrontierGates[i]->GetDFrontierVisited())
 			{
-				bool update_flag = true;
-				int D_size = DFrontiers.size();
-				for (int j=0; j<D_size; j++)
-				{
-					if (DFrontiers[j]==FrontierGates[i])
-					{
-						update_flag = false;
-						cout<<"Gate "<<FrontierGates[i]->GetGateName()<<" don't need to be pushed into the DFrontier Gate."<<endl;
-						break;
-					}
-				}
-				if (update_flag)
-				{
-					DFrontiers.push_back(FrontierGates[i]);
-					FrontierGates[i]->SetDFrontierVisited(true);
-				}
+				DFrontiers.push_back(FrontierGates[i]);
+				FrontierGates[i]->SetDFrontierVisited(true);
 			}
 		}
 
@@ -784,7 +785,9 @@ bool PODEM(Wire* W)
 				}
 				if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
 				{
-					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+					NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					//NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
 				}
 				else
 				{
@@ -803,7 +806,8 @@ bool PODEM(Wire* W)
 				}
 				if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
 				{
-					NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+					vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+					NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
 				}
 				else
 				{
@@ -881,7 +885,7 @@ bool PODEM(Wire* W)
 			FrontierGates = CurrentWire->GetFanOut();
 
 			/*--------------------for test-------------------*/
-			cout<<"frontier gates are: "<<endl;
+			cout<<"frontier gates are: ";
 			for(unsigned i=0; i<FrontierGates.size(); i++)
 			{
 				cout<<FrontierGates[i]->GetGateName()<<",";
@@ -900,7 +904,7 @@ bool PODEM(Wire* W)
 
 			DFrontiers.pop_back();
 			//vector<Gate*>::iterator GPointer = DFrontiers.end();
-			int F_size = FrontierGates.size();
+		/*	int F_size = FrontierGates.size();
 
 			vector <Gate*> NotLists;
 
@@ -914,24 +918,10 @@ bool PODEM(Wire* W)
 				{	
 					NotLists.push_back(FrontierGates[i]);
 				}
-				else
+				else if (!FrontierGates[i]->GetDFrontierVisited())
 				{
-					bool update_flag = true;
-					int D_size = DFrontiers.size();
-					for (int j=0; j<D_size; j++)
-					{
-						if (DFrontiers[j]==FrontierGates[i])
-						{
-							update_flag = false;
-							cout<<"Gate "<<FrontierGates[i]->GetGateName()<<" don't need to be pushed into the DFrontier Gate."<<endl;
-							break;
-						}
-					}
-					if (update_flag)
-					{
-						DFrontiers.push_back(FrontierGates[i]);
-						FrontierGates.front()->SetDFrontierVisited(true);
-					}
+					DFrontiers.push_back(FrontierGates[i]);
+					FrontierGates.front()->SetDFrontierVisited(true);	
 				}
 			}
 
@@ -951,7 +941,8 @@ bool PODEM(Wire* W)
 					}
 					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
 					{
-						NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+						vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+						NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
 					}
 					else
 					{
@@ -970,7 +961,8 @@ bool PODEM(Wire* W)
 					}
 					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
 					{
-						NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
+						vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+						NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
 					}
 					else
 					{
@@ -978,27 +970,15 @@ bool PODEM(Wire* W)
 					}
 
 				}
-				else
+				else if (!NotLists.front()->GetDFrontierVisited())
 				{
-					bool update_flag = true;
-					int D_size = DFrontiers.size();
-					for (int i=0; i<D_size; i++)
-					{
-						if (DFrontiers[i]==NotLists.front())
-						{
-							update_flag = false;
-							break;
-						}
-					}
-					if (update_flag)
-					{
-						DFrontiers.push_back(NotLists.front());
-						NotLists.front()->SetDFrontierVisited(true);
-					}
+					DFrontiers.push_back(NotLists.front());
+					NotLists.front()->SetDFrontierVisited(true);
 				}	
 				NotLists.erase(NotLists.begin());
 			}
 			//DFrontiers.erase(GPointer);
+			*/
 		}
 
 		//ImplyForward BTResult to see if there is a contradiction
