@@ -19,6 +19,7 @@ void Objective(Gate* G);
 DType LookUpTable(Gate* G);
 DType DLookUpTable(Gate* G);
 void ClearObjFixed();
+void ClearDFrontierVisited();
 
 vector<Wire*> CWire;
 vector<Gate*> CGate;
@@ -443,6 +444,8 @@ int main(int argc, char **argv)
 	{
 		//intialize and set s-a-1 fault
 		Initialize();
+		ClearObjFixed();
+		ClearDFrontierVisited();
 		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
@@ -539,13 +542,20 @@ int main(int argc, char **argv)
 					cout<<endl;
 					DFrontiers.pop_back();
 					ClearObjFixed();
-					for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+					if (!DFrontiers.empty())
 					{
-						if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 						{
-							PodemWire = DFrontiers.back()->GetInputs()[m];
-							break;
-						}
+							if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+							{
+								PodemWire = DFrontiers.back()->GetInputs()[m];
+								break;
+							}
+						}	
+					}
+					else
+					{
+						break;
 					}
 				}
 			}
@@ -572,12 +582,15 @@ int main(int argc, char **argv)
 			}
 		}*/
 
+		
 
 
 		//---------------------------------------------------------------------------------------------------------------
-		//initialize and set s-a-0 fault
+				//intialize and set s-a-1 fault
 		Initialize();
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+		ClearObjFixed();
+		ClearDFrontierVisited();
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
 
 		CWire[i]->SetStuck(true,DNOT);
 		CWire[i]->SetFixed(true);
@@ -588,6 +601,7 @@ int main(int argc, char **argv)
 
 		//Activate fault
 		//Implication to the back
+		
 		if (CWire[i]->GetWireType()!=INPUT)
 		{
 			Gate* DBack = CWire[i]->GetFanIn();
@@ -632,13 +646,27 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		//Do PODEM
 		else
 		{
+			cout<<endl;
+			cout<<"fail!"<<endl;
+			cout<<endl;
+			DFrontiers.pop_back();					
+			ClearObjFixed();
+			for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+			{
+				if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+				{
+					PodemWire = DFrontiers.back()->GetInputs()[m];
+					break;
+				}
+			}
 			bool success=false;
+			
 			while (!DFrontiers.empty())
 			{
 				
@@ -646,7 +674,7 @@ int main(int argc, char **argv)
 				{	
 					TestNumber++;
 					cout<<endl;
-						cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 					cout<<endl;
 					success = true;
 					break;
@@ -658,37 +686,31 @@ int main(int argc, char **argv)
 					cout<<endl;
 					DFrontiers.pop_back();
 					ClearObjFixed();
-					for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+					if (!DFrontiers.empty())
 					{
-						if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 						{
-							PodemWire = DFrontiers.back()->GetInputs()[m];
-							break;
-						}
+							if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+							{
+								PodemWire = DFrontiers.back()->GetInputs()[m];
+								break;
+							}
+						}	
+					}
+					else
+					{
+						break;
 					}
 				}
 			}
 			if (!success)
 			{
 				cout<<endl;
-				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 				cout<<endl;
 			}
 			
 		}
-
-		/*--------------------for test--------------------*/
-		// to test the DFrontier
-	/*	DF_size = DFrontiers.size();
-		if (DFrontiers.size()!=0)
-		{
-			cout<<"DFrontier list is shown below:"<<endl;
-			for (int i=0; i<DF_size; i++)
-			{
-				DFrontiers[i]->PrintGate();
-				cout<<endl;
-			}
-		}*/
 
 	}
 
@@ -827,6 +849,7 @@ bool PODEM(Wire* W)
 
 		if (DFrontiers.size()==0)	
 		{
+			cout<<"No D-Frontier!!!"<<endl;
 			return false;
 		}
 
@@ -1052,6 +1075,15 @@ void ClearObjFixed()
 	for (int i=0; i<size; i++)
 	{
 		CWire[i]->SetObjFixed(false);
+	}
+}
+
+void ClearDFrontierVisited()
+{
+	int size = CGate.size();
+	for (int i=0; i<size; i++)
+	{
+		CGate[i]->SetDFrontierVisited(false);
 	}
 }
 
@@ -1343,7 +1375,7 @@ void Objective(Gate* G)
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
 			//if (G->GetInputs()[i]->GetValue()==X)
-			if (!G->GetInputs()[i]->GetFixed())
+			if ((G->GetInputs()[i]->GetValue()!=D)&&(G->GetInputs()[i]->GetValue()!=DNOT))
 			{
 				G->GetInputs()[i]->SetValue(ONE);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1358,7 +1390,7 @@ void Objective(Gate* G)
 	{	
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (!G->GetInputs()[i]->GetFixed())
+			if ((G->GetInputs()[i]->GetValue()!=D)&&(G->GetInputs()[i]->GetValue()!=DNOT))
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1373,7 +1405,7 @@ void Objective(Gate* G)
 	{
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (!G->GetInputs()[i]->GetFixed())
+			if ((G->GetInputs()[i]->GetValue()!=D)&&(G->GetInputs()[i]->GetValue()!=DNOT))
 			{
 				G->GetInputs()[i]->SetValue(ONE);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1388,7 +1420,7 @@ void Objective(Gate* G)
 	{
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (!G->GetInputs()[i]->GetFixed())
+			if ((G->GetInputs()[i]->GetValue()!=D)&&(G->GetInputs()[i]->GetValue()!=DNOT))
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
 				G->GetInputs()[i]->SetObjFixed(true);
