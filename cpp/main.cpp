@@ -517,7 +517,14 @@ int main(int argc, char **argv)
 				cout<<endl;
 				DFrontiers.pop_back();
 				ClearObjFixed();
-				PodemWire = DFrontiers.back()->GetOutput();
+				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+				{
+					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+					{
+						PodemWire = DFrontiers.back()->GetInputs()[m];
+						break;
+					}
+				}
 			}
 			
 			
@@ -599,6 +606,7 @@ int main(int argc, char **argv)
 		while (!DFrontiers.empty())
 		{
 			
+			ClearObjFixed();
 			if(PODEM(PodemWire)==true)
 			{	
 				TestNumber++;
@@ -608,13 +616,13 @@ int main(int argc, char **argv)
 				success = true;
 				break;
 			}
-			else
+			else if (PODEM(PodemWire)==false)
 			{
 				cout<<endl;
-				cout<<"fail!"<<endl;
+				cout<<"fail! Need to Enter PODEM again"<<endl;
 				cout<<endl;
 				DFrontiers.pop_back();
-				ClearObjFixed();
+				
 				PodemWire = DFrontiers.back()->GetOutput();
 			}
 			
@@ -1292,7 +1300,7 @@ bool InputImplyForward()
 		for (int j=0; j<gatesize; j++)
 		{
 
-			if (fanout[j]->GetOutput()->GetFixed()==false)
+			if ((fanout[j]->GetOutput()->GetFixed()==false)&&(fanout[j]->GetOutput()->GetObjFixed()==false))
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
 				wires.push_back(fanout[j]->GetOutput());
@@ -1322,7 +1330,8 @@ void Objective(Gate* G)
 	{
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]->GetValue()==X)
+			//if (G->GetInputs()[i]->GetValue()==X)
+			if (!G->GetInputs()[i]->GetFixed())
 			{
 				G->GetInputs()[i]->SetValue(ONE);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1337,7 +1346,7 @@ void Objective(Gate* G)
 	{	
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]->GetValue()==X)
+			if (!G->GetInputs()[i]->GetFixed())
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1352,7 +1361,7 @@ void Objective(Gate* G)
 	{
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]->GetValue()==X)
+			if (!G->GetInputs()[i]->GetFixed())
 			{
 				G->GetInputs()[i]->SetValue(ONE);
 				G->GetInputs()[i]->SetObjFixed(true);
@@ -1367,7 +1376,7 @@ void Objective(Gate* G)
 	{
 		for (unsigned i=0; i<G->GetInputs().size(); i++)
 		{
-			if (G->GetInputs()[i]->GetValue()==X)
+			if (!G->GetInputs()[i]->GetFixed())
 			{
 				G->GetInputs()[i]->SetValue(ZERO);
 				G->GetInputs()[i]->SetObjFixed(true);
