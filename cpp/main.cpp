@@ -513,6 +513,7 @@ int main(int argc, char **argv)
 			cout<<endl;
 			DFrontiers.pop_back();					
 			ClearObjFixed();
+			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 			if (!DFrontiers.empty())
 			{
 				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
@@ -545,6 +546,7 @@ int main(int argc, char **argv)
 					cout<<endl;
 					DFrontiers.pop_back();
 					ClearObjFixed();
+					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 					if (!DFrontiers.empty())
 					{
 						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
@@ -660,6 +662,8 @@ int main(int argc, char **argv)
 			cout<<endl;
 			DFrontiers.pop_back();					
 			ClearObjFixed();
+			
+			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 			if (!DFrontiers.empty())
 			{
 				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
@@ -692,6 +696,7 @@ int main(int argc, char **argv)
 					cout<<endl;
 					DFrontiers.pop_back();
 					ClearObjFixed();
+					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 					if (!DFrontiers.empty())
 					{
 						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
@@ -855,6 +860,7 @@ bool PODEM(Wire* W)
 
 		if (DFrontiers.size()==0)	
 		{
+			cout<<"DFROTIER SIZE ="<<DFrontiers.size()<<endl;
 			cout<<"No D-Frontier!!!"<<endl;
 			return false;
 		}
@@ -912,6 +918,7 @@ bool PODEM(Wire* W)
 		/*--------------------for test--------------------*/
 
 		
+
 		//if all the Backtrace is done, current wire change 
 		//and frontier gate changes
 		if(BTResult==NULL)
@@ -920,6 +927,42 @@ bool PODEM(Wire* W)
 			//we need to propagate it further
 			//until the frontier is not a Not gate.
 			CurrentWire = FrontierGate->GetOutput();
+
+			while (CurrentWire->GetWireType()!=OUTPUT)
+			{
+				if ((CurrentWire->GetFanOut().size()==1)&&(CurrentWire->GetFanOut()[0]->GetGateType()==NOT))
+				{
+					if (CurrentWire->GetValue()==D)
+					{
+						CurrentWire = CurrentWire->GetFanOut()[0]->GetOutput();
+						CurrentWire->SetValue(DNOT);
+					}
+					else
+					{
+						CurrentWire = CurrentWire->GetFanOut()[0]->GetOutput();
+						CurrentWire->SetValue(D);
+					}
+				}
+				else if ((CurrentWire->GetFanOut().size()==1)&&(CurrentWire->GetFanOut()[0]->GetGateType()==BUFFER))
+				{
+					if (CurrentWire->GetValue()==D)
+					{
+						CurrentWire = CurrentWire->GetFanOut()[0]->GetOutput();
+						CurrentWire->SetValue(D);
+					}
+					else
+					{
+						CurrentWire = CurrentWire->GetFanOut()[0]->GetOutput();
+						CurrentWire->SetValue(DNOT);
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			
 			FrontierGates = CurrentWire->GetFanOut();
 
 			/*--------------------for test-------------------*/
@@ -1019,6 +1062,7 @@ bool PODEM(Wire* W)
 			*/
 		}
 
+
 		//ImplyForward BTResult to see if there is a contradiction
 		if (InputImplyForward())
 		{
@@ -1035,7 +1079,7 @@ bool PODEM(Wire* W)
 		{
 			return false;
 		}
-	
+
 		//implyForward BTResult' to see if there is a contradiction
 		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
 			{return false;}
@@ -1063,7 +1107,7 @@ bool PODEM(Wire* W)
 
 			if (PODEM(CurrentWire)==true) return true;
 		}
-
+		cout<<"D11 SIZE = "<<DFrontiers.size()<<endl;
 		//Imply BTResult= X
 		BTResult->SetValue(X);
 		BTResult->SetFixed(false);
