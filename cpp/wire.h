@@ -27,8 +27,8 @@ class Wire
 		Gate* FanInGate;
 		vector<Gate*> FanOutGate;
 		bool BTVisited;
+		bool ObjFixed;
 		bool IsFixed;
-		string FirstHalf;
 		string HalfName;
 		int FrameNum;
 
@@ -44,6 +44,7 @@ class Wire
 			FanOutGate = vector<Gate*>(); 
 			BTVisited = false;
 			IsFixed= false;
+			ObjFixed = false;
 			HalfName = name.substr(0, name.size()-3);
 			string a = name.substr(name.length()-1);
 			FrameNum = atoi(a.c_str());
@@ -63,11 +64,19 @@ class Wire
 
 		vector<Gate*> GetFanOut(){return FanOutGate;}
 
+		string GetHalfName(){return HalfName;}
+	
+		int GetFrameNum(){return FrameNum;}
+
 		bool GetBTVisited(){return BTVisited;}
 
 		bool GetFixed(){return IsFixed;}
 		
 		void SetFixed(bool fix){IsFixed = fix;}
+		
+		void SetObjFixed(bool fix){ObjFixed = fix;}
+
+		bool GetObjFixed(){return ObjFixed;}
 
 		bool GetStuck(){return IsStuck;}
 		
