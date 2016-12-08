@@ -787,6 +787,7 @@ bool PODEM(Wire* W)
 
 		vector <Gate*> NotLists;
 
+		//update DFrontier list
 		for (int i=0; i<F_size; i++)
 		{
 			if (FrontierGates[i]->GetGateType()==NOT)
