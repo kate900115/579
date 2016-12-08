@@ -513,12 +513,15 @@ int main(int argc, char **argv)
 			cout<<endl;
 			DFrontiers.pop_back();					
 			ClearObjFixed();
-			for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+			if (!DFrontiers.empty())
 			{
-				if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 				{
-					PodemWire = DFrontiers.back()->GetInputs()[m];
-					break;
+					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+					{
+						PodemWire = DFrontiers.back()->GetInputs()[m];
+						break;
+					}
 				}
 			}
 			bool success=false;
@@ -657,12 +660,15 @@ int main(int argc, char **argv)
 			cout<<endl;
 			DFrontiers.pop_back();					
 			ClearObjFixed();
-			for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+			if (!DFrontiers.empty())
 			{
-				if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
 				{
-					PodemWire = DFrontiers.back()->GetInputs()[m];
-					break;
+					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+					{
+						PodemWire = DFrontiers.back()->GetInputs()[m];
+						break;
+					}
 				}
 			}
 			bool success=false;
@@ -861,8 +867,17 @@ bool PODEM(Wire* W)
 		}	
 		cout<<endl;
 		/*--------------------for test--------------------*/
-
+		
+		//update current wire and frontier gate
 		FrontierGate = DFrontiers.back();
+		for (unsigned m=0; m<FrontierGate->GetInputs().size(); m++)
+		{
+			if ((FrontierGate->GetInputs()[m]->GetValue()==D)||(FrontierGate->GetInputs()[m]->GetValue()==DNOT))
+			{
+				CurrentWire = FrontierGate->GetInputs()[m];
+				break;
+			}
+		}
 		//DFrontiers.erase(DFrontiers.begin());
 
 	
