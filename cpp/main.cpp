@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 		Initialize();
 		ClearObjFixed();
 		ClearDFrontierVisited();
-		cout<<"@@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
 		CWire[i]->SetFixed(true);
@@ -531,7 +531,7 @@ int main(int argc, char **argv)
 				{	
 					TestNumber++;
 					cout<<endl;
-					cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
 					cout<<endl;
 					success = true;
 					break;
@@ -564,7 +564,7 @@ int main(int argc, char **argv)
 			if (!success)
 			{
 				cout<<endl;
-				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+				cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
 				cout<<endl;
 			}
 			
@@ -627,7 +627,7 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<endl<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<endl<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		//Do PODEM
@@ -660,7 +660,7 @@ int main(int argc, char **argv)
 				{	
 					TestNumber++;
 					cout<<endl;
-					cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+					cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 					cout<<endl;
 					success = true;
 					break;
@@ -693,7 +693,7 @@ int main(int argc, char **argv)
 			if (!success)
 			{
 				cout<<endl;
-				cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+				cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
 				cout<<endl;
 			}
 			
