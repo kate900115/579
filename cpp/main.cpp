@@ -26,6 +26,7 @@ vector<Gate*> CGate;
 vector<Wire*> InputWires;
 vector<Wire*> ComputedInputs;
 vector<Gate*> DFrontiers;
+vector<Wire*> OutputWires;
 
 Gate* FrontierGate;
 
@@ -76,6 +77,7 @@ int main(int argc, char **argv)
 			{
 				Wire* NewOutput = new Wire(word, OUTPUT, 0, X);
 				CWire.push_back(NewOutput);
+				OutputWires.push_back(NewOutput);
 			}
 		}
 
@@ -595,7 +597,7 @@ int main(int argc, char **argv)
 		Initialize();
 		ClearObjFixed();
 		ClearDFrontierVisited();
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
+		cout<<endl<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
 
 		CWire[i]->SetStuck(true,DNOT);
 		CWire[i]->SetFixed(true);
@@ -651,7 +653,7 @@ int main(int argc, char **argv)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+			cout<<endl<<"@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
 			cout<<endl;
 		}
 		//Do PODEM
@@ -1424,8 +1426,16 @@ bool InputImplyForward()
 		}
 		wires.erase(wires.begin());
 	}
-	cout<<"return true"<<endl;
-	return true;
+	bool success=false;
+	for (unsigned i = 0; i<OutputWires.size(); i++)
+	{
+		if((OutputWires[i]->GetValue()== DNOT)||(OutputWires[i]->GetValue()== D)||(OutputWires[i]->GetValue()== X))
+		{
+			cout<<"return true"<<endl;
+			success = true;
+		}
+	}
+	return success;
 }	
 
 
