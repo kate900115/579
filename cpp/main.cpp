@@ -821,11 +821,13 @@ bool PODEM(Wire* W)
 				{
 					vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
 					NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
 					//NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
 				}
 				else
 				{
 					CurrentWire = NotLists.front()->GetOutput();
+					return true;
 				}
 			}
 			else if (NotLists.front()->GetGateType()==BUFFER)
@@ -842,10 +844,12 @@ bool PODEM(Wire* W)
 				{
 					vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
 					NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
 				}
 				else
 				{
 					CurrentWire = NotLists.front()->GetOutput();
+					return true;
 				}
 			}
 			else if (!NotLists.front()->GetDFrontierVisited())
