@@ -1315,6 +1315,10 @@ Wire* ImplyForward(vector<Gate*> Gs)
 				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
 				gates.insert(gates.end(), outputs.begin(), outputs.end());
 			}
+			else
+			{
+				return gates.front()->GetOutput();
+			}
 		}
 		else if (gates.front()->GetGateType() == BUFFER)
 		{
@@ -1324,6 +1328,10 @@ Wire* ImplyForward(vector<Gate*> Gs)
 			{
 				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
 				gates.insert(gates.end(), outputs.begin(), outputs.end());
+			}
+			else
+			{
+				return gates.front()->GetOutput();
 			}
 		}
 		else
