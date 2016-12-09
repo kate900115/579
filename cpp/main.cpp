@@ -13,7 +13,7 @@ bool PODEM(Wire* W);
 void Initialize();
 void ImplyBackward(Gate* G);
 bool InputImplyForward();
-Gate* ImplyForward(vector<Gate*> Gs);
+Wire* ImplyForward(vector<Gate*> Gs);
 Wire* Backtrace(Gate* G);
 void Objective(Gate* G);
 DType LookUpTable(Gate* G);
@@ -448,6 +448,11 @@ int main(int argc, char **argv)
 		Initialize();
 		ClearObjFixed();
 		ClearDFrontierVisited();
+		//clear DFrontier List
+		while (!DFrontiers.empty())
+		{
+			DFrontiers.pop_back();
+		}
 		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
@@ -469,13 +474,13 @@ int main(int argc, char **argv)
 		//find D-frontier
 		//imply forward if there are NOT gates
 		//and then update the frontier wire
-		vector<Gate*> DFront = CWire[i]->GetFanOut();
 		Wire* PodemWire = CWire[i];
-		Gate* InitialFrontier = ImplyForward(DFront);
-		if (InitialFrontier != NULL)
+		if (PodemWire->GetWireType()!=OUTPUT)
 		{
-			PodemWire = InitialFrontier->GetInputs()[0];
-		}	
+			vector<Gate*> DFront = CWire[i]->GetFanOut();
+			PodemWire = ImplyForward(DFront);	
+		}
+		
 
 		//for test
 		//PodemWire->PrintWire();
@@ -489,11 +494,7 @@ int main(int argc, char **argv)
 		/*--------------------for test--------------------*/
 
 		////////////////////////////////////////////////////////////////////////
-		//clear DFrontier List
-		while (!DFrontiers.empty())
-		{
-			DFrontiers.pop_back();
-		}
+
 
 		if(PODEM(PodemWire)==true)
 		{	
@@ -576,6 +577,11 @@ int main(int argc, char **argv)
 		Initialize();
 		ClearObjFixed();
 		ClearDFrontierVisited();
+
+		while (!DFrontiers.empty())
+		{
+			DFrontiers.pop_back();
+		}
 		cout<<endl<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
 
 		CWire[i]->SetStuck(true,DNOT);
@@ -597,13 +603,13 @@ int main(int argc, char **argv)
 		//find D-frontier
 		//imply forward if there are NOT gates
 		//and then update the frontier wire
-		DFront = CWire[i]->GetFanOut();
 		PodemWire = CWire[i];
-		InitialFrontier = ImplyForward(DFront);
-		if (InitialFrontier != NULL)
+		if (PodemWire->GetWireType()!=OUTPUT)
 		{
-			PodemWire = InitialFrontier->GetInputs()[0];
-		}	
+			vector<Gate*> DFront = CWire[i]->GetFanOut();
+			PodemWire = ImplyForward(DFront);	
+		}
+	
 
 		//for test
 		//PodemWire->PrintWire();
@@ -618,10 +624,7 @@ int main(int argc, char **argv)
 
 		////////////////////////////////////////////////////////////////////////
 		//clear DFrontier List
-		while (!DFrontiers.empty())
-		{
-			DFrontiers.pop_back();
-		}
+		
 
 		if(PODEM(PodemWire)==true)
 		{	
@@ -713,15 +716,13 @@ bool PODEM(Wire* W)
 	//if Stuck at fault is at primary output
 	//we don't need to generate test vector
 	Wire* CurrentWire = W;	
+	int WireSize = CWire.size();
 
 	/*--------------------for test--------------------*/
 	//print all the Gate read from input file 
 	cout<<endl;
 	cout<<"-----------------------------PODOM--------------------------------"<<endl;
 
-
-
-	int WireSize = CWire.size();
 	cout<<"CurrentWire = ";
 	CurrentWire->PrintWire();
 	cout<<endl;
@@ -1296,10 +1297,10 @@ void ImplyBackward(Gate* G)
 }
 
 
-Gate* ImplyForward(vector<Gate*> Gs)
+Wire* ImplyForward(vector<Gate*> Gs)
 {
 	vector<Gate*> gates = Gs;
-	Gate* NewFrontier = NULL;
+	Wire* NewWire = NULL;
 	//Implication to the front
 	//if there is NOT gate as frontier
 	//We can propagate D or D' further
@@ -1311,8 +1312,8 @@ Gate* ImplyForward(vector<Gate*> Gs)
 			gates.front()->GetOutput()->SetFixed(true);
 			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
 			{
-				NewFrontier = (gates.front()->GetOutput()->GetFanOut())[0];
-				gates.push_back((gates.front()->GetOutput()->GetFanOut())[0]);
+				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
+				gates.insert(gates.end(), outputs.begin(), outputs.end());
 			}
 		}
 		else if (gates.front()->GetGateType() == BUFFER)
@@ -1321,13 +1322,32 @@ Gate* ImplyForward(vector<Gate*> Gs)
 			gates.front()->GetOutput()->SetFixed(true);
 			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
 			{
-				NewFrontier = (gates.front()->GetOutput()->GetFanOut())[0];
-				gates.push_back((gates.front()->GetOutput()->GetFanOut())[0]);
+				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
+				gates.insert(gates.end(), outputs.begin(), outputs.end());
 			}
+		}
+		else
+		{
+			DFrontiers.push_back(gates.front());
+			gates.front()->SetDFrontierVisited(true);
 		}
 		gates.erase(gates.begin());	
 	}
-	return NewFrontier;
+
+	if (!DFrontiers.empty())
+	{
+		int size = DFrontiers.back()->GetInputs().size();
+		vector<Wire*> inputs = DFrontiers.back()->GetInputs();
+		for (int i=0; i<size; i++)
+		{
+			if ((inputs[i]->GetValue()==D)||(inputs[i]->GetValue()==DNOT))
+			{
+				NewWire = inputs[i];
+				break;
+			}
+		}
+	}
+	return NewWire;
 }
 
 
