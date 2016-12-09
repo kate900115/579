@@ -858,6 +858,7 @@ bool PODEM(Wire* W)
 			{
 				DFrontiers.push_back(NotLists.front());
 				NotLists.front()->SetDFrontierVisited(true);
+				
 			}	
 			NotLists.erase(NotLists.begin());
 		}
@@ -865,7 +866,7 @@ bool PODEM(Wire* W)
 		//If No DFrontier, untestable
 		//return false
 
-		if (DFrontiers.size()==0)	
+		if (DFrontiers.size()==0)
 		{
 			cout<<"DFROTIER SIZE ="<<DFrontiers.size()<<endl;
 			cout<<"No D-Frontier!!!"<<endl;
@@ -933,6 +934,8 @@ bool PODEM(Wire* W)
 			//if the frontier gate is not gate
 			//we need to propagate it further
 			//until the frontier is not a Not gate.
+			
+
 			CurrentWire = FrontierGate->GetOutput();
 
 			while (CurrentWire->GetWireType()!=OUTPUT)
@@ -971,6 +974,38 @@ bool PODEM(Wire* W)
 
 			
 			FrontierGates = CurrentWire->GetFanOut();
+
+			vector<Gate*> GateTest = FrontierGates;
+			
+			// if all the DFrontier are visited
+			// we need to exit
+			bool NewDFrontier = false;
+			while(!GateTest.empty())
+			{	
+				cout<<"aaaaaaaaaaaaaaaaaaaaaaa"<<endl;
+				if ((GateTest.front()->GetGateType()!=NOT)&&(GateTest.front()->GetGateType()!=BUFFER))
+				{
+					if (!GateTest.front()->GetDFrontierVisited())
+					{
+						NewDFrontier = true;
+						break;
+					}
+				}
+				else
+				{
+					if (GateTest.front()->GetOutput()->GetWireType()!=OUTPUT)
+					{
+						vector<Gate*> ToBeAdd = GateTest.front()->GetOutput()->GetFanOut();
+						GateTest.insert(GateTest.end(), ToBeAdd.begin(), ToBeAdd.end());
+					}
+				}
+				GateTest.erase(GateTest.begin());
+			}
+
+			if ((NewDFrontier==false)&&(CurrentWire->GetWireType()!=OUTPUT))
+			{
+				return false;
+			}
 
 			/*--------------------for test-------------------*/
 			cout<<"frontier gates are: ";
@@ -1404,24 +1439,23 @@ bool InputImplyForward()
 	vector<Wire*> wires = InputWires;
 	while (wires.size()!=0)
 	{
-
 		vector<Gate*>fanout = wires.front()->GetFanOut();
 		int gatesize = fanout.size();
 		for (int j=0; j<gatesize; j++)
 		{
 
-			if ((fanout[j]->GetOutput()->GetFixed()==false)&&(fanout[j]->GetOutput()->GetObjFixed()==false))
-			{
-				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
-				wires.push_back(fanout[j]->GetOutput());
-			}
-			else if ( (LookUpTable(fanout[j])!=X)
+			if ( (LookUpTable(fanout[j])!=X)
 				&&(  ! (  (fanout[j]->GetOutput()->GetValue()==LookUpTable(fanout[j]))
 				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
 				&&((fanout[j]->GetOutput()->GetFixed()==true)||(fanout[j]->GetOutput()->GetObjFixed()==true)))
 			{
 				cout<<fanout[j]->GetGateName()<<" return false"<<endl;
 				return false;
+			}
+			else 
+			{
+				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
+				wires.push_back(fanout[j]->GetOutput());
 			}
 		}
 		wires.erase(wires.begin());
