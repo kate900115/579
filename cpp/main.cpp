@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 		Initialize();
 		ClearObjFixed();
 		ClearDFrontierVisited();
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+		cout<<"@@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 		CWire[i]->SetStuck(true,D);
 		CWire[i]->SetFixed(true);
@@ -494,17 +494,12 @@ int main(int argc, char **argv)
 		{
 			DFrontiers.pop_back();
 		}
-	//	DFrontiers = PodemWire->GetFanOut();
-	//	DFrontiers.push_back(PodemWire->GetFanout[0]);
 
-	//	cout<<DFrontiers.size()<<endl;
-	//	cout<<InitialFrontier->GetGateName()<<endl;
-	//	cout<<DFrontiers.front()->GetGateName()<<endl;
 		if(PODEM(PodemWire)==true)
 		{	
 			TestNumber++;
 			cout<<endl;
-			cout<<"@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+			cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
 			cout<<endl;
 		}
 		//Do PODEM
@@ -574,22 +569,6 @@ int main(int argc, char **argv)
 			}
 			
 		}
-		
-
-		/*--------------------for test--------------------*/
-		// to test the DFrontier
-	/*	int DF_size = DFrontiers.size();
-		if (DFrontiers.size()!=0)
-		{
-			cout<<"DFrontier list is shown below:"<<endl;
-			for (int i=0; i<DF_size; i++)
-			{
-				cout<<DFrontiers[i]->GetGateName();
-				cout<<endl;
-			}
-		}*/
-
-		
 
 
 		//---------------------------------------------------------------------------------------------------------------
@@ -643,12 +622,7 @@ int main(int argc, char **argv)
 		{
 			DFrontiers.pop_back();
 		}
-	//	DFrontiers = PodemWire->GetFanOut();
-	//	DFrontiers.push_back(PodemWire->GetFanout[0]);
 
-	//	cout<<DFrontiers.size()<<endl;
-	//	cout<<InitialFrontier->GetGateName()<<endl;
-	//	cout<<DFrontiers.front()->GetGateName()<<endl;
 		if(PODEM(PodemWire)==true)
 		{	
 			TestNumber++;
@@ -1026,82 +1000,7 @@ bool PODEM(Wire* W)
 			/*--------------------for test--------------------*/
 
 			DFrontiers.pop_back();
-			//vector<Gate*>::iterator GPointer = DFrontiers.end();
-		/*	int F_size = FrontierGates.size();
 
-			vector <Gate*> NotLists;
-
-			for (int i=0; i<F_size; i++)
-			{
-				if (FrontierGates[i]->GetGateType()==NOT)
-				{	
-					NotLists.push_back(FrontierGates[i]);
-				}
-				else if (FrontierGates[i]->GetGateType()==BUFFER)
-				{	
-					NotLists.push_back(FrontierGates[i]);
-				}
-				else if (!FrontierGates[i]->GetDFrontierVisited())
-				{
-					DFrontiers.push_back(FrontierGates[i]);
-					FrontierGates.front()->SetDFrontierVisited(true);	
-				}
-			}
-
-			while (!NotLists.empty())
-			{
-				if (NotLists.front()->GetGateType()==NOT)
-				{
-					if (NotLists.front()->GetInputs()[0]->GetValue()==D)
-					{
-						cout<<"D"<<endl;
-						NotLists.front()->GetOutput()->SetValue(DNOT);
-					}
-					else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
-					{
-						cout<<"DNOT"<<endl;
-						NotLists.front()->GetOutput()->SetValue(D);
-					}
-					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
-					{
-						vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
-						NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
-					}
-					else
-					{
-						CurrentWire = NotLists.front()->GetOutput();
-					}
-				}
-				else if (NotLists.front()->GetGateType()==BUFFER)
-				{
-					if (NotLists.front()->GetInputs()[0]->GetValue()==D)
-					{
-						NotLists.front()->GetOutput()->SetValue(D);
-					}
-					else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
-					{
-						NotLists.front()->GetOutput()->SetValue(DNOT);
-					}
-					if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
-					{
-						vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
-						NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
-					}
-					else
-					{
-						CurrentWire = NotLists.front()->GetOutput();
-					}
-
-				}
-				else if (!NotLists.front()->GetDFrontierVisited())
-				{
-					DFrontiers.push_back(NotLists.front());
-					NotLists.front()->SetDFrontierVisited(true);
-				}	
-				NotLists.erase(NotLists.begin());
-			}
-			//DFrontiers.erase(GPointer);
-			*/
 		}
 
 
