@@ -1452,7 +1452,7 @@ bool InputImplyForward()
 				cout<<fanout[j]->GetGateName()<<" return false"<<endl;
 				return false;
 			}
-			else 
+			else if ((fanout[j]->GetOutput()->GetFixed()==false)&&(fanout[j]->GetOutput()->GetObjFixed()==false))
 			{
 				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
 				wires.push_back(fanout[j]->GetOutput());
@@ -1550,7 +1550,7 @@ Wire* Backtrace(Gate* G)
 		if ((G->GetInputs())[i]->GetWireType()==INPUT)
 		{
 			if (((G->GetInputs())[i]->GetBTVisited()==false)
-			  &&(((G->GetInputs())[i]->GetFixed()==false)||((G->GetInputs())[i]->GetObjFixed()==false)))
+			  &&((G->GetInputs())[i]->GetFixed()==false)&&((G->GetInputs())[i]->GetObjFixed()==false))
 			{	
 				(G->GetInputs())[i]->SetValue(ZERO);
 				(G->GetInputs())[i]->SetBTVisited(true);
