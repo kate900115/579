@@ -509,7 +509,10 @@ int main(int argc, char **argv)
 			cout<<endl;
 			cout<<"fail!"<<endl;
 			cout<<endl;
-			DFrontiers.pop_back();					
+			if (!DFrontiers.empty())
+			{
+				DFrontiers.pop_back();					
+			}
 			ClearObjFixed();
 			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 			if (!DFrontiers.empty())
@@ -542,7 +545,10 @@ int main(int argc, char **argv)
 					cout<<endl;
 					cout<<"fail!"<<endl;
 					cout<<endl;
-					DFrontiers.pop_back();
+					if (!DFrontiers.empty())
+					{
+						DFrontiers.pop_back();
+					}
 					ClearObjFixed();
 					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 					if (!DFrontiers.empty())
@@ -637,11 +643,20 @@ int main(int argc, char **argv)
 		else
 		{
 			cout<<endl;
-			cout<<"fail!"<<endl;
+			cout<<"fail!!!!!!!!"<<endl;
 			cout<<endl;
-			DFrontiers.pop_back();					
+			//cout<<"D SIZEe = "<<DFrontiers.size()<<endl;
+			if (!DFrontiers.empty())			
+			{
+				DFrontiers.pop_back();					
+			}
 			ClearObjFixed();
-			
+			//cout<<DFrontiers[0]->GetGateName()<<endl;
+			//cout<<DFrontiers[1]->GetGateName()<<endl;
+			//cout<<DFrontiers[2]->GetGateName()<<endl;
+			//cout<<DFrontiers[3]->GetGateName()<<endl;
+			//cout<<DFrontiers[4]->GetGateName()<<endl;
+			//cout<<DFrontiers[5]->GetGateName()<<endl;
 			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 			if (!DFrontiers.empty())
 			{
@@ -671,9 +686,12 @@ int main(int argc, char **argv)
 				else
 				{
 					cout<<endl;
-					cout<<"fail!"<<endl;
+					cout<<"fail?!!"<<endl;
 					cout<<endl;
-					DFrontiers.pop_back();
+					if (!DFrontiers.empty())
+					{
+						DFrontiers.pop_back();
+					}
 					ClearObjFixed();
 					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 					if (!DFrontiers.empty())
@@ -1015,15 +1033,18 @@ bool PODEM(Wire* W)
 				CWire[m]->PrintWire();
 			}
 			/*--------------------for test--------------------*/
+
 			if (PODEM(CurrentWire)==true) return true;
 		}
 		if (BTResult==NULL)
 		{
+			cout<<"BTResult = null"<<endl;
+			cout<<"D Size = "<<DFrontiers.size()<<endl;
 			return false;
 		}
 
 		//implyForward BTResult' to see if there is a contradiction
-		if ((BTResult!=NULL)&&(BTResult->GetFixed()==true))
+		if ((BTResult!=NULL)&&((BTResult->GetFixed()==true)||(BTResult->GetObjFixed()==true)))
 			{return false;}
 		if(BTResult->GetValue()==ONE)
 			{BTResult->SetValue(ZERO);}
@@ -1036,25 +1057,28 @@ bool PODEM(Wire* W)
 			CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
-
-		if(InputImplyForward())
-		{
-			/*--------------------for test--------------------*/
-			cout<<"-------after imply---------"<<endl;
-			for (int m=0; m<WireSize; m++)
+		if (BTResult!=NULL)
+		{	
+			if(InputImplyForward())
 			{
-				CWire[m]->PrintWire();
+				/*--------------------for test--------------------*/
+				cout<<"-------after imply---------"<<endl;
+				for (int m=0; m<WireSize; m++)
+				{
+					CWire[m]->PrintWire();
+				}
+				/*--------------------for test--------------------*/
+	
+				if (PODEM(CurrentWire)==true) return true;
 			}
-			/*--------------------for test--------------------*/
-
-			if (PODEM(CurrentWire)==true) return true;
+		
+			cout<<"D11 SIZE = "<<DFrontiers.size()<<endl;
+			//Imply BTResult= X
+			BTResult->SetValue(X);
+			BTResult->SetFixed(false);
+			BTResult->SetBTVisited(false);
+			InputImplyForward();
 		}
-		cout<<"D11 SIZE = "<<DFrontiers.size()<<endl;
-		//Imply BTResult= X
-		BTResult->SetValue(X);
-		BTResult->SetFixed(false);
-		BTResult->SetBTVisited(false);
-		InputImplyForward();
 		return false;
 	}
 }
@@ -1391,8 +1415,7 @@ bool InputImplyForward()
 			else if ((fanout[i]->GetOutput()->GetFixed()==false)&&(fanout[i]->GetOutput()->GetObjFixed()==false))
 			{
 				cout<<"fanout is "<<fanout[i]->GetGateName()<<endl;
-				fanout[i]->GetOutput()->SetValue(LookUpTable(fanout[i]));
-				
+				fanout[i]->GetOutput()->SetValue(LookUpTable(fanout[i]));	
 			}
 
 			if (fanout[i]->GetOutput()->GetInternalBTVisited()==false)
