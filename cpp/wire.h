@@ -31,6 +31,7 @@ class Wire
 		bool IsFixed;
 		string HalfName;
 		int FrameNum;
+		bool InternalBTVisited;
 
 	public:
 		//constructor
@@ -48,6 +49,7 @@ class Wire
 			HalfName = name.substr(0, name.size()-3);
 			string a = name.substr(name.length()-1);
 			FrameNum = atoi(a.c_str());
+			InternalBTVisited = false;
 		}
 
 		void initialize(){IsStuck = false; Value = X; BTVisited = false; IsFixed = false;}
@@ -79,8 +81,13 @@ class Wire
 		bool GetObjFixed(){return ObjFixed;}
 
 		bool GetStuck(){return IsStuck;}
+
+		bool GetInternalBTVisited(){return InternalBTVisited;}
 		
 		//set the private value
+
+		void SetInternalBTVisited(bool visit){InternalBTVisited = visit;}		
+	
 		void SetValue(DType V){Value = V;}
 
 		void SetStuck(bool is_stuck, DType v){IsStuck = is_stuck; Value = v;}
