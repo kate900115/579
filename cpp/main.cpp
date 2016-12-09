@@ -1364,6 +1364,47 @@ Wire* ImplyForward(vector<Gate*> Gs)
 bool InputImplyForward()
 {
 	vector<Wire*> wires = InputWires;
+	for (unsigned i=0; i<CWire.size(); i++)
+	{
+		CWire[i]->SetInternalBTVisited(false);
+	}
+	
+	while (wires.size()!=0)
+	{
+		vector<Gate*> fanout;
+		if (wires.front()->GetWireType()!=OUTPUT)
+		{
+			fanout = wires.front()->GetFanOut();
+		}
+		for (unsigned i=0; i<fanout.size(); i++)
+		{
+			cout<<"gate: "<<fanout[i]->GetGateName()<<", BTVisited = "<<fanout[i]->GetOutput()->GetInternalBTVisited()<<endl;
+			if ( (LookUpTable(fanout[i])!=X)
+				&&(  ! (  (fanout[i]->GetOutput()->GetValue()==LookUpTable(fanout[i]))
+				||        (fanout[i]->GetOutput()->GetValue()==DLookUpTable(fanout[i])) ))
+				&&((fanout[i]->GetOutput()->GetFixed()==true)||(fanout[i]->GetOutput()->GetObjFixed()==true)))
+			{
+				cout<<fanout[i]->GetGateName()<<" return false"<<endl;
+				//
+				return false;
+			}
+			else if ((fanout[i]->GetOutput()->GetFixed()==false)&&(fanout[i]->GetOutput()->GetObjFixed()==false))
+			{
+				cout<<"fanout is "<<fanout[i]->GetGateName()<<endl;
+				fanout[i]->GetOutput()->SetValue(LookUpTable(fanout[i]));
+				
+			}
+
+			if (fanout[i]->GetOutput()->GetInternalBTVisited()==false)
+			{
+				fanout[i]->GetOutput()->SetInternalBTVisited(true);
+				wires.push_back(fanout[i]->GetOutput());
+			}
+		}
+		wires.erase(wires.begin());
+	}
+/*
+	vector<Wire*> wires = InputWires;
 	while (wires.size()!=0)
 	{
 		vector<Gate*>fanout = wires.front()->GetFanOut();
@@ -1386,7 +1427,7 @@ bool InputImplyForward()
 			}
 		}
 		wires.erase(wires.begin());
-	}
+	}*/
 	bool success=false;
 	for (unsigned i = 0; i<OutputWires.size(); i++)
 	{
