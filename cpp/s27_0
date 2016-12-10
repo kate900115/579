@@ -1,0 +1,24 @@
+input G0__0 G1__0 G2__0 G3__0 
+output G17__0 
+time_frame_output O5__0
+time_frame_output O6__0
+time_frame_output O7__0
+time_frame_input I5__0
+time_frame_input I6__0
+time_frame_input I7__0
+wire G10__0 G11__0 G13__0 G14__0 G8__0 G15__0 G12__0 G16__0 G9__0
+  dff DFF_0__0 O5__0 G10__0
+  dff DFF_1__0 O6__0 G11__0
+  dff DFF_2__0 O7__0 G13__0
+  not NOT_0__0 G14__0 G0__0
+  not NOT_1__0 G17__0 G11__0 
+  and AND2_0__0 G8__0 G14__0 I6__0 
+  or OR2_0__0 G15__0 G12__0 G8__0
+  or OR2_1__0 G16__0 G3__0 G8__0 
+  nand NAND2_0__0 G9__0 G16__0 G15__0
+  nor NOR2_0__0 G10__0 G14__0 G11__0 
+  nor NOR2_1__0 G11__0 I5__0 G9__0  
+  nor NOR2_2__0 G12__0 G1__0 I7__0 
+  nor NOR2_3__0 G13__0 G2__0 G12__0
+
+
