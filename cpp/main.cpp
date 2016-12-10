@@ -9,734 +9,731 @@
 
 using namespace std;
 
-bool PODEM(Wire* W);
-void Initialize();
+//functions
+bool PODEM(Wire* W, int frame);
+void Initialize(int frame);
 void ImplyBackward(Gate* G);
-bool InputImplyForward();
-Wire* ImplyForward(vector<Gate*> Gs);
+bool InputImplyForward(int frame);
+Wire* ImplyForward(vector<Gate*> Gs, int frame);
 Wire* Backtrace(Gate* G);
 void Objective(Gate* G);
 DType LookUpTable(Gate* G);
 DType DLookUpTable(Gate* G);
-void ClearObjFixed();
-void ClearDFrontierVisited();
+void ClearObjFixed(int frame);
+void ClearDFrontierVisited(int frame);
 
-vector<Wire*> CWire;
-vector<Gate*> CGate;
-vector<Wire*> InputWires;
-vector<Wire*> ComputedInputs;
-vector<Gate*> DFrontiers;
-vector<Wire*> OutputWires;
 
-Gate* FrontierGate;
+//global variable
+struct Circuit
+{
+	vector<Wire*> CWire;
+	vector<Gate*> CGate;
+	vector<Wire*> InputWires;
+	vector<Gate*> DFrontiers;
+	vector<Wire*> OutputWires;
+	Gate* FrontierGate;
+};
+
+Circuit C[10];
+
+
 
 int InputSize=0;
 
 int main(int argc, char **argv)
 {
 	//read inputfile
-	string FileName = string(argv[1]);
-	ifstream inFile;
-	inFile.open(FileName.c_str());
-	
-	
-	if (!inFile.good())
+	ifstream inFile[argc-1];
+	string FileName[argc-1];
+	for (int i=0; i<argc-1; i++)
 	{
-		cout << "ERROR in read_input() - cannot open " << FileName << " for reading." << endl;
+		FileName[i] = string(argv[i+1]);
+		inFile[i].open(FileName[i].c_str());
 	}
+	int FrameNum = argc -1;
+	//string FileName = string(argv[1]);
+	//ifstream inFile;
+	//inFile.open(FileName.c_str());
 	
-	string line;
-	//store the inputfile into the circuit data structure
-	while (getline(inFile, line))
+	for (int frame=0; frame<FrameNum; frame++)
 	{
-		stringstream sstr;
-	    	// skip empty lines
-	    	if (line.length() == 0) break;
+		if (!inFile[frame].good())
+		{
+			cout << "ERROR in read_input() - cannot open " << FileName[frame] << " for reading." << endl;
+		}
+		
+		string line;
+		//store the inputfile into the circuit data structure
+		while (getline(inFile[frame], line))
+		{
+			stringstream sstr;
+		    	// skip empty lines
+		    	if (line.length() == 0) break;
 	    
-	    	sstr << line;
-	    	string word;
-	    	vector<string> words;
-
-		
+		    	sstr << line;
+		    	string word;
+		    	vector<string> words;	
     		
-		//to get the type
-		sstr >>word;
-		if (word=="input")
-		{
-			while (sstr >> word)
+			//to get the type
+			sstr >>word;
+			if (word=="input")
 			{
-				Wire* NewInput = new Wire(word, INPUT, 0, X);
-				CWire.push_back(NewInput);
-				InputWires.push_back(NewInput);
+				while (sstr >> word)
+				{
+					Wire* NewInput = new Wire(word, INPUT, 0, X);
+					C[frame].CWire.push_back(NewInput);
+					C[frame].InputWires.push_back(NewInput);
+				}
+	   		}
+
+			else if (word=="output")
+			{
+				while (sstr >> word)
+				{
+					Wire* NewOutput = new Wire(word, OUTPUT, 0, X);
+					C[frame].CWire.push_back(NewOutput);
+					C[frame].OutputWires.push_back(NewOutput);
+				}
 			}
-	   	}
 
-		else if (word=="output")
-		{
-			while (sstr >> word)
+			else if (word=="wire")
 			{
-				Wire* NewOutput = new Wire(word, OUTPUT, 0, X);
-				CWire.push_back(NewOutput);
-				OutputWires.push_back(NewOutput);
+				while (sstr >> word)
+				{
+					Wire* NewWire = new Wire(word, WIRE, 0, X);
+					C[frame].CWire.push_back(NewWire);
+				}	
 			}
-		}
-
-		else if (word=="wire")
-		{
-			while (sstr >> word)
+			else if (word=="dff")
 			{
-				Wire* NewWire = new Wire(word, WIRE, 0, X);
-				CWire.push_back(NewWire);
+				string dff_name;
+				string dff_output;
+				string dff_input;
+				sstr >> dff_name;
+				sstr >> dff_output;
+				sstr >> dff_input;
 
-			}	
-		}
-		else if (word=="dff")
-		{
-			string dff_name;
-			string dff_output;
-			string dff_input;
-			sstr >> dff_name;
-			sstr >> dff_output;
-			sstr >> dff_input;
+				vector<string> d_inputs;
+				d_inputs.push_back(dff_input);
 
+				Wire* DffOutput;
+				vector<Wire*> DffInputs;
+
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if (C[frame].CWire[i]->GetWireName()==dff_input)
+					{
+						DffInputs.push_back(C[frame].CWire[i]);					
+					}
+					if (C[frame].CWire[i]->GetWireName()==dff_output)
+					{
+						DffOutput = C[frame].CWire[i];
+					}
+				}
+		
+				Gate* NewDFF = new Gate(dff_name, BUFFER, DffInputs, DffOutput);
+				C[frame].CGate.push_back(NewDFF);
+			
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if(C[frame].CWire[i]->GetWireName() == dff_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewDFF);	
+					}
+					if (C[frame].CWire[i]->GetWireName() == dff_input)
+					{
+						C[frame].CWire[i]->AddFanOut(NewDFF);
+					}
+				}
+			}
+			else if	(word=="not")
+			{
+				string not_name;
+				string not_input;
+				string not_output;
+				sstr >> not_name;
+				sstr >> not_output;
+				sstr >> not_input;
+
+				Wire* NotOutput;
+				vector<Wire*> NotInputs;
+
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if (C[frame].CWire[i]->GetWireName()==not_input)
+					{
+						NotInputs.push_back(C[frame].CWire[i]);				
+					}
+					if (C[frame].CWire[i]->GetWireName()==not_output)
+					{
+						NotOutput = C[frame].CWire[i];
+					}
+				}
+			
+				Gate* NewNot = new Gate(not_name, NOT, NotInputs, NotOutput);
+				C[frame].CGate.push_back(NewNot);
+
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if(C[frame].CWire[i]->GetWireName() == not_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewNot);	
+					}
+					if (C[frame].CWire[i]->GetWireName() == not_input)
+					{
+						C[frame].CWire[i]->AddFanOut(NewNot);
+					}
+				}
+			}
+			else if (word=="and")
+			{
+				string and_name;
+				sstr >> and_name;
 	
-			vector<string> d_inputs;
-			d_inputs.push_back(dff_input);
+				string and_output;
+				sstr >> and_output;
+		
+				string and_input;
+	
+				Wire* AndOutput;
+				vector<Wire*> AndInputs;
 
-			Wire* DffOutput;
-			vector<Wire*> DffInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName()==dff_input)
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
 				{
-					DffInputs.push_back(CWire[i]);
-					
+					if(C[frame].CWire[i]->GetWireName()==and_output)
+					{
+						AndOutput = C[frame].CWire[i];
+						break;
+					}
 				}
-				if (CWire[i]->GetWireName()==dff_output)
+
+				while (sstr >> and_input)
+				{	
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if (C[frame].CWire[i]->GetWireName()==and_input)
+						{
+							AndInputs.push_back(C[frame].CWire[i]);
+						}
+					}
+				}
+				
+				int size = AndInputs.size();
+	
+
+				Gate* NewAnd = new Gate(and_name, AND, AndInputs, AndOutput);
+				C[frame].CGate.push_back(NewAnd);
+				for (int j=0; j<size; j++)
 				{
-					DffOutput = CWire[i];
+					and_input = AndInputs[j]->GetWireName();
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if(C[frame].CWire[i]->GetWireName() == and_input)
+						{
+							C[frame].CWire[i]->AddFanOut(NewAnd);	
+						}
+					}
+				}
+					
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if (C[frame].CWire[i]->GetWireName() == and_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewAnd);
+						//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+					}
 				}
 			}
-		
-			Gate* NewDFF = new Gate(dff_name, BUFFER, DffInputs, DffOutput);
-			CGate.push_back(NewDFF);
+			else if (word=="or")
+			{
+				string or_name;
+				sstr >> or_name;
+
+				string or_output;
+				sstr >> or_output;
 			
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName() == dff_output)
+				string or_input;
+	
+				Wire* OrOutput;
+				vector<Wire*> OrInputs;
+	
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
 				{
-					CWire[i]->SetFanIn(NewDFF);	
+					if(C[frame].CWire[i]->GetWireName()==or_output)
+					{
+						OrOutput = C[frame].CWire[i];
+						break;
+					}
 				}
-				if (CWire[i]->GetWireName() == dff_input)
-				{
-					CWire[i]->AddFanOut(NewDFF);
+
+				while (sstr >> or_input)
+				{	
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if (C[frame].CWire[i]->GetWireName()==or_input)
+						{
+							OrInputs.push_back(C[frame].CWire[i]);
+						}
+					}
 				}
-			}
-		}
-		else if	(word=="not")
-		{
-			string not_name;
-			string not_input;
-			string not_output;
-			sstr >> not_name;
-			sstr >> not_output;
-			sstr >> not_input;
-
-			Wire* NotOutput;
-			vector<Wire*> NotInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName()==not_input)
-				{
-					NotInputs.push_back(CWire[i]);
 					
-				}
-				if (CWire[i]->GetWireName()==not_output)
+				int size = OrInputs.size();
+	
+				Gate* NewOr = new Gate(or_name, OR, OrInputs, OrOutput);
+				C[frame].CGate.push_back(NewOr);
+				for (int j=0; j<size; j++)
 				{
-					NotOutput = CWire[i];
+					or_input = OrInputs[j]->GetWireName();
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if(C[frame].CWire[i]->GetWireName() == or_input)
+						{
+							C[frame].CWire[i]->AddFanOut(NewOr);	
+						}
+					}
+				}
+					
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if (C[frame].CWire[i]->GetWireName() == or_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewOr);
+						//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+					}
 				}
 			}
+			else if (word=="nor")
+			{
+				string nor_name;
+				sstr >> nor_name;
+	
+				string nor_output;
+				sstr >> nor_output;
+
+				string nor_input;
+				
+				Wire* NorOutput;
+				vector<Wire*> NorInputs;
+	
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if(C[frame].CWire[i]->GetWireName()==nor_output)
+					{
+						NorOutput = C[frame].CWire[i];
+						break;
+					}
+				}
+
+				while (sstr >> nor_input)
+				{	
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if (C[frame].CWire[i]->GetWireName()==nor_input)
+						{
+							NorInputs.push_back(C[frame].CWire[i]);
+						}
+					}
+				}
+				
+				int size = NorInputs.size();
+	
+	
+				Gate* NewNor = new Gate(nor_name, NOR, NorInputs, NorOutput);
+				C[frame].CGate.push_back(NewNor);
+				for (int j=0; j<size; j++)
+				{
+					nor_input = NorInputs[j]->GetWireName();
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if(C[frame].CWire[i]->GetWireName() == nor_input)
+						{
+							C[frame].CWire[i]->AddFanOut(NewNor);	
+						}
+					}
+				}
+					
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
+				{
+					if (C[frame].CWire[i]->GetWireName() == nor_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewNor);
+						//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+					}
+				}
+			}
+			else if (word=="nand")
+			{
+				string nand_name;
+				sstr >> nand_name;
+	
+				string nand_output;
+				sstr >> nand_output;
 			
-			Gate* NewNot = new Gate(not_name, NOT, NotInputs, NotOutput);
-			CGate.push_back(NewNot);
+				string nand_input;
+	
+				Wire* NandOutput;
+				vector<Wire*> NandInputs;
 
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName() == not_output)
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
 				{
-					CWire[i]->SetFanIn(NewNot);	
-				}
-				if (CWire[i]->GetWireName() == not_input)
-				{
-					CWire[i]->AddFanOut(NewNot);
-				}
-			}
-		}
-		else if (word=="and")
-		{
-			string and_name;
-			sstr >> and_name;
-
-			string and_output;
-			sstr >> and_output;
-		
-			string and_input;
-
-			Wire* AndOutput;
-			vector<Wire*> AndInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName()==and_output)
-				{
-					AndOutput = CWire[i];
-					break;
-				}
-			}
-
-			while (sstr >> and_input)
-			{	
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if (CWire[i]->GetWireName()==and_input)
+					if(C[frame].CWire[i]->GetWireName()== nand_output)
 					{
-						AndInputs.push_back(CWire[i]);
+						NandOutput = C[frame].CWire[i];
+						break;
 					}
 				}
-			}
+
+				while (sstr >> nand_input)
+				{	
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
+					{
+						if (C[frame].CWire[i]->GetWireName()==nand_input)
+						{
+							NandInputs.push_back(C[frame].CWire[i]);
+						}
+					}
+				}
 				
-			int size = AndInputs.size();
-
-
-			Gate* NewAnd = new Gate(and_name, AND, AndInputs, AndOutput);
-			CGate.push_back(NewAnd);
-			for (int j=0; j<size; j++)
-			{
-				and_input = AndInputs[j]->GetWireName();
-				for (unsigned i=0; i<CWire.size(); i++)
+				int size = NandInputs.size();
+	
+	
+				Gate* NewNand = new Gate(nand_name, NAND, NandInputs, NandOutput);
+				C[frame].CGate.push_back(NewNand);
+				for (int j=0; j<size; j++)
 				{
-					if(CWire[i]->GetWireName() == and_input)
+					nand_input = NandInputs[j]->GetWireName();
+					for (unsigned i=0; i<C[frame].CWire.size(); i++)
 					{
-						CWire[i]->AddFanOut(NewAnd);	
+						if(C[frame].CWire[i]->GetWireName() == nand_input)
+						{
+							C[frame].CWire[i]->AddFanOut(NewNand);	
+						}
 					}
 				}
-			}
 					
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName() == and_output)
+				for (unsigned i=0; i<C[frame].CWire.size(); i++)
 				{
-
-					CWire[i]->SetFanIn(NewAnd);
-					//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+					if (C[frame].CWire[i]->GetWireName() == nand_output)
+					{
+						C[frame].CWire[i]->SetFanIn(NewNand);
+						//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
+					}
 				}
 			}
 		}
-		else if (word=="or")
-		{
-			string or_name;
-			sstr >> or_name;
-
-			string or_output;
-			sstr >> or_output;
-		
-			string or_input;
-
-			Wire* OrOutput;
-			vector<Wire*> OrInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName()==or_output)
-				{
-					OrOutput = CWire[i];
-					break;
-				}
-			}
-
-			while (sstr >> or_input)
-			{	
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if (CWire[i]->GetWireName()==or_input)
-					{
-						OrInputs.push_back(CWire[i]);
-					}
-				}
-			}
-				
-			int size = OrInputs.size();
-
-			Gate* NewOr = new Gate(or_name, OR, OrInputs, OrOutput);
-			CGate.push_back(NewOr);
-			for (int j=0; j<size; j++)
-			{
-				or_input = OrInputs[j]->GetWireName();
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if(CWire[i]->GetWireName() == or_input)
-					{
-						CWire[i]->AddFanOut(NewOr);	
-					}
-				}
-			}
-					
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName() == or_output)
-				{
-					CWire[i]->SetFanIn(NewOr);
-					//cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
-				}
-			}
-		}
-		else if (word=="nor")
-		{
-			string nor_name;
-			sstr >> nor_name;
-
-			string nor_output;
-			sstr >> nor_output;
-
-			string nor_input;
-			
-			Wire* NorOutput;
-			vector<Wire*> NorInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName()==nor_output)
-				{
-					NorOutput = CWire[i];
-					break;
-				}
-			}
-
-			while (sstr >> nor_input)
-			{	
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if (CWire[i]->GetWireName()==nor_input)
-					{
-						NorInputs.push_back(CWire[i]);
-					}
-				}
-			}
-				
-			int size = NorInputs.size();
-
-
-			Gate* NewNor = new Gate(nor_name, NOR, NorInputs, NorOutput);
-			CGate.push_back(NewNor);
-			for (int j=0; j<size; j++)
-			{
-				nor_input = NorInputs[j]->GetWireName();
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if(CWire[i]->GetWireName() == nor_input)
-					{
-						CWire[i]->AddFanOut(NewNor);	
-					}
-				}
-			}
-					
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName() == nor_output)
-				{
-					CWire[i]->SetFanIn(NewNor);
-					cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
-				}
-			}
-		}
-		else if (word=="nand")
-		{
-			string nand_name;
-			sstr >> nand_name;
-
-			string nand_output;
-			sstr >> nand_output;
-		
-			string nand_input;
-
-			Wire* NandOutput;
-			vector<Wire*> NandInputs;
-
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if(CWire[i]->GetWireName()== nand_output)
-				{
-					NandOutput = CWire[i];
-					break;
-				}
-			}
-
-			while (sstr >> nand_input)
-			{	
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if (CWire[i]->GetWireName()==nand_input)
-					{
-						NandInputs.push_back(CWire[i]);
-					}
-				}
-			}
-				
-			int size = NandInputs.size();
-
-
-			Gate* NewNand = new Gate(nand_name, NAND, NandInputs, NandOutput);
-			CGate.push_back(NewNand);
-			for (int j=0; j<size; j++)
-			{
-				nand_input = NandInputs[j]->GetWireName();
-				for (unsigned i=0; i<CWire.size(); i++)
-				{
-					if(CWire[i]->GetWireName() == nand_input)
-					{
-						CWire[i]->AddFanOut(NewNand);	
-					}
-				}
-			}
-					
-			for (unsigned i=0; i<CWire.size(); i++)
-			{
-				if (CWire[i]->GetWireName() == nand_output)
-				{
-					CWire[i]->SetFanIn(NewNand);
-					cout<<CWire[i]->GetFanIn()->GetGateName()<<endl;
-				}
-			}
-		}
-	}
   
-	cout << "file " << FileName << " successfully read." << endl;
-	inFile.close();
+		cout << "file " << FileName << " successfully read." << endl;
+		inFile[frame].close();
 	
-	/*--------------------for test--------------------*/
-	//print all the Gate read from input file 
-	int GateSize=CGate.size();
-	for (int i=0; i<GateSize; i++)
-	{
-		CGate[i]->PrintGate();
-		for (int j=0; j<CGate[i]->GetInputSize(); j++)
-		{
-			cout<<"input"<<j<<"="<<(CGate[i]->GetInputs())[j]->GetWireName()<<", ";
-		}
-		cout<<"output = "<<CGate[i]->GetOutput()->GetWireName()<<endl;
-	}
-	//print all the Wire read from input file
-	int WireSize = CWire.size();
-	for (int i=0; i<WireSize; i++)
-	{
-		CWire[i]->PrintWire();
-	}
-	/*--------------------for test--------------------*/
-
-
-	int TestNumber = 0;
-	// PODEM
-	// for each wire we will generate 
-	// s-a-0 fault and s-a-1 fault
-
-
-	for (int i=0; i<WireSize; i++)
-	{
-		//intialize and set s-a-1 fault
-		Initialize();
-		ClearObjFixed();
-		ClearDFrontierVisited();
-		//clear DFrontier List
-		while (!DFrontiers.empty())
-		{
-			DFrontiers.pop_back();
-		}
-		cout<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
-
-		CWire[i]->SetStuck(true,D);
-		CWire[i]->SetFixed(true);
-		if (CWire[i]->GetWireType()==INPUT)
-		{
-			CWire[i]->SetBTVisited(true);
-		}
-
-		//Activate fault
-		//Implication to the back
-		
-		if (CWire[i]->GetWireType()!=INPUT)
-		{
-			Gate* DBack = CWire[i]->GetFanIn();
-			ImplyBackward(DBack);
-		}
-		
-		//find D-frontier
-		//imply forward if there are NOT gates
-		//and then update the frontier wire
-		Wire* PodemWire = CWire[i];
-		if (PodemWire->GetWireType()!=OUTPUT)
-		{
-			vector<Gate*> DFront = CWire[i]->GetFanOut();
-			PodemWire = ImplyForward(DFront);	
-		}
-		
-
-		//for test
-		//PodemWire->PrintWire();
 		/*--------------------for test--------------------*/
+		//print all the Gate read from input file 
+		int GateSize=C[frame].CGate.size();
+		for (int i=0; i<GateSize; i++)
+		{
+			C[frame].CGate[i]->PrintGate();
+			for (int j=0; j<C[frame].CGate[i]->GetInputSize(); j++)
+			{
+				cout<<"input"<<j<<"="<<(C[frame].CGate[i]->GetInputs())[j]->GetWireName()<<", ";
+			}
+			cout<<"output = "<<C[frame].CGate[i]->GetOutput()->GetWireName()<<endl;
+		}
 		//print all the Wire read from input file
-		int WireSize = CWire.size();
-		for (int m=0; m<WireSize; m++)
+		int WireSize = C[frame].CWire.size();
+		for (int i=0; i<WireSize; i++)
 		{
-			CWire[m]->PrintWire();
+			C[frame].CWire[i]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
 
-		////////////////////////////////////////////////////////////////////////
+
+		
+	}
 
 
-		if(PODEM(PodemWire)==true)
-		{	
-			TestNumber++;
-			cout<<endl;
-			cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-			cout<<endl;
-		}
-		//Do PODEM
-		else
+
+		int frame = 0;
+		int TestNumber = 0;
+		// PODEM
+		// for each wire we will generate 
+		// s-a-0 fault and s-a-1 fault
+
+		int WireSize = C[frame].CWire.size();
+		for (int i=0; i<WireSize; i++)
 		{
-			cout<<endl;
-			cout<<"fail!"<<endl;
-			cout<<endl;
-			if (!DFrontiers.empty())
+			//intialize and set s-a-1 fault
+			Initialize(frame);
+			ClearObjFixed(frame);
+			ClearDFrontierVisited(frame);
+			//clear DFrontier List
+			while (!C[frame].DFrontiers.empty())
 			{
-				DFrontiers.pop_back();					
+				C[frame].DFrontiers.pop_back();
 			}
-			ClearObjFixed();
-			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-			if (!DFrontiers.empty())
+			cout<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+	
+			C[frame].CWire[i]->SetStuck(true,D);
+			C[frame].CWire[i]->SetFixed(true);
+			if (C[frame].CWire[i]->GetWireType()==INPUT)
 			{
-				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
-				{
-					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-					{
-						PodemWire = DFrontiers.back()->GetInputs()[m];
-						break;
-					}
-				}
+				C[frame].CWire[i]->SetBTVisited(true);
 			}
-			bool success=false;
-			
-			while (!DFrontiers.empty())
+
+			//Activate fault
+			//Implication to the back
+		
+			if (C[frame].CWire[i]->GetWireType()!=INPUT)
 			{
-				
-				if(PODEM(PodemWire)==true)
-				{	
-					TestNumber++;
-					cout<<endl;
-					cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-					cout<<endl;
-					success = true;
-					break;
-				}
-				else
+				Gate* DBack = C[frame].CWire[i]->GetFanIn();
+				ImplyBackward(DBack);
+			}
+		
+			//find D-frontier
+			//imply forward if there are NOT gates
+			//and then update the frontier wire
+			Wire* PodemWire = C[frame].CWire[i];
+			if (PodemWire->GetWireType()!=OUTPUT)
+			{
+				vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+				PodemWire = ImplyForward(DFront, frame);	
+			}
+		
+
+			//for test
+			//PodemWire->PrintWire();
+			/*--------------------for test--------------------
+			//print all the Wire read from input file
+			int WireSize = CWire.size();
+			for (int m=0; m<WireSize; m++)
+			{
+				CWire[m]->PrintWire();
+			}
+			--------------------for test--------------------*/
+
+			if(PODEM(PodemWire, frame)==true)
+			{	
+				TestNumber++;
+				cout<<endl;
+				cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+				cout<<endl;
+			}
+			//Do PODEM
+			else
+			{
+				//cout<<endl;
+				//cout<<"fail!"<<endl;
+				//cout<<endl;
+				if (!C[frame].DFrontiers.empty())
 				{
-					cout<<endl;
-					cout<<"fail!"<<endl;
-					cout<<endl;
-					if (!DFrontiers.empty())
+					C[frame].DFrontiers.pop_back();					
+				}
+				ClearObjFixed(frame);
+				//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
+				if (!C[frame].DFrontiers.empty())
+				{
+					for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
 					{
-						DFrontiers.pop_back();
-					}
-					ClearObjFixed();
-					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-					if (!DFrontiers.empty())
-					{
-						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+						if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
 						{
-							if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-							{
-								PodemWire = DFrontiers.back()->GetInputs()[m];
-								break;
-							}
-						}	
+							PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+							break;
+						}
+					}
+				}
+				bool success=false;
+				
+				while (!C[frame].DFrontiers.empty())
+				{
+				
+					if(PODEM(PodemWire, frame)==true)
+					{	
+						TestNumber++;
+						cout<<endl;
+						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+						cout<<endl;
+						success = true;
+						break;
 					}
 					else
 					{
-						break;
+						//cout<<endl;
+						//cout<<"fail!"<<endl;
+						//cout<<endl;
+						if (!C[frame].DFrontiers.empty())
+						{
+							C[frame].DFrontiers.pop_back();
+						}
+						ClearObjFixed(frame);
+						//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
+						if (!C[frame].DFrontiers.empty())
+						{
+							for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+							{
+								if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+								{
+									PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+									break;
+								}
+							}	
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
+				if (!success)
+				{
+					cout<<endl;
+					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+					cout<<endl;
+				}
+				
 			}
-			if (!success)
-			{
-				cout<<endl;
-				cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
-				cout<<endl;
-			}
-			
-		}
 
 
-		//---------------------------------------------------------------------------------------------------------------
+			/*---------------------------------------------------------------------------------------------------------------*/
 				//intialize and set s-a-1 fault
-		Initialize();
-		ClearObjFixed();
-		ClearDFrontierVisited();
+			Initialize(frame);
+			ClearObjFixed(frame);
+			ClearDFrontierVisited(frame);
 
-		while (!DFrontiers.empty())
-		{
-			DFrontiers.pop_back();
-		}
-		cout<<endl<<"@@  Wire "<<CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
-
-		CWire[i]->SetStuck(true,DNOT);
-		CWire[i]->SetFixed(true);
-		if (CWire[i]->GetWireType()==INPUT)
-		{
-			CWire[i]->SetBTVisited(true);
-		}
-
-		//Activate fault
-		//Implication to the back
+			while (!C[frame].DFrontiers.empty())
+			{
+				C[frame].DFrontiers.pop_back();
+			}
+			cout<<endl<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
+	
+			C[frame].CWire[i]->SetStuck(true,DNOT);
+			C[frame].CWire[i]->SetFixed(true);
+			if (C[frame].CWire[i]->GetWireType()==INPUT)
+			{
+				C[frame].CWire[i]->SetBTVisited(true);
+			}
+	
+			//Activate fault
+			//Implication to the back
+			
+			if (C[frame].CWire[i]->GetWireType()!=INPUT)
+			{
+				Gate* DBack = C[frame].CWire[i]->GetFanIn();
+				ImplyBackward(DBack);
+			}
 		
-		if (CWire[i]->GetWireType()!=INPUT)
-		{
-			Gate* DBack = CWire[i]->GetFanIn();
-			ImplyBackward(DBack);
-		}
-		
-		//find D-frontier
-		//imply forward if there are NOT gates
-		//and then update the frontier wire
-		PodemWire = CWire[i];
-		if (PodemWire->GetWireType()!=OUTPUT)
-		{
-			vector<Gate*> DFront = CWire[i]->GetFanOut();
-			PodemWire = ImplyForward(DFront);	
-		}
+			//find D-frontier
+			//imply forward if there are NOT gates
+			//and then update the frontier wire
+			PodemWire = C[frame].CWire[i];
+			if (PodemWire->GetWireType()!=OUTPUT)
+			{
+				vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+				PodemWire = ImplyForward(DFront, frame);	
+			}
 	
 
-		//for test
-		//PodemWire->PrintWire();
-		/*--------------------for test--------------------*/
-		//print all the Wire read from input file
-		WireSize = CWire.size();
-		for (int m=0; m<WireSize; m++)
-		{
-			CWire[m]->PrintWire();
-		}
-		/*--------------------for test--------------------*/
-
-		////////////////////////////////////////////////////////////////////////
-		//clear DFrontier List
-		
-
-		if(PODEM(PodemWire)==true)
-		{	
-			TestNumber++;
-			cout<<endl;
-			cout<<endl<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
-			cout<<endl;
-		}
-		//Do PODEM
-		else
-		{
-			cout<<endl;
-			cout<<"fail!!!!!!!!"<<endl;
-			cout<<endl;
-			//cout<<"D SIZEe = "<<DFrontiers.size()<<endl;
-			if (!DFrontiers.empty())			
+			//for test
+			//PodemWire->PrintWire();
+			/*--------------------for test--------------------
+			//print all the Wire read from input file
+			WireSize = CWire.size();
+			for (int m=0; m<WireSize; m++)
 			{
-				DFrontiers.pop_back();					
+				CWire[m]->PrintWire();
 			}
-			ClearObjFixed();
-			//cout<<DFrontiers[0]->GetGateName()<<endl;
-			//cout<<DFrontiers[1]->GetGateName()<<endl;
-			//cout<<DFrontiers[2]->GetGateName()<<endl;
-			//cout<<DFrontiers[3]->GetGateName()<<endl;
-			//cout<<DFrontiers[4]->GetGateName()<<endl;
-			//cout<<DFrontiers[5]->GetGateName()<<endl;
-			cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-			if (!DFrontiers.empty())
-			{
-				for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
-				{
-					if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-					{
-						PodemWire = DFrontiers.back()->GetInputs()[m];
-						break;
-					}
-				}
-			}
-			bool success=false;
+			--------------------for test--------------------*/
+
+			//clear DFrontier List
 			
-			while (!DFrontiers.empty())
+			if(PODEM(PodemWire, frame)==true)
+			{	
+				TestNumber++;
+				cout<<endl;
+				cout<<endl<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+				cout<<endl;
+			}
+			//Do PODEM
+			else
 			{
-				
-				if(PODEM(PodemWire)==true)
-				{	
-					TestNumber++;
-					cout<<endl;
-					cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
-					cout<<endl;
-					success = true;
-					break;
-				}
-				else
+				if (!C[frame].DFrontiers.empty())			
 				{
-					cout<<endl;
-					cout<<"fail?!!"<<endl;
-					cout<<endl;
-					if (!DFrontiers.empty())
+					C[frame].DFrontiers.pop_back();					
+				}
+				ClearObjFixed(frame);
+	
+				if (!C[frame].DFrontiers.empty())
+				{
+					for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
 					{
-						DFrontiers.pop_back();
-					}
-					ClearObjFixed();
-					cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-					if (!DFrontiers.empty())
-					{
-						for (unsigned m=0; m<DFrontiers.back()->GetInputs().size(); m++)
+						if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
 						{
-							if ((DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-							{
-								PodemWire = DFrontiers.back()->GetInputs()[m];
-								break;
-							}
-						}	
+							PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+							break;
+						}
+					}
+				}
+				bool success=false;
+				
+				while (!C[frame].DFrontiers.empty())
+				{
+					
+					if(PODEM(PodemWire,frame)==true)
+					{	
+						TestNumber++;
+						cout<<endl;
+						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+						cout<<endl;
+						success = true;
+						break;
 					}
 					else
 					{
-						break;
+
+						if (!C[frame].DFrontiers.empty())
+						{
+							C[frame].DFrontiers.pop_back();
+						}
+						ClearObjFixed(frame);
+	
+						if (!C[frame].DFrontiers.empty())
+						{
+							for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+							{
+								if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+								{
+									PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+									break;
+								}
+							}	
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
+				if (!success)
+				{
+					cout<<endl;
+					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+					cout<<endl;
+				}
 			}
-			if (!success)
-			{
-				cout<<endl;
-				cout<<"@@@ Wire "<<CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
-				cout<<endl;
-			}
-			
 		}
-
-	}
-
-	return 0;
+	
+		return 0;
 }
 
 
 
 //functions
 
-bool PODEM(Wire* W)
+bool PODEM(Wire* W, int frame)
 {
 	//if Stuck at fault is at primary output
 	//we don't need to generate test vector
 	Wire* CurrentWire = W;	
-	int WireSize = CWire.size();
+	//int WireSize = CWire.size();
 
-	/*--------------------for test--------------------*/
+	/*--------------------for test--------------------
 	//print all the Gate read from input file 
 	cout<<endl;
 	cout<<"-----------------------------PODOM--------------------------------"<<endl;
@@ -744,7 +741,7 @@ bool PODEM(Wire* W)
 	cout<<"CurrentWire = ";
 	CurrentWire->PrintWire();
 	cout<<endl;
-	/*--------------------for test--------------------*/
+	--------------------for test--------------------*/
 		
 	if ((CurrentWire->GetWireType()==OUTPUT)&&(CurrentWire->GetValue()!=X)&&(CurrentWire->GetValue()!=ZERO)&&(CurrentWire->GetValue()!=ONE)) 
 		return true;
@@ -755,17 +752,17 @@ bool PODEM(Wire* W)
 
 		vector <Gate*> FrontierGates = CurrentWire->GetFanOut();
 		int F_size = FrontierGates.size();
-		/*--------------------for test-------------------*/
+		/*--------------------for test-------------------
 		cout<<"frontier gates are: ";
 		for(unsigned i=0; i<FrontierGates.size(); i++)
 		{
 			cout<<FrontierGates[i]->GetGateName()<<",";
 		}
 		cout<<endl;
-		/*--------------------for test-------------------*/
+		--------------------for test-------------------*/
 
 
-		/*--------------------for test-------------------*/
+		/*--------------------for test-------------------
 		cout<<endl<<"Gate information:"<<endl;
 		int GateSize=CGate.size();
 		for (int i=0; i<GateSize; i++)
@@ -778,7 +775,7 @@ bool PODEM(Wire* W)
 			cout<<"output = "<<CGate[i]->GetOutput()->GetWireName()<<", DFrontierVisited: "<<CGate[i]->GetDFrontierVisited()<<endl;
 		}
 
-		/*--------------------for test-------------------*/
+		-------------------for test-------------------*/
 
 		vector <Gate*> NotLists;
 
@@ -795,7 +792,7 @@ bool PODEM(Wire* W)
 			}
 			else if (!FrontierGates[i]->GetDFrontierVisited())
 			{
-				DFrontiers.push_back(FrontierGates[i]);
+				C[frame].DFrontiers.push_back(FrontierGates[i]);
 				FrontierGates[i]->SetDFrontierVisited(true);
 			}
 		}
@@ -816,8 +813,6 @@ bool PODEM(Wire* W)
 				{
 					vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
 					NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
-					
-					//NotLists.push_back(NotLists.front()->GetOutput()->GetFanOut()[0]);
 				}
 				else
 				{
@@ -849,7 +844,7 @@ bool PODEM(Wire* W)
 			}
 			else if (!NotLists.front()->GetDFrontierVisited())
 			{
-				DFrontiers.push_back(NotLists.front());
+				C[frame].DFrontiers.push_back(NotLists.front());
 				NotLists.front()->SetDFrontierVisited(true);
 				
 			}	
@@ -859,64 +854,62 @@ bool PODEM(Wire* W)
 		//If No DFrontier, untestable
 		//return false
 
-		if (DFrontiers.size()==0)
+		if (C[frame].DFrontiers.size()==0)
 		{
-			cout<<"DFROTIER SIZE ="<<DFrontiers.size()<<endl;
-			cout<<"No D-Frontier!!!"<<endl;
 			return false;
 		}
 
-		/*--------------------for test--------------------*/
-		cout<<"DFrontiers are: ";
-		for (unsigned i=0; i<DFrontiers.size(); i++)
+		/*--------------------for test--------------------
+		cout<<"C[frame].DFrontiers are: ";
+		for (unsigned i=0; i<C[frame].DFrontiers.size(); i++)
 		{
-			cout<<DFrontiers[i]->GetGateName()<<",";
+			cout<<C[frame].DFrontiers[i]->GetGateName()<<",";
 		}	
 		cout<<endl;
-		/*--------------------for test--------------------*/
+		--------------------for test--------------------*/
 		
 		//update current wire and frontier gate
-		FrontierGate = DFrontiers.back();
-		for (unsigned m=0; m<FrontierGate->GetInputs().size(); m++)
+		C[frame].FrontierGate = C[frame].DFrontiers.back();
+		for (unsigned m=0; m<C[frame].FrontierGate->GetInputs().size(); m++)
 		{
-			if ((FrontierGate->GetInputs()[m]->GetValue()==D)||(FrontierGate->GetInputs()[m]->GetValue()==DNOT))
+			if ((C[frame].FrontierGate->GetInputs()[m]->GetValue()==D)||(C[frame].FrontierGate->GetInputs()[m]->GetValue()==DNOT))
 			{
-				CurrentWire = FrontierGate->GetInputs()[m];
+				CurrentWire = C[frame].FrontierGate->GetInputs()[m];
 				break;
 			}
 		}
-		//DFrontiers.erase(DFrontiers.begin());
+		//C[frame].DFrontiers.erase(C[frame].DFrontiers.begin());
 
 	
 
-		/*--------------------for test--------------------*/
+		/*--------------------for test--------------------
 		cout<<"{NEW} Frontier Gate is:";	
-		FrontierGate->PrintGate();
+		C[frame].FrontierGate->PrintGate();
 		cout<<endl;
-		/*--------------------for test--------------------*/
+		--------------------for test--------------------*/
 
 		//objective
-		Objective(FrontierGate);
-		FrontierGate->GetOutput()->SetValue(LookUpTable(FrontierGate));
+		Objective(C[frame].FrontierGate);
+		C[frame].FrontierGate->GetOutput()->SetValue(LookUpTable(C[frame].FrontierGate));
 
-		/*--------------------for test--------------------*/
+		/*--------------------for test--------------------
 		cout<<"-------after objective---------"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{
 			CWire[m]->PrintWire();
 		}
 		cout<<endl;
-		/*--------------------for test--------------------*/
+		--------------------for test--------------------*/
 
 		//Backtrace
-		Wire* BTResult = Backtrace(FrontierGate);
-		/*--------------------for test--------------------*/
+		Wire* BTResult = Backtrace(C[frame].FrontierGate);
+		/*--------------------for test--------------------
 		cout<<"-------after backtrace---------"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{
 			CWire[m]->PrintWire();
 		}	
-		/*--------------------for test--------------------*/
+		--------------------for test--------------------*/
 
 		
 
@@ -929,7 +922,7 @@ bool PODEM(Wire* W)
 			//until the frontier is not a Not gate.
 			
 
-			CurrentWire = FrontierGate->GetOutput();
+			CurrentWire = C[frame].FrontierGate->GetOutput();
 
 			while (CurrentWire->GetWireType()!=OUTPUT)
 			{
@@ -975,7 +968,6 @@ bool PODEM(Wire* W)
 			bool NewDFrontier = false;
 			while(!GateTest.empty())
 			{	
-				cout<<"aaaaaaaaaaaaaaaaaaaaaaa"<<endl;
 				if ((GateTest.front()->GetGateType()!=NOT)&&(GateTest.front()->GetGateType()!=BUFFER))
 				{
 					if (!GateTest.front()->GetDFrontierVisited())
@@ -1000,46 +992,46 @@ bool PODEM(Wire* W)
 				return false;
 			}
 
-			/*--------------------for test-------------------*/
+			/*--------------------for test-------------------
 			cout<<"frontier gates are: ";
 			for(unsigned i=0; i<FrontierGates.size(); i++)
 			{
 				cout<<FrontierGates[i]->GetGateName()<<",";
 			}
 			cout<<endl;
-			/*--------------------for test-------------------*/
+			--------------------for test-------------------*/
 
-			/*--------------------for test--------------------*/
-			cout<<"DFrontiers are: ";
-			for (unsigned i=0; i<DFrontiers.size(); i++)
+			/*--------------------for test--------------------
+			cout<<"C[frame].DFrontiers are: ";
+			for (unsigned i=0; i<C[frame].DFrontiers.size(); i++)
 			{
-				cout<<DFrontiers[i]->GetGateName()<<",";
+				cout<<C[frame].DFrontiers[i]->GetGateName()<<",";
 			}	
 			cout<<endl;
-			/*--------------------for test--------------------*/
+			--------------------for test--------------------*/
 
-			DFrontiers.pop_back();
+			C[frame].DFrontiers.pop_back();
 
 		}
 
 
 		//ImplyForward BTResult to see if there is a contradiction
-		if (InputImplyForward())
+		if (InputImplyForward(frame))
 		{
-			/*--------------------for test--------------------*/
+			/*--------------------for test--------------------
 			cout<<"-------after imply---------"<<endl;
 			for (int m=0; m<WireSize; m++)
 			{
 				CWire[m]->PrintWire();
 			}
-			/*--------------------for test--------------------*/
+			--------------------for test--------------------*/
 
-			if (PODEM(CurrentWire)==true) return true;
+			if (PODEM(CurrentWire,frame)==true) return true;
 		}
 		if (BTResult==NULL)
 		{
-			cout<<"BTResult = null"<<endl;
-			cout<<"D Size = "<<DFrontiers.size()<<endl;
+			//cout<<"BTResult = null"<<endl;
+			//cout<<"D Size = "<<C[frame].DFrontiers.size()<<endl;
 			return false;
 		}
 
@@ -1050,34 +1042,33 @@ bool PODEM(Wire* W)
 			{BTResult->SetValue(ZERO);}
 		else if (BTResult->GetValue()==ZERO)
 			{BTResult->SetValue(ONE);}
-		/*--------------------for test--------------------*/
+		/*--------------------for test--------------------
 		cout<<"---fail, we need to backtrack.---"<<endl;
 		for (int m=0; m<WireSize; m++)
 		{	
 			CWire[m]->PrintWire();
 		}
-		/*--------------------for test--------------------*/
+		--------------------for test--------------------*/
 		if (BTResult!=NULL)
 		{	
-			if(InputImplyForward())
+			if(InputImplyForward(frame))
 			{
-				/*--------------------for test--------------------*/
+				/*--------------------for test--------------------
 				cout<<"-------after imply---------"<<endl;
 				for (int m=0; m<WireSize; m++)
 				{
 					CWire[m]->PrintWire();
 				}
-				/*--------------------for test--------------------*/
+				--------------------for test--------------------*/
 	
-				if (PODEM(CurrentWire)==true) return true;
+				if (PODEM(CurrentWire, frame)==true) return true;
 			}
 		
-			cout<<"D11 SIZE = "<<DFrontiers.size()<<endl;
 			//Imply BTResult= X
 			BTResult->SetValue(X);
 			BTResult->SetFixed(false);
 			BTResult->SetBTVisited(false);
-			InputImplyForward();
+			InputImplyForward(frame);
 		}
 		return false;
 	}
@@ -1085,30 +1076,30 @@ bool PODEM(Wire* W)
 
 
 //set all the wire to X
-void Initialize()
+void Initialize(int frame)
 {
-	int size = CWire.size();
+	int size = C[frame].CWire.size();
 	for (int i=0; i<size; i++)
 	{
-		CWire[i]->initialize();
+		C[frame].CWire[i]->initialize();
 	}
 }
 
-void ClearObjFixed()
+void ClearObjFixed(int frame)
 {
-	int size = CWire.size();
+	int size = C[frame].CWire.size();
 	for (int i=0; i<size; i++)
 	{
-		CWire[i]->SetObjFixed(false);
+		C[frame].CWire[i]->SetObjFixed(false);
 	}
 }
 
-void ClearDFrontierVisited()
+void ClearDFrontierVisited(int frame)
 {
-	int size = CGate.size();
+	int size = C[frame].CGate.size();
 	for (int i=0; i<size; i++)
 	{
-		CGate[i]->SetDFrontierVisited(false);
+		C[frame].CGate[i]->SetDFrontierVisited(false);
 	}
 }
 
@@ -1119,8 +1110,8 @@ void ImplyBackward(Gate* G)
 	gates.push_back(G);
 	while (gates.size()!=0)
 	{
-		gates.front()->PrintGate();
-		cout<<endl;
+		//gates.front()->PrintGate();
+		//cout<<endl;
 		if (gates.front()->GetGateType()==NOT)
 		{
 			if (gates.front()->GetOutput()->GetValue()==ONE)
@@ -1321,7 +1312,7 @@ void ImplyBackward(Gate* G)
 }
 
 
-Wire* ImplyForward(vector<Gate*> Gs)
+Wire* ImplyForward(vector<Gate*> Gs, int frame)
 {
 	vector<Gate*> gates = Gs;
 	Wire* NewWire = NULL;
@@ -1360,16 +1351,16 @@ Wire* ImplyForward(vector<Gate*> Gs)
 		}
 		else
 		{
-			DFrontiers.push_back(gates.front());
+			C[frame].DFrontiers.push_back(gates.front());
 			gates.front()->SetDFrontierVisited(true);
 		}
 		gates.erase(gates.begin());	
 	}
 
-	if (!DFrontiers.empty())
+	if (!C[frame].DFrontiers.empty())
 	{
-		int size = DFrontiers.back()->GetInputs().size();
-		vector<Wire*> inputs = DFrontiers.back()->GetInputs();
+		int size = C[frame].DFrontiers.back()->GetInputs().size();
+		vector<Wire*> inputs = C[frame].DFrontiers.back()->GetInputs();
 		for (int i=0; i<size; i++)
 		{
 			if ((inputs[i]->GetValue()==D)||(inputs[i]->GetValue()==DNOT))
@@ -1385,12 +1376,12 @@ Wire* ImplyForward(vector<Gate*> Gs)
 
 //from primary input to forward gates
 //check if there is a contradiction
-bool InputImplyForward()
+bool InputImplyForward(int frame)
 {
-	vector<Wire*> wires = InputWires;
-	for (unsigned i=0; i<CWire.size(); i++)
+	vector<Wire*> wires = C[frame].InputWires;
+	for (unsigned i=0; i<C[frame].CWire.size(); i++)
 	{
-		CWire[i]->SetInternalBTVisited(false);
+		C[frame].CWire[i]->SetInternalBTVisited(false);
 	}
 	
 	while (wires.size()!=0)
@@ -1402,19 +1393,19 @@ bool InputImplyForward()
 		}
 		for (unsigned i=0; i<fanout.size(); i++)
 		{
-			cout<<"gate: "<<fanout[i]->GetGateName()<<", BTVisited = "<<fanout[i]->GetOutput()->GetInternalBTVisited()<<endl;
+			//cout<<"gate: "<<fanout[i]->GetGateName()<<", BTVisited = "<<fanout[i]->GetOutput()->GetInternalBTVisited()<<endl;
 			if ( (LookUpTable(fanout[i])!=X)
 				&&(  ! (  (fanout[i]->GetOutput()->GetValue()==LookUpTable(fanout[i]))
 				||        (fanout[i]->GetOutput()->GetValue()==DLookUpTable(fanout[i])) ))
 				&&((fanout[i]->GetOutput()->GetFixed()==true)||(fanout[i]->GetOutput()->GetObjFixed()==true)))
 			{
-				cout<<fanout[i]->GetGateName()<<" return false"<<endl;
+				//cout<<fanout[i]->GetGateName()<<" return false"<<endl;
 				//
 				return false;
 			}
 			else if ((fanout[i]->GetOutput()->GetFixed()==false)&&(fanout[i]->GetOutput()->GetObjFixed()==false))
 			{
-				cout<<"fanout is "<<fanout[i]->GetGateName()<<endl;
+				//cout<<"fanout is "<<fanout[i]->GetGateName()<<endl;
 				fanout[i]->GetOutput()->SetValue(LookUpTable(fanout[i]));	
 			}
 
@@ -1426,37 +1417,13 @@ bool InputImplyForward()
 		}
 		wires.erase(wires.begin());
 	}
-/*
-	vector<Wire*> wires = InputWires;
-	while (wires.size()!=0)
-	{
-		vector<Gate*>fanout = wires.front()->GetFanOut();
-		int gatesize = fanout.size();
-		for (int j=0; j<gatesize; j++)
-		{
 
-			if ( (LookUpTable(fanout[j])!=X)
-				&&(  ! (  (fanout[j]->GetOutput()->GetValue()==LookUpTable(fanout[j]))
-				||        (fanout[j]->GetOutput()->GetValue()==DLookUpTable(fanout[j])) ))
-				&&((fanout[j]->GetOutput()->GetFixed()==true)||(fanout[j]->GetOutput()->GetObjFixed()==true)))
-			{
-				cout<<fanout[j]->GetGateName()<<" return false"<<endl;
-				return false;
-			}
-			else if ((fanout[j]->GetOutput()->GetFixed()==false)&&(fanout[j]->GetOutput()->GetObjFixed()==false))
-			{
-				fanout[j]->GetOutput()->SetValue(LookUpTable(fanout[j]));
-				wires.push_back(fanout[j]->GetOutput());
-			}
-		}
-		wires.erase(wires.begin());
-	}*/
 	bool success=false;
-	for (unsigned i = 0; i<OutputWires.size(); i++)
+	for (unsigned i = 0; i<C[frame].OutputWires.size(); i++)
 	{
-		if((OutputWires[i]->GetValue()== DNOT)||(OutputWires[i]->GetValue()== D)||(OutputWires[i]->GetValue()== X))
+		if((C[frame].OutputWires[i]->GetValue()== DNOT)||(C[frame].OutputWires[i]->GetValue()== D)||(C[frame].OutputWires[i]->GetValue()== X))
 		{
-			cout<<"return true"<<endl;
+			//cout<<"return true"<<endl;
 			success = true;
 		}
 	}
