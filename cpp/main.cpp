@@ -577,9 +577,8 @@ int main(int argc, char **argv)
 					PodemWire = ImplyForward(DFront, frame);	
 				}
 			
-
 				//for test
-				//PodemWire->PrintWire();
+				PodemWire->PrintWire();
 				/*--------------------for test--------------------
 				//print all the Wire read from input file
 				int WireSize = CWire.size();
@@ -745,6 +744,7 @@ int main(int argc, char **argv)
 			//imply forward if there are NOT gates
 			//and then update the frontier wire
 			PodemWire = C[frame].CWire[i];
+			// we don't test the secondary input
 			if (PodemWire->GetWireType()!=S_INPUT)
 			{
 				if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
@@ -1454,7 +1454,7 @@ Wire* ImplyForward(vector<Gate*> Gs, int frame)
 		{
 			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
 			gates.front()->GetOutput()->SetFixed(true);
-			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
+			if ((gates.front()->GetOutput()->GetWireType()!=OUTPUT)&&(gates.front()->GetOutput()->GetWireType()!=S_OUTPUT))
 			{
 				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
 				gates.insert(gates.end(), outputs.begin(), outputs.end());
@@ -1468,7 +1468,7 @@ Wire* ImplyForward(vector<Gate*> Gs, int frame)
 		{
 			gates.front()->GetOutput()->SetValue(LookUpTable(gates.front()));
 			gates.front()->GetOutput()->SetFixed(true);
-			if (gates.front()->GetOutput()->GetWireType()!=OUTPUT)
+			if ((gates.front()->GetOutput()->GetWireType()!=OUTPUT)&&(gates.front()->GetOutput()->GetWireType()!=S_OUTPUT))
 			{
 				vector<Gate*> outputs = gates.front()->GetOutput()->GetFanOut();
 				gates.insert(gates.end(), outputs.begin(), outputs.end());
