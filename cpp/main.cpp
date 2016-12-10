@@ -569,103 +569,105 @@ int main(int argc, char **argv)
 			//imply forward if there are NOT gates
 			//and then update the frontier wire
 			Wire* PodemWire = C[frame].CWire[i];
-			if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
+			if (PodemWire->GetWireType()!=S_INPUT)
 			{
-				vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
-				PodemWire = ImplyForward(DFront, frame);	
-			}
-		
-
-			//for test
-			//PodemWire->PrintWire();
-			/*--------------------for test--------------------
-			//print all the Wire read from input file
-			int WireSize = CWire.size();
-			for (int m=0; m<WireSize; m++)
-			{
-				CWire[m]->PrintWire();
-			}
-			--------------------for test--------------------*/
-
-			if(PODEM(PodemWire, frame)==true)
-			{	
-				TestNumber++;
-				cout<<endl;
-				cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-				cout<<endl;
-			}
-			//Do PODEM
-			else
-			{
-				//cout<<endl;
-				//cout<<"fail!"<<endl;
-				//cout<<endl;
-				if (!C[frame].DFrontiers.empty())
+				if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
 				{
-					C[frame].DFrontiers.pop_back();					
+					vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+					PodemWire = ImplyForward(DFront, frame);	
 				}
-				ClearObjFixed(frame);
-				//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-				if (!C[frame].DFrontiers.empty())
+			
+
+				//for test
+				//PodemWire->PrintWire();
+				/*--------------------for test--------------------
+				//print all the Wire read from input file
+				int WireSize = CWire.size();
+				for (int m=0; m<WireSize; m++)
 				{
-					for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
-					{
-						if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-						{
-							PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
-							break;
-						}
-					}
+					CWire[m]->PrintWire();
 				}
-				bool success=false;
-				
-				while (!C[frame].DFrontiers.empty())
+				--------------------for test--------------------*/
+	
+				if(PODEM(PodemWire, frame)==true)
+				{	
+					TestNumber++;
+					cout<<endl;
+					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<endl;
+				}
+				//Do PODEM
+				else
 				{
-				
-					if(PODEM(PodemWire, frame)==true)
-					{	
-						TestNumber++;
-						cout<<endl;
-						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
-						cout<<endl;
-						success = true;
-						break;
-					}
-					else
+					//cout<<endl;
+					//cout<<"fail!"<<endl;
+					//cout<<endl;
+					if (!C[frame].DFrontiers.empty())
 					{
-						//cout<<endl;
-						//cout<<"fail!"<<endl;
-						//cout<<endl;
-						if (!C[frame].DFrontiers.empty())
+						C[frame].DFrontiers.pop_back();					
+					}
+					ClearObjFixed(frame);
+					//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
+					if (!C[frame].DFrontiers.empty())
+					{
+						for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
 						{
-							C[frame].DFrontiers.pop_back();
-						}
-						ClearObjFixed(frame);
-						//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
-						if (!C[frame].DFrontiers.empty())
-						{
-							for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+							if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
 							{
-								if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-								{
-									PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
-									break;
-								}
-							}	
+								PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+								break;
+							}
+						}
+					}
+					bool success=false;
+					
+					while (!C[frame].DFrontiers.empty())
+					{
+					
+						if(PODEM(PodemWire, frame)==true)
+						{	
+							TestNumber++;
+							cout<<endl;
+							cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+							cout<<endl;
+							success = true;
+							break;
 						}
 						else
 						{
-							break;
+							//cout<<endl;
+							//cout<<"fail!"<<endl;
+							//cout<<endl;
+							if (!C[frame].DFrontiers.empty())
+							{
+								C[frame].DFrontiers.pop_back();
+							}
+							ClearObjFixed(frame);
+							//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
+							if (!C[frame].DFrontiers.empty())
+							{
+								for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+								{
+									if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+									{
+										PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+										break;
+									}
+								}	
+							}
+							else
+							{
+								break;
+							}
 						}
 					}
-				}
-				if (!success)
-				{
-					cout<<endl;
-					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
-					cout<<endl;
-				}
-				
+					if (!success)
+					{
+						cout<<endl;
+						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+						cout<<endl;
+					}
+				}		
 			}
 
 
@@ -743,102 +745,104 @@ int main(int argc, char **argv)
 			//imply forward if there are NOT gates
 			//and then update the frontier wire
 			PodemWire = C[frame].CWire[i];
-			if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
+			if (PodemWire->GetWireType()!=S_INPUT)
 			{
-				vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
-				PodemWire = ImplyForward(DFront, frame);	
-			}
-	
-
-			//for test
-			//PodemWire->PrintWire();
-			/*--------------------for test--------------------
-			//print all the Wire read from input file
-			WireSize = CWire.size();
-			for (int m=0; m<WireSize; m++)
-			{
-				CWire[m]->PrintWire();
-			}
-			--------------------for test--------------------*/
-
-			//clear DFrontier List
-
-			if(PODEM(PodemWire, frame)==true)
-			{	
-				TestNumber++;
-				cout<<endl;
-				cout<<endl<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
-				cout<<endl;
-			}
-			//Do PODEM
-			else
-			{
-				if (!C[frame].DFrontiers.empty())			
+				if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
 				{
-					C[frame].DFrontiers.pop_back();					
+					vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+					PodemWire = ImplyForward(DFront, frame);	
 				}
-				ClearObjFixed(frame);
 	
-				if (!C[frame].DFrontiers.empty())
-				{
-					for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
-					{
-						if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-						{
-							PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
-							break;
-						}
-					}
-				}
-				bool success=false;
-				
-				while (!C[frame].DFrontiers.empty())
-				{
-					
-					if(PODEM(PodemWire,frame)==true)
-					{	
-						TestNumber++;
-						cout<<endl;
-						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
-						cout<<endl;
-						success = true;
-						break;
-					}
-					else
-					{
 
-						if (!C[frame].DFrontiers.empty())
-						{
-							C[frame].DFrontiers.pop_back();
-						}
-						ClearObjFixed(frame);
+				//for test
+				//PodemWire->PrintWire();
+				/*--------------------for test--------------------
+				//print all the Wire read from input file
+				WireSize = CWire.size();
+				for (int m=0; m<WireSize; m++)
+				{
+					CWire[m]->PrintWire();
+				}
+				--------------------for test--------------------*/
 	
-						if (!C[frame].DFrontiers.empty())
+				//clear DFrontier List
+
+				if(PODEM(PodemWire, frame)==true)
+				{	
+					TestNumber++;
+					cout<<endl;
+					cout<<endl<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+					cout<<endl;
+				}
+				//Do PODEM
+				else
+				{
+					if (!C[frame].DFrontiers.empty())			
+					{
+						C[frame].DFrontiers.pop_back();					
+					}
+					ClearObjFixed(frame);
+		
+					if (!C[frame].DFrontiers.empty())
+					{
+						for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
 						{
-							for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+							if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
 							{
-								if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
-								{
-									PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
-									break;
-								}
-							}	
+								PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+								break;
+							}
+						}
+					}
+					bool success=false;
+					
+					while (!C[frame].DFrontiers.empty())
+					{
+						
+						if(PODEM(PodemWire,frame)==true)
+						{	
+							TestNumber++;
+							cout<<endl;
+							cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+							cout<<endl;
+							success = true;
+							break;
 						}
 						else
 						{
-							break;
+	
+							if (!C[frame].DFrontiers.empty())
+							{
+								C[frame].DFrontiers.pop_back();
+							}
+							ClearObjFixed(frame);
+		
+							if (!C[frame].DFrontiers.empty())
+							{
+								for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
+								{
+									if ((C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==D)||(C[frame].DFrontiers.back()->GetInputs()[m]->GetValue()==DNOT))
+									{
+										PodemWire = C[frame].DFrontiers.back()->GetInputs()[m];
+										break;
+									}
+								}	
+							}
+							else
+							{
+								break;
+							}
 						}
 					}
-				}
-				if (!success)
-				{
-					cout<<endl;
-					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
-					cout<<endl;
+					if (!success)
+					{
+						cout<<endl;
+						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+						cout<<endl;
+					}
 				}
 			}
 		}
-	
 		return 0;
 }
 
