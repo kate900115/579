@@ -496,7 +496,7 @@ int main(int argc, char **argv)
 		// for each wire we will generate 
 		// s-a-0 fault and s-a-1 fault
 
-		int WireSize = C[frame].CWire.size();
+		int WireSize = C[frame].FWires[0].FrameWires.size();
 		for (int i=0; i<WireSize; i++)
 		{
 			//intialize and set s-a-1 fault
@@ -509,9 +509,40 @@ int main(int argc, char **argv)
 				C[frame].DFrontiers.pop_back();
 			}
 			cout<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+
+
+			string WireHalfName = C[frame].FWires[0].FrameWires[i]->GetHalfName();
+			/*--------------------for test--------------------*/
+			cout<<"HalfName is "<<WireHalfName<<endl;
+			/*--------------------for test--------------------*/
+			for (int FNum = 0; FNum < frame+1; FNum++)
+			{
+				if (FNum!=frame)
+				{
+					for (int j=0; j<WireSize; j++)
+					{
+						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
+						{
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+						}
+					}
+				}
+				else
+				{
+					for (int j=0; j<WireSize; j++)
+					{
+						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
+						{
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, D);
+							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+						}
+					}
+				}
+			} 
 	
-			C[frame].CWire[i]->SetStuck(true,D);
-			C[frame].CWire[i]->SetFixed(true);
+			//C[frame].CWire[i]->SetStuck(true,D);
+			//C[frame].CWire[i]->SetFixed(true);
 
 			// Initial State must be all 0s.
 			for (unsigned m=0; m<C[frame].S_InputWires.size(); m++)
@@ -649,9 +680,43 @@ int main(int argc, char **argv)
 				C[frame].DFrontiers.pop_back();
 			}
 			cout<<endl<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
-	
-			C[frame].CWire[i]->SetStuck(true,DNOT);
-			C[frame].CWire[i]->SetFixed(true);
+
+
+
+			//string WireHalfName = C[frame].FWires[0].FrameWires[i]->GetHalfName();
+			/*--------------------for test--------------------*/
+			cout<<WireHalfName<<endl;
+			/*--------------------for test--------------------*/
+			for (int FNum = 0; FNum < frame+1; FNum++)
+			{
+				
+				if (FNum!=frame)
+				{
+					for (int j=0; j<WireSize; j++)
+					{
+						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
+						{
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+						}
+					}
+				}
+				else
+				{
+					
+					for (int j=0; j<WireSize; j++)
+					{
+
+						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
+						{
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, D);
+							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+						}
+					}
+				}
+			} 
+			//C[frame].CWire[i]->SetStuck(true,DNOT);
+			//C[frame].CWire[i]->SetFixed(true);
 
 			// Initial State must be all 0s.
 			for (unsigned m=0; m<C[frame].S_InputWires.size(); m++)
@@ -673,7 +738,7 @@ int main(int argc, char **argv)
 				Gate* DBack = C[frame].CWire[i]->GetFanIn();
 				ImplyBackward(DBack);
 			}
-		
+
 			//find D-frontier
 			//imply forward if there are NOT gates
 			//and then update the frontier wire
@@ -697,7 +762,7 @@ int main(int argc, char **argv)
 			--------------------for test--------------------*/
 
 			//clear DFrontier List
-			
+
 			if(PODEM(PodemWire, frame)==true)
 			{	
 				TestNumber++;
