@@ -1,12 +1,6 @@
-input G0__0 G1__0 G2__0 G3__0
-output G17__0
+input G0__0 G1__0 G2__0 G3__0 G5__0 G6__0 G7__0
+output G17__0 G10__1 G11__1 G13__1
 wire G14__0 G8__0 G15__0 G12__0 G16__0 G9__0
-time_frame_input G5__0
-time_frame_input G6__0
-time_frame_input G7__0
-time_frame_output G10__1
-time_frame_output G11__1
-time_frame_output G13__1
  not NOT_0__0 G14__0 G0__0 
  not NOT_1__0 G17__0 G11__1 
  and AND2_0__0 G8__0 G14__0 G6__0 
