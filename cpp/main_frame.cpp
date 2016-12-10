@@ -50,15 +50,16 @@ int main(int argc, char **argv)
 		FileName[i] = string(argv[i+1]);
 		inFile[i].open(FileName[i].c_str());
 	}
+	int FrameNum = argc -1;
 	//string FileName = string(argv[1]);
 	//ifstream inFile;
 	//inFile.open(FileName.c_str());
 	
-	for (int frame=0; frame<argc-1; frame++)
+	for (int frame=0; frame<FrameNum; frame++)
 	{
 		if (!inFile[frame].good())
 		{
-			cout << "ERROR in read_input() - cannot open " << FileName << " for reading." << endl;
+			cout << "ERROR in read_input() - cannot open " << FileName[frame] << " for reading." << endl;
 		}
 		
 		string line;
