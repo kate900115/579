@@ -1,0 +1,9 @@
+input G1 G2 G3
+output G6 G9
+wire G4 G5 G7 G8
+not NOT_1 G4 G1
+or OR2_1 G6 G4 G2
+not NOT_2 G5 G2
+nand NAND2_1 G7 G3 G5
+dff BUF_1 G8 G2
+nor NOR2_1 G9 G7 G8

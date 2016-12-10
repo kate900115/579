@@ -1,0 +1,5 @@
+output G4
+wire G3
+input G1 G2
+not NOT_1 G3 G1
+or OR2_1 G4 G3 G2
