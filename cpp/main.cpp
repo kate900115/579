@@ -24,9 +24,18 @@ void ClearDFrontierVisited(int frame);
 
 
 //global variable
+
+
+struct FrameWire
+{
+	vector<Wire*> FrameWires;
+};
+
+
 struct Circuit
 {
 	vector<Wire*> CWire;
+	FrameWire FWires[10];
 	vector<Gate*> CGate;
 	vector<Wire*> InputWires;
 	vector<Wire*> OutputWires;
@@ -85,6 +94,8 @@ int main(int argc, char **argv)
 					Wire* NewInput = new Wire(word, INPUT, 0, X);
 					C[frame].CWire.push_back(NewInput);
 					C[frame].InputWires.push_back(NewInput);
+					int num = NewInput->GetFrameNum();
+					C[frame].FWires[num].FrameWires.push_back(NewInput);
 				}
 	   		}
 
@@ -95,6 +106,8 @@ int main(int argc, char **argv)
 					Wire* NewOutput = new Wire(word, OUTPUT, 0, X);
 					C[frame].CWire.push_back(NewOutput);
 					C[frame].OutputWires.push_back(NewOutput);
+					int num = NewOutput->GetFrameNum();
+					C[frame].FWires[num].FrameWires.push_back(NewOutput);
 				}
 			}
 
@@ -104,6 +117,8 @@ int main(int argc, char **argv)
 				{
 					Wire* NewWire = new Wire(word, WIRE, 0, X);
 					C[frame].CWire.push_back(NewWire);
+					int num = NewWire->GetFrameNum();
+					C[frame].FWires[num].FrameWires.push_back(NewWire);
 				}	
 			}
 			else if (word=="time_frame_output")
@@ -113,6 +128,8 @@ int main(int argc, char **argv)
 					Wire* NewWire = new Wire(word, S_OUTPUT, 0, X);
 					C[frame].S_OutputWires.push_back(NewWire);
 					C[frame].CWire.push_back(NewWire);
+					int num = NewWire->GetFrameNum();
+					C[frame].FWires[num].FrameWires.push_back(NewWire);
 				}	
 			}
 			else if (word=="time_frame_input")
@@ -122,6 +139,8 @@ int main(int argc, char **argv)
 					Wire* NewWire = new Wire(word, S_INPUT, 0, ONE);
 					C[frame].S_InputWires.push_back(NewWire);
 					C[frame].CWire.push_back(NewWire);
+					int num = NewWire->GetFrameNum();
+					C[frame].FWires[num].FrameWires.push_back(NewWire);
 				}
 			}
 			else if (word=="dff")
