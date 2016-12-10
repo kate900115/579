@@ -46,10 +46,17 @@ class Wire
 			BTVisited = false;
 			IsFixed= false;
 			ObjFixed = false;
-			HalfName = name.substr(0, name.size()-3);
 			string a = name.substr(name.length()-1);
 			FrameNum = atoi(a.c_str());
 			InternalBTVisited = false;
+			if ((Type==S_OUTPUT)||(Type==S_INPUT))
+			{
+				HalfName = name.substr(0, name.size()-5);
+			}
+			else 
+			{
+				HalfName = name.substr(0, name.size()-3);
+			}
 		}
 
 		void initialize(){IsStuck = false; Value = X; BTVisited = false; IsFixed = false;}
