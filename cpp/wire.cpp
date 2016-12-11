@@ -18,6 +18,14 @@ void Wire::PrintWire()
 	{
 		cout<<"internal wire, Value=";
 	}
+	else if (Type==S_INPUT)
+	{
+		cout<<"secondary input, Value=";
+	}
+	else if (Type==S_OUTPUT)
+	{
+		cout<<"secondray output, Value=";
+	}
 
 	if (Value==ZERO)
 	{

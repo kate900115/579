@@ -1,0 +1,51 @@
+input G0__0 G1__0 G2__0 G3__0
+output G17__0
+wire G10__0 G11__0 G13__0 G14__0 G8__0 G15__0 G12__0 G16__0 G9__0
+time_frame_input G5__0
+time_frame_input G6__0
+time_frame_input G7__0
+input G0__1 G1__1 G2__1 G3__1
+output G17__1
+wire G5__1 G10__1 G6__1 G11__1 G7__1 G13__1 G14__1 G8__1 G15__1 G12__1 G16__1 G9__1
+input G0__2 G1__2 G2__2 G3__2
+output G17__2
+wire G5__2 G6__2 G7__2 G14__2 G8__2 G15__2 G12__2 G16__2 G9__2
+time_frame_output G10__2
+time_frame_output G11__2
+time_frame_output G13__2
+ not NOT_0__0 G14__0 G0__0 
+ not NOT_1__0 G17__0 G11__0 
+ and AND2_0__0 G8__0 G14__0 G6__0 
+ or OR2_0__0 G15__0 G12__0 G8__0 
+ or OR2_1__0 G16__0 G3__0 G8__0 
+ nand NAND2_0__0 G9__0 G16__0 G15__0 
+ nor NOR2_0__0 G10__0 G14__0 G11__0 
+ nor NOR2_1__0 G11__0 G5__0 G9__0 
+ nor NOR2_2__0 G12__0 G1__0 G7__0 
+ nor NOR2_3__0 G13__0 G2__0 G12__0 
+ dff DFF_0__1 G5__1 G10__0 
+ dff DFF_1__1 G6__1 G11__0 
+ dff DFF_2__1 G7__1 G13__0 
+ not NOT_0__1 G14__1 G0__1 
+ not NOT_1__1 G17__1 G11__1 
+ and AND2_0__1 G8__1 G14__1 G6__1 
+ or OR2_0__1 G15__1 G12__1 G8__1 
+ or OR2_1__1 G16__1 G3__1 G8__1 
+ nand NAND2_0__1 G9__1 G16__1 G15__1 
+ nor NOR2_0__1 G10__1 G14__1 G11__1 
+ nor NOR2_1__1 G11__1 G5__1 G9__1 
+ nor NOR2_2__1 G12__1 G1__1 G7__1 
+ nor NOR2_3__1 G13__1 G2__1 G12__1 
+ dff DFF_0__2 G5__2 G10__1 
+ dff DFF_1__2 G6__2 G11__1 
+ dff DFF_2__2 G7__2 G13__1 
+ not NOT_0__2 G14__2 G0__2 
+ not NOT_1__2 G17__2 G11__2 
+ and AND2_0__2 G8__2 G14__2 G6__2 
+ or OR2_0__2 G15__2 G12__2 G8__2 
+ or OR2_1__2 G16__2 G3__2 G8__2 
+ nand NAND2_0__2 G9__2 G16__2 G15__2 
+ nor NOR2_0__2 G10__2 G14__2 G11__2 
+ nor NOR2_1__2 G11__2 G5__2 G9__2 
+ nor NOR2_2__2 G12__2 G1__2 G7__2 
+ nor NOR2_3__2 G13__2 G2__2 G12__2 

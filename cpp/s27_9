@@ -1,0 +1,163 @@
+input G0__0 G1__0 G2__0 G3__0
+output G17__0
+wire G10__0 G11__0 G13__0 G14__0 G8__0 G15__0 G12__0 G16__0 G9__0
+input G5__0
+input G6__0
+input G7__0
+input G0__1 G1__1 G2__1 G3__1
+output G17__1
+wire G5__1 G10__1 G6__1 G11__1 G7__1 G13__1 G14__1 G8__1 G15__1 G12__1 G16__1 G9__1
+input G0__2 G1__2 G2__2 G3__2
+output G17__2
+wire G5__2 G10__2 G6__2 G11__2 G7__2 G13__2 G14__2 G8__2 G15__2 G12__2 G16__2 G9__2
+input G0__3 G1__3 G2__3 G3__3
+output G17__3
+wire G5__3 G10__3 G6__3 G11__3 G7__3 G13__3 G14__3 G8__3 G15__3 G12__3 G16__3 G9__3
+input G0__4 G1__4 G2__4 G3__4
+output G17__4
+wire G5__4 G10__4 G6__4 G11__4 G7__4 G13__4 G14__4 G8__4 G15__4 G12__4 G16__4 G9__4
+input G0__5 G1__5 G2__5 G3__5
+output G17__5
+wire G5__5 G10__5 G6__5 G11__5 G7__5 G13__5 G14__5 G8__5 G15__5 G12__5 G16__5 G9__5
+input G0__6 G1__6 G2__6 G3__6
+output G17__6
+wire G5__6 G10__6 G6__6 G11__6 G7__6 G13__6 G14__6 G8__6 G15__6 G12__6 G16__6 G9__6
+input G0__7 G1__7 G2__7 G3__7
+output G17__7
+wire G5__7 G10__7 G6__7 G11__7 G7__7 G13__7 G14__7 G8__7 G15__7 G12__7 G16__7 G9__7
+input G0__8 G1__8 G2__8 G3__8
+output G17__8
+wire G5__8 G10__8 G6__8 G11__8 G7__8 G13__8 G14__8 G8__8 G15__8 G12__8 G16__8 G9__8
+input G0__9 G1__9 G2__9 G3__9
+output G17__9
+wire G5__9 G6__9 G7__9 G14__9 G8__9 G15__9 G12__9 G16__9 G9__9
+time_frame_output G10__9
+time_frame_output G11__9
+time_frame_output G13__9
+ not NOT_0__0 G14__0 G0__0 
+ not NOT_1__0 G17__0 G11__0 
+ and AND2_0__0 G8__0 G14__0 G6__0 
+ or OR2_0__0 G15__0 G12__0 G8__0 
+ or OR2_1__0 G16__0 G3__0 G8__0 
+ nand NAND2_0__0 G9__0 G16__0 G15__0 
+ nor NOR2_0__0 G10__0 G14__0 G11__0 
+ nor NOR2_1__0 G11__0 G5__0 G9__0 
+ nor NOR2_2__0 G12__0 G1__0 G7__0 
+ nor NOR2_3__0 G13__0 G2__0 G12__0 
+ dff DFF_0__1 G5__1 G10__0 
+ dff DFF_1__1 G6__1 G11__0 
+ dff DFF_2__1 G7__1 G13__0 
+ not NOT_0__1 G14__1 G0__1 
+ not NOT_1__1 G17__1 G11__1 
+ and AND2_0__1 G8__1 G14__1 G6__1 
+ or OR2_0__1 G15__1 G12__1 G8__1 
+ or OR2_1__1 G16__1 G3__1 G8__1 
+ nand NAND2_0__1 G9__1 G16__1 G15__1 
+ nor NOR2_0__1 G10__1 G14__1 G11__1 
+ nor NOR2_1__1 G11__1 G5__1 G9__1 
+ nor NOR2_2__1 G12__1 G1__1 G7__1 
+ nor NOR2_3__1 G13__1 G2__1 G12__1 
+ dff DFF_0__2 G5__2 G10__1 
+ dff DFF_1__2 G6__2 G11__1 
+ dff DFF_2__2 G7__2 G13__1 
+ not NOT_0__2 G14__2 G0__2 
+ not NOT_1__2 G17__2 G11__2 
+ and AND2_0__2 G8__2 G14__2 G6__2 
+ or OR2_0__2 G15__2 G12__2 G8__2 
+ or OR2_1__2 G16__2 G3__2 G8__2 
+ nand NAND2_0__2 G9__2 G16__2 G15__2 
+ nor NOR2_0__2 G10__2 G14__2 G11__2 
+ nor NOR2_1__2 G11__2 G5__2 G9__2 
+ nor NOR2_2__2 G12__2 G1__2 G7__2 
+ nor NOR2_3__2 G13__2 G2__2 G12__2 
+ dff DFF_0__3 G5__3 G10__2 
+ dff DFF_1__3 G6__3 G11__2 
+ dff DFF_2__3 G7__3 G13__2 
+ not NOT_0__3 G14__3 G0__3 
+ not NOT_1__3 G17__3 G11__3 
+ and AND2_0__3 G8__3 G14__3 G6__3 
+ or OR2_0__3 G15__3 G12__3 G8__3 
+ or OR2_1__3 G16__3 G3__3 G8__3 
+ nand NAND2_0__3 G9__3 G16__3 G15__3 
+ nor NOR2_0__3 G10__3 G14__3 G11__3 
+ nor NOR2_1__3 G11__3 G5__3 G9__3 
+ nor NOR2_2__3 G12__3 G1__3 G7__3 
+ nor NOR2_3__3 G13__3 G2__3 G12__3 
+ dff DFF_0__4 G5__4 G10__3 
+ dff DFF_1__4 G6__4 G11__3 
+ dff DFF_2__4 G7__4 G13__3 
+ not NOT_0__4 G14__4 G0__4 
+ not NOT_1__4 G17__4 G11__4 
+ and AND2_0__4 G8__4 G14__4 G6__4 
+ or OR2_0__4 G15__4 G12__4 G8__4 
+ or OR2_1__4 G16__4 G3__4 G8__4 
+ nand NAND2_0__4 G9__4 G16__4 G15__4 
+ nor NOR2_0__4 G10__4 G14__4 G11__4 
+ nor NOR2_1__4 G11__4 G5__4 G9__4 
+ nor NOR2_2__4 G12__4 G1__4 G7__4 
+ nor NOR2_3__4 G13__4 G2__4 G12__4 
+ dff DFF_0__5 G5__5 G10__4 
+ dff DFF_1__5 G6__5 G11__4 
+ dff DFF_2__5 G7__5 G13__4 
+ not NOT_0__5 G14__5 G0__5 
+ not NOT_1__5 G17__5 G11__5 
+ and AND2_0__5 G8__5 G14__5 G6__5 
+ or OR2_0__5 G15__5 G12__5 G8__5 
+ or OR2_1__5 G16__5 G3__5 G8__5 
+ nand NAND2_0__5 G9__5 G16__5 G15__5 
+ nor NOR2_0__5 G10__5 G14__5 G11__5 
+ nor NOR2_1__5 G11__5 G5__5 G9__5 
+ nor NOR2_2__5 G12__5 G1__5 G7__5 
+ nor NOR2_3__5 G13__5 G2__5 G12__5 
+ dff DFF_0__6 G5__6 G10__5 
+ dff DFF_1__6 G6__6 G11__5 
+ dff DFF_2__6 G7__6 G13__5 
+ not NOT_0__6 G14__6 G0__6 
+ not NOT_1__6 G17__6 G11__6 
+ and AND2_0__6 G8__6 G14__6 G6__6 
+ or OR2_0__6 G15__6 G12__6 G8__6 
+ or OR2_1__6 G16__6 G3__6 G8__6 
+ nand NAND2_0__6 G9__6 G16__6 G15__6 
+ nor NOR2_0__6 G10__6 G14__6 G11__6 
+ nor NOR2_1__6 G11__6 G5__6 G9__6 
+ nor NOR2_2__6 G12__6 G1__6 G7__6 
+ nor NOR2_3__6 G13__6 G2__6 G12__6 
+ dff DFF_0__7 G5__7 G10__6 
+ dff DFF_1__7 G6__7 G11__6 
+ dff DFF_2__7 G7__7 G13__6 
+ not NOT_0__7 G14__7 G0__7 
+ not NOT_1__7 G17__7 G11__7 
+ and AND2_0__7 G8__7 G14__7 G6__7 
+ or OR2_0__7 G15__7 G12__7 G8__7 
+ or OR2_1__7 G16__7 G3__7 G8__7 
+ nand NAND2_0__7 G9__7 G16__7 G15__7 
+ nor NOR2_0__7 G10__7 G14__7 G11__7 
+ nor NOR2_1__7 G11__7 G5__7 G9__7 
+ nor NOR2_2__7 G12__7 G1__7 G7__7 
+ nor NOR2_3__7 G13__7 G2__7 G12__7 
+ dff DFF_0__8 G5__8 G10__7 
+ dff DFF_1__8 G6__8 G11__7 
+ dff DFF_2__8 G7__8 G13__7 
+ not NOT_0__8 G14__8 G0__8 
+ not NOT_1__8 G17__8 G11__8 
+ and AND2_0__8 G8__8 G14__8 G6__8 
+ or OR2_0__8 G15__8 G12__8 G8__8 
+ or OR2_1__8 G16__8 G3__8 G8__8 
+ nand NAND2_0__8 G9__8 G16__8 G15__8 
+ nor NOR2_0__8 G10__8 G14__8 G11__8 
+ nor NOR2_1__8 G11__8 G5__8 G9__8 
+ nor NOR2_2__8 G12__8 G1__8 G7__8 
+ nor NOR2_3__8 G13__8 G2__8 G12__8 
+ dff DFF_0__9 G5__9 G10__8 
+ dff DFF_1__9 G6__9 G11__8 
+ dff DFF_2__9 G7__9 G13__8 
+ not NOT_0__9 G14__9 G0__9 
+ not NOT_1__9 G17__9 G11__9 
+ and AND2_0__9 G8__9 G14__9 G6__9 
+ or OR2_0__9 G15__9 G12__9 G8__9 
+ or OR2_1__9 G16__9 G3__9 G8__9 
+ nand NAND2_0__9 G9__9 G16__9 G15__9 
+ nor NOR2_0__9 G10__9 G14__9 G11__9 
+ nor NOR2_1__9 G11__9 G5__9 G9__9 
+ nor NOR2_2__9 G12__9 G1__9 G7__9 
+ nor NOR2_3__9 G13__9 G2__9 G12__9 

@@ -141,6 +141,7 @@ int main(int argc, char **argv)
 					C[frame].CWire.push_back(NewWire);
 					int num = NewWire->GetFrameNum();
 					C[frame].FWires[num].FrameWires.push_back(NewWire);
+					C[frame].InputWires.push_back(NewWire);
 				}
 			}
 			else if (word=="dff")
@@ -461,7 +462,7 @@ int main(int argc, char **argv)
 			}
 		}
   
-		cout << "file " << FileName << " successfully read." << endl;
+		cout << "file " << FileName[frame] << " successfully read." << endl;
 		inFile[frame].close();
 	
 		/*--------------------for test--------------------*/
@@ -484,22 +485,35 @@ int main(int argc, char **argv)
 		}
 		/*--------------------for test--------------------*/
 
+		for (unsigned i=0; i<C[FrameNum-1].FWires[0].FrameWires.size(); i++)
+		{
+			cout<<"wire = "<<C[FrameNum-1].FWires[0].FrameWires[i]->GetWireName()<<endl;
+		}
+		cout<<"----------------------------------------"<<endl;
 
-		
+		for (unsigned i=0; i<C[FrameNum-1].FWires[frame].FrameWires.size(); i++)
+		{
+			cout<<"wire = "<<C[FrameNum-1].FWires[frame].FrameWires[i]->GetWireName()<<endl;
+		}
 	}
 
+	/*----------------------start PODEM------------------------*/
 
-	
-		int frame = 0;
-		int TestNumber = 0;
-		// PODEM
-		// for each wire we will generate 
-		// s-a-0 fault and s-a-1 fault
-
-		int WireSize = C[frame].FWires[0].FrameWires.size();
-		for (int i=0; i<WireSize; i++)
+	int TestNumber = 0;
+	// PODEM
+	// for each wire we will generate 
+	// s-a-0 fault and s-a-1 fault
+	int WireSize = C[FrameNum-1].FWires[0].FrameWires.size();
+	cout<<"wire size = "<<WireSize<<endl;
+	for (int i=0; i<WireSize; i++)
+	{
+		bool NextFrameFlag;
+		//int WireSize = C[frame].FWires[0].FrameWires.size();
+		//intialize and set s-a-1 fault
+		for (int frame = 0; frame<FrameNum; frame++)
 		{
-			//intialize and set s-a-1 fault
+			NextFrameFlag = false;
+			cout<<"time frame "<<frame<<":"<<endl;
 			Initialize(frame);
 			ClearObjFixed(frame);
 			ClearDFrontierVisited(frame);
@@ -508,41 +522,183 @@ int main(int argc, char **argv)
 			{
 				C[frame].DFrontiers.pop_back();
 			}
-			cout<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
-
-			string WireHalfName = C[frame].FWires[0].FrameWires[i]->GetHalfName();
+			
 			/*--------------------for test--------------------*/
-			cout<<"HalfName is "<<WireHalfName<<endl;
+			//cout<<"HalfName is "<<WireHalfName<<endl;
 			/*--------------------for test--------------------*/
+			//find and set the stuck at fault in all time frames.
+			Wire* PodemWire;
+			Wire* InitialPodemWire;
 			for (int FNum = 0; FNum < frame+1; FNum++)
 			{
+				cout<<"frame = "<<FNum<<endl;
+				string WireHalfName = C[FrameNum-1].FWires[0].FrameWires[i]->GetHalfName();
 				if (FNum!=frame)
 				{
-					for (int j=0; j<WireSize; j++)
+					int FSize = C[frame].FWires[FNum].FrameWires.size();
+					for (int j=0; j<FSize; j++)
 					{
 						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
 						{
-							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							//C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, D);
 							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+
+							// upadate DFrontier List
+							vector <Gate*> FrontierGates = C[frame].FWires[FNum].FrameWires[j]->GetFanOut();
+							vector <Gate*> NotLists;
+							int F_size = FrontierGates.size();
+		
+							for (int i=0; i<F_size; i++)
+							{
+								if (FrontierGates[i]->GetGateType()==NOT)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (FrontierGates[i]->GetGateType()==BUFFER)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (!FrontierGates[i]->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(FrontierGates[i]);
+									FrontierGates[i]->SetDFrontierVisited(true);
+								}
+							}
+
+							while (!NotLists.empty())
+							{
+								if (NotLists.front()->GetGateType()==NOT)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+									}
+								}
+								else if (NotLists.front()->GetGateType()==BUFFER)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
+									}
+								}
+								else if (!NotLists.front()->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(NotLists.front());
+									NotLists.front()->SetDFrontierVisited(true);
+								}	
+								NotLists.erase(NotLists.begin());
+							}
+							break;	
 						}
 					}
 				}
 				else
 				{
-					for (int j=0; j<WireSize; j++)
+					int FSize = C[frame].FWires[0].FrameWires.size();
+					for (int j=0; j<FSize; j++)
 					{
 						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
 						{
+							PodemWire = C[frame].FWires[FNum].FrameWires[j];
+							InitialPodemWire = PodemWire;
 							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, D);
 							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+
+
+							// upadate DFrontier List
+							vector <Gate*> FrontierGates = C[frame].FWires[FNum].FrameWires[j]->GetFanOut();
+							vector <Gate*> NotLists;
+							int F_size = FrontierGates.size();
+		
+							for (int i=0; i<F_size; i++)
+							{
+								if (FrontierGates[i]->GetGateType()==NOT)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (FrontierGates[i]->GetGateType()==BUFFER)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (!FrontierGates[i]->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(FrontierGates[i]);
+									FrontierGates[i]->SetDFrontierVisited(true);
+								}
+							}
+
+							while (!NotLists.empty())
+							{
+								if (NotLists.front()->GetGateType()==NOT)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+									}
+								}
+								else if (NotLists.front()->GetGateType()==BUFFER)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
+									}
+								}
+								else if (!NotLists.front()->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(NotLists.front());
+									NotLists.front()->SetDFrontierVisited(true);
+								}	
+								NotLists.erase(NotLists.begin());
+							}
+							break;
 						}
 					}
 				}
 			} 
-	
+		
 			//C[frame].CWire[i]->SetStuck(true,D);
 			//C[frame].CWire[i]->SetFixed(true);
+			cout<<"\%\%  Wire "<<InitialPodemWire->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 			// Initial State must be all 0s.
 			for (unsigned m=0; m<C[frame].S_InputWires.size(); m++)
@@ -550,33 +706,31 @@ int main(int argc, char **argv)
 				C[frame].S_InputWires[m]->SetValue(ZERO);
 				C[frame].S_InputWires[m]->SetFixed(true);
 			}
-
-			if (C[frame].CWire[i]->GetWireType()==INPUT)
+	
+			if (PodemWire->GetWireType()==INPUT)
 			{
-				C[frame].CWire[i]->SetBTVisited(true);
+				PodemWire->SetBTVisited(true);
 			}
-
+	
 			//Activate fault
-			//Implication to the back
-		
-			if ((C[frame].CWire[i]->GetWireType()!=INPUT)&&(C[frame].CWire[i]->GetWireType()!=S_INPUT))
+			//Implication to the back	
+			if ((PodemWire->GetWireType()!=INPUT)&&(PodemWire->GetWireType()!=S_INPUT))
 			{
-				Gate* DBack = C[frame].CWire[i]->GetFanIn();
+				Gate* DBack = PodemWire->GetFanIn();
 				ImplyBackward(DBack);
 			}
-		
-			//find D-frontier
-			//imply forward if there are NOT gates
-			//and then update the frontier wire
-			Wire* PodemWire = C[frame].CWire[i];
+			
+
 			if (PodemWire->GetWireType()!=S_INPUT)
 			{
+				//imply forward if there are NOT gates
+				//and then update the frontier wire
 				if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
 				{
-					vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+					vector<Gate*> DFront = PodemWire->GetFanOut();
 					PodemWire = ImplyForward(DFront, frame);	
 				}
-			
+				
 				//for test
 				PodemWire->PrintWire();
 				/*--------------------for test--------------------
@@ -587,12 +741,12 @@ int main(int argc, char **argv)
 					CWire[m]->PrintWire();
 				}
 				--------------------for test--------------------*/
-	
+
 				if(PODEM(PodemWire, frame)==true)
 				{	
 					TestNumber++;
 					cout<<endl;
-					cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+					cout<<"@@@ Wire "<<InitialPodemWire->GetWireName()<<"/0 has test vector"<<endl;
 					cout<<endl;
 				}
 				//Do PODEM
@@ -601,12 +755,13 @@ int main(int argc, char **argv)
 					//cout<<endl;
 					//cout<<"fail!"<<endl;
 					//cout<<endl;
+					NextFrameFlag = true;
 					if (!C[frame].DFrontiers.empty())
 					{
 						C[frame].DFrontiers.pop_back();					
 					}
 					ClearObjFixed(frame);
-					//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
+
 					if (!C[frame].DFrontiers.empty())
 					{
 						for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
@@ -621,19 +776,20 @@ int main(int argc, char **argv)
 					bool success=false;
 					
 					while (!C[frame].DFrontiers.empty())
-					{
-					
+					{					
 						if(PODEM(PodemWire, frame)==true)
 						{	
 							TestNumber++;
 							cout<<endl;
-							cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has test vector"<<endl;
+							cout<<"@@@ Wire "<<InitialPodemWire->GetWireName()<<"/0 has test vector"<<endl;
 							cout<<endl;
 							success = true;
+							NextFrameFlag = false;
 							break;
 						}
 						else
 						{
+							NextFrameFlag = true;
 							//cout<<endl;
 							//cout<<"fail!"<<endl;
 							//cout<<endl;
@@ -663,61 +819,213 @@ int main(int argc, char **argv)
 					if (!success)
 					{
 						cout<<endl;
-						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/0 has no test vector"<<endl;
+						cout<<"@@ Wire "<<InitialPodemWire->GetWireName()<<"/0 has no test vector"<<endl;
+						NextFrameFlag = true;
+						cout<<"We need to expand to next frame!"<<endl;
 						cout<<endl;
 					}
-				}		
+
+				}
+		
 			}
+			if (!NextFrameFlag)
+			{
+				break;
+			}
+			
+		}
 
-
-			/*---------------------------------------------------------------------------------------------------------------*/
-				//intialize and set s-a-1 fault
+		/*---------------------------------------------------------------------------------------------------------------*/
+		//intialize and set s-a-1 fault
+		for (int frame = 0; frame<FrameNum; frame++)
+		{
+			NextFrameFlag = false;
+			cout<<"time frame "<<frame<<":"<<endl;
 			Initialize(frame);
 			ClearObjFixed(frame);
 			ClearDFrontierVisited(frame);
-
+			//clear DFrontier List
 			while (!C[frame].DFrontiers.empty())
 			{
 				C[frame].DFrontiers.pop_back();
 			}
-			cout<<endl<<"@@  Wire "<<C[frame].CWire[i]->GetWireName()<<" is the fault site. It's s-a-1 fault."<<endl;
 
-
-
-			//string WireHalfName = C[frame].FWires[0].FrameWires[i]->GetHalfName();
+			
 			/*--------------------for test--------------------*/
-			cout<<WireHalfName<<endl;
+			//cout<<"HalfName is "<<WireHalfName<<endl;
 			/*--------------------for test--------------------*/
+			//find and set the stuck at fault in all time frames.
+			Wire* PodemWire;
+			Wire* InitialPodemWire;
 			for (int FNum = 0; FNum < frame+1; FNum++)
 			{
-				
+				cout<<"frame = "<<FNum<<endl;
+				string WireHalfName = C[FrameNum-1].FWires[0].FrameWires[i]->GetHalfName();
 				if (FNum!=frame)
 				{
-					for (int j=0; j<WireSize; j++)
+					int FSize = C[frame].FWires[FNum].FrameWires.size();
+					for (int j=0; j<FSize; j++)
 					{
 						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
 						{
-							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							//C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, ZERO);
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, DNOT);
 							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+
+							// upadate DFrontier List
+							vector <Gate*> FrontierGates = C[frame].FWires[FNum].FrameWires[j]->GetFanOut();
+							vector <Gate*> NotLists;
+							int F_size = FrontierGates.size();
+		
+							for (int i=0; i<F_size; i++)
+							{
+								if (FrontierGates[i]->GetGateType()==NOT)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (FrontierGates[i]->GetGateType()==BUFFER)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (!FrontierGates[i]->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(FrontierGates[i]);
+									FrontierGates[i]->SetDFrontierVisited(true);
+								}
+							}
+
+							while (!NotLists.empty())
+							{
+								if (NotLists.front()->GetGateType()==NOT)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+									}
+								}
+								else if (NotLists.front()->GetGateType()==BUFFER)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
+									}
+								}
+								else if (!NotLists.front()->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(NotLists.front());
+									NotLists.front()->SetDFrontierVisited(true);
+								}	
+								NotLists.erase(NotLists.begin());
+							}
+							break;	
 						}
 					}
 				}
 				else
 				{
-					
-					for (int j=0; j<WireSize; j++)
+					int FSize = C[frame].FWires[0].FrameWires.size();
+					for (int j=0; j<FSize; j++)
 					{
-
 						if (C[frame].FWires[FNum].FrameWires[j]->GetHalfName()==WireHalfName)
 						{
-							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, D);
+							PodemWire = C[frame].FWires[FNum].FrameWires[j];
+							InitialPodemWire = PodemWire;
+							C[frame].FWires[FNum].FrameWires[j]->SetStuck(true, DNOT);
 							C[frame].FWires[FNum].FrameWires[j]->SetFixed(true);
+
+
+							// upadate DFrontier List
+							vector <Gate*> FrontierGates = C[frame].FWires[FNum].FrameWires[j]->GetFanOut();
+							vector <Gate*> NotLists;
+							int F_size = FrontierGates.size();
+		
+							for (int i=0; i<F_size; i++)
+							{
+								if (FrontierGates[i]->GetGateType()==NOT)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (FrontierGates[i]->GetGateType()==BUFFER)
+								{	
+									NotLists.push_back(FrontierGates[i]);
+								}
+								else if (!FrontierGates[i]->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(FrontierGates[i]);
+									FrontierGates[i]->SetDFrontierVisited(true);
+								}
+							}
+
+							while (!NotLists.empty())
+							{
+								if (NotLists.front()->GetGateType()==NOT)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+									}
+								}
+								else if (NotLists.front()->GetGateType()==BUFFER)
+								{
+									if (NotLists.front()->GetInputs()[0]->GetValue()==D)
+									{
+										NotLists.front()->GetOutput()->SetValue(D);
+									}
+									else if(NotLists.front()->GetInputs()[0]->GetValue()==DNOT)
+									{
+										NotLists.front()->GetOutput()->SetValue(DNOT);
+									}
+									if (NotLists.front()->GetOutput()->GetWireType()!=OUTPUT)
+									{
+										vector<Gate*> tempgate = NotLists.front()->GetOutput()->GetFanOut();
+										NotLists.insert(NotLists.end(), tempgate.begin(), tempgate.end());
+					
+									}
+								}
+								else if (!NotLists.front()->GetDFrontierVisited())
+								{
+									C[frame].DFrontiers.push_back(NotLists.front());
+									NotLists.front()->SetDFrontierVisited(true);
+								}	
+								NotLists.erase(NotLists.begin());
+							}
+							break;
 						}
 					}
 				}
-			} 
-			//C[frame].CWire[i]->SetStuck(true,DNOT);
+			}  
+		
+			//C[frame].CWire[i]->SetStuck(true,D);
 			//C[frame].CWire[i]->SetFixed(true);
+			cout<<"\%\%  Wire "<<InitialPodemWire->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
 
 			// Initial State must be all 0s.
 			for (unsigned m=0; m<C[frame].S_InputWires.size(); m++)
@@ -725,64 +1033,62 @@ int main(int argc, char **argv)
 				C[frame].S_InputWires[m]->SetValue(ZERO);
 				C[frame].S_InputWires[m]->SetFixed(true);
 			}
-
-			if (C[frame].CWire[i]->GetWireType()==INPUT)
+	
+			if (PodemWire->GetWireType()==INPUT)
 			{
-				C[frame].CWire[i]->SetBTVisited(true);
+				PodemWire->SetBTVisited(true);
 			}
-
+	
 			//Activate fault
-			//Implication to the back
-		
-			if ((C[frame].CWire[i]->GetWireType()!=INPUT)&&(C[frame].CWire[i]->GetWireType()!=S_INPUT))
+			//Implication to the back	
+			if ((PodemWire->GetWireType()!=INPUT)&&(PodemWire->GetWireType()!=S_INPUT))
 			{
-				Gate* DBack = C[frame].CWire[i]->GetFanIn();
+				Gate* DBack = PodemWire->GetFanIn();
 				ImplyBackward(DBack);
 			}
+			
 
-			//find D-frontier
-			//imply forward if there are NOT gates
-			//and then update the frontier wire
-			PodemWire = C[frame].CWire[i];
-			// we don't test the secondary input
 			if (PodemWire->GetWireType()!=S_INPUT)
 			{
+				//imply forward if there are NOT gates
+				//and then update the frontier wire
 				if ((PodemWire->GetWireType()!=OUTPUT)&&(PodemWire->GetWireType()!=S_OUTPUT))
 				{
-					vector<Gate*> DFront = C[frame].CWire[i]->GetFanOut();
+					vector<Gate*> DFront = PodemWire->GetFanOut();
 					PodemWire = ImplyForward(DFront, frame);	
 				}
-	
-
+				
 				//for test
-				//PodemWire->PrintWire();
+				PodemWire->PrintWire();
 				/*--------------------for test--------------------
 				//print all the Wire read from input file
-				WireSize = CWire.size();
+				int WireSize = CWire.size();
 				for (int m=0; m<WireSize; m++)
 				{
 					CWire[m]->PrintWire();
 				}
 				--------------------for test--------------------*/
-	
-				//clear DFrontier List
 
 				if(PODEM(PodemWire, frame)==true)
 				{	
 					TestNumber++;
 					cout<<endl;
-					cout<<endl<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+					cout<<"@@@ Wire "<<InitialPodemWire->GetWireName()<<"/1 has test vector"<<endl;
 					cout<<endl;
 				}
 				//Do PODEM
 				else
 				{
-					if (!C[frame].DFrontiers.empty())			
+					//cout<<endl;
+					//cout<<"fail!"<<endl;
+					//cout<<endl;
+					NextFrameFlag = true;
+					if (!C[frame].DFrontiers.empty())
 					{
 						C[frame].DFrontiers.pop_back();					
 					}
 					ClearObjFixed(frame);
-		
+
 					if (!C[frame].DFrontiers.empty())
 					{
 						for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
@@ -797,26 +1103,29 @@ int main(int argc, char **argv)
 					bool success=false;
 					
 					while (!C[frame].DFrontiers.empty())
-					{
-						
-						if(PODEM(PodemWire,frame)==true)
+					{					
+						if(PODEM(PodemWire, frame)==true)
 						{	
 							TestNumber++;
 							cout<<endl;
-							cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has test vector"<<endl;
+							cout<<"@@@ Wire "<<InitialPodemWire->GetWireName()<<"/1 has test vector"<<endl;
 							cout<<endl;
 							success = true;
+							NextFrameFlag = false;
 							break;
 						}
 						else
 						{
-	
+							NextFrameFlag = true;
+							//cout<<endl;
+							//cout<<"fail!"<<endl;
+							//cout<<endl;
 							if (!C[frame].DFrontiers.empty())
 							{
 								C[frame].DFrontiers.pop_back();
 							}
 							ClearObjFixed(frame);
-		
+							//cout<<"D SIZE = "<<DFrontiers.size()<<endl;
 							if (!C[frame].DFrontiers.empty())
 							{
 								for (unsigned m=0; m<C[frame].DFrontiers.back()->GetInputs().size(); m++)
@@ -837,13 +1146,23 @@ int main(int argc, char **argv)
 					if (!success)
 					{
 						cout<<endl;
-						cout<<"@@@ Wire "<<C[frame].CWire[i]->GetWireName()<<"/1 has no test vector"<<endl;
+						cout<<"@@ Wire "<<InitialPodemWire->GetWireName()<<"/1 has no test vector"<<endl;
+						NextFrameFlag = true;
+						cout<<"We need to expand to next frame!"<<endl;
 						cout<<endl;
 					}
+
 				}
+		
 			}
+			if (!NextFrameFlag)
+			{
+				break;
+			}
+			
 		}
-		return 0;
+	}
+	return 0;
 }
 
 
@@ -854,7 +1173,6 @@ bool PODEM(Wire* W, int frame)
 {
 	//if Stuck at fault is at primary output
 	//we don't need to generate test vector
-	cout<<"000000000000000000000000000000000"<<endl;
 	Wire* CurrentWire = W;	
 	int WireSize = C[frame].CWire.size();
 	cout<<"wire size: "<<WireSize<<endl;
@@ -1178,9 +1496,9 @@ bool PODEM(Wire* W, int frame)
 			C[frame].CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
-		if (BTResult!=NULL)
+		//if (BTResult!=NULL)
 		{	
-			if(InputImplyForward(frame))
+			//if(InputImplyForward(frame))
 			{
 				/*--------------------for test--------------------*/
 				cout<<"-------after imply---------"<<endl;
