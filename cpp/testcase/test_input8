@@ -1,0 +1,18 @@
+input    G0__0 G1__0 G2__0 G3__0 G4__0 G5__0 G6__0 
+output G12__0
+wire G7__0 G8__0 G9__0 G10__0 G11__0
+input    G0__1 G1__1 G2__1 G3__1 G4__1 G5__1 G6__1 
+output G12__1
+wire G7__1 G8__1 G9__1 G10__1 G11__1
+  not NOT_1 G11__0 G10__0  
+  or OR_3 G9__0 G6__0 G4__0 G5__0 
+  nand NAND2_1 G7__0 G0__0 G1__0 
+  nand NAND2_2 G8__0 G2__0 G3__0
+  nand NAND2_3 G10__0 G7__0 G8__0  
+  nor NOR2_0 G12__0 G11__0 G9__0 
+  not NOT_1__1 G11__1 G10__1  
+  or OR_3__1 G9__1 G6__1 G4__1 G5__1 
+  nand NAND2_1 G7__1 G0__1 G1__1 
+  nand NAND2_2 G8__1 G2__1 G3__1
+  nand NAND2_3 G10__1 G7__1 G8__1  
+  nor NOR2_0 G12__1 G11__1 G9__1 
