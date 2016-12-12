@@ -1026,6 +1026,12 @@ int main(int argc, char **argv)
 			//C[frame].CWire[i]->SetStuck(true,D);
 			//C[frame].CWire[i]->SetFixed(true);
 			cout<<"\%\%  Wire "<<InitialPodemWire->GetWireName()<<" is the fault site. It's s-a-0 fault."<<endl;
+			//print all the DFrontier 
+			cout<<"print out all the names of dfrontier before podem:"<<endl;
+			for (unsigned m=0; m<C[frame].DFrontiers.size(); m++)
+			{
+				cout<<"Dfrontier name: "<<C[frame].DFrontiers[m]->GetGateName()<<", "<<C[frame].DFrontiers[m]->GetDFrontierVisited()<<endl;
+			}
 
 			// Initial State must be all 0s.
 			for (unsigned m=0; m<C[frame].S_InputWires.size(); m++)
@@ -1496,12 +1502,13 @@ bool PODEM(Wire* W, int frame)
 			C[frame].CWire[m]->PrintWire();
 		}
 		/*--------------------for test--------------------*/
-		//if (BTResult!=NULL)
+		if (BTResult!=NULL)
 		{	
-			//if(InputImplyForward(frame))
+			if(InputImplyForward(frame))
 			{
 				/*--------------------for test--------------------*/
 				cout<<"-------after imply---------"<<endl;
+				cout<<"aaaaaaaaaaaaaaaaaaaaaa"<<endl;
 				for (int m=0; m<WireSize; m++)
 				{
 					C[frame].CWire[m]->PrintWire();
@@ -1798,8 +1805,11 @@ Wire* ImplyForward(vector<Gate*> Gs, int frame)
 		}
 		else
 		{
-			C[frame].DFrontiers.push_back(gates.front());
-			gates.front()->SetDFrontierVisited(true);
+			if (gates.front()->GetDFrontierVisited()==false)
+			{
+				C[frame].DFrontiers.push_back(gates.front());
+				gates.front()->SetDFrontierVisited(true);
+			}
 		}
 		gates.erase(gates.begin());	
 	}
