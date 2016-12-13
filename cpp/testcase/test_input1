@@ -1,9 +1,9 @@
-input    G0 G1 G2 G3 G4 G5 G6 
-output G12
-wire G7 G8 G9 G10 G11
-  not NOT_1 G11 G10  
-  or OR_3 G9 G6 G4 G5 
-  nand NAND2_1 G7 G0 G1 
-  nand NAND2_2 G8 G2 G3
-  nand NAND2_3 G10 G7 G8  
-  nor NOR2_0 G12 G11 G9 
+input    G0__0 G1__0 G2__0 G3__0 G4__0 G5__0 G6__0 
+output G12__0
+wire G7__0 G8__0 G9__0 G10__0 G11__0
+  not NOT_1__0 G11__0 G10__0  
+  or OR_3__0 G9__0 G6__0 G4__0 G5__0 
+  nand NAND2_1__0 G7__0 G0__0 G1__0 
+  nand NAND2_2__0 G8__0 G2__0 G3__0
+  nand NAND2_3__0 G10__0 G7__0 G8__0  
+  nor NOR2_0__0 G12__0 G11__0 G9__0 

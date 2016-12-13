@@ -1,7 +1,7 @@
-input G0 G1 G2 G3
-output G7
-wire G4 G5 G6
-and AND2_1 G4 G0 G1 
-and AND2_2 G5 G2 G3
-and AND2_3 G6 G4 G5
-not NOT_1 G7 G6
+input G0__0 G1__0 G2__0 G3__0
+output G7__0
+wire G4__0 G5__0 G6__0
+and AND2_1 G4__0 G0__0 G1__0 
+and AND2_2 G5__0 G2__0 G3__0
+and AND2_3 G6__0 G4__0 G5__0
+not NOT_1 G7__0 G6__0
